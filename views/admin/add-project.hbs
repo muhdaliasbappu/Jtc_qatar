@@ -1,17 +1,12 @@
-<main class="text-center" style="width: 100%; max-width: 330px; padding: 15px; margin: auto;">
-    <form action="/admin/add-project/" method="POST" enctype="multipart/form-data">
-        <img class="mb-4" src="" alt="" width="100" height="80">
+<div class="text-center" style="width: 100%; max-width: 330px; padding: 15px; margin: auto;">
+    <form action="/admin/add-project/" method="post">
+        <img class=" mb-4" src="" alt="" width="100" height="80">
         <h1 class=" h3 mb-3 fw-normal">Add Project</h1>
-        <input class="form-control mt-3" name="projectname" id="projectname" placeholder="Project name">
-        <input class="form-control mt-3" name="projectcode" id="projectcode" placeholder="Project Code">
-        <select class="form-select mt-3" aria-label="Default select example">
-            <option selected>Project Status</option>
-            <option value="1">Ongoing</option>
-            <option value="2">OnHold</option>
-            <option value="3">Completed</option>
-        </select>
-
+        <input class="form-control mt-3" name="projectname" id="projectname" placeholder="Project name" required>
+        <input class="form-control mt-3" name="projectcode" id="projectcode" placeholder="Project Code" required>
+       
+    <input type="hidden" name="projectstatus" value="Ongoing">
         <button class="w-100 btn btn-lg btn-primary mt-5" type="submit">Add</button>
 
     </form>
-</main>
+</div>

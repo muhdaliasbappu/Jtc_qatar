@@ -1,25 +1,14 @@
-<script>
-    function showhide1(a) {
-        if (a == 11) {
-            document.getElementById('own').style.display = "block";
-            document.getElementById('hired').style.display = "none";
-        }
-        if (a == 12) {
-            document.getElementById('own').style.display = "none";
-            document.getElementById('hired').style.display = "block";
-        }
-    }
 
-</script>
-<main class="text-center" style="width: 100%; max-width: 330px; padding: 15px; margin: auto;">
-    <form action="/admin/add-employee/" method="POST" enctype="multipart/form-data">
+<div class="text-center" style="width: 100%; max-width: 330px; padding: 15px; margin: auto;">
+    <form action="/admin/add-employee/" method="POST">
         <img class="mb-4" src="" alt="">
         <h1 class=" h3 mb-3 fw-normal">Add Employee</h1>
-        <input class="form-control" name="surname" id="surname" placeholder="Surname">
-        <input class="form-control mt-3" name="givenName" id="givenname" placeholder="Given name">
-        <input class="form-control mt-3" name="qid" id="qid" placeholder="QID">
-        <input class="form-control mt-3" name="passno" id="passno" placeholder="Passport No">
-        <select class="form-select mt-3" name="nation" id="nation" aria-label="Default select example">
+        <input class="form-control" name="surname" id="surname" placeholder="Surname" required>
+        <input class="form-control mt-3" name="givenName" id="givenname" placeholder="Given name" required>
+        <input class="form-control mt-3" type="number" maxlength="11" minlength="11" name="qid" id="qid"
+            placeholder="QID">
+        <input class="form-control mt-3" name="passno" id="passno" placeholder="Passport No" required>
+        <select class="form-select mt-3" name="nation" id="nation" aria-label="Default select example" required>
             <option selected>Nationality</option>
             <option value="Afghanistan">Afghanistan</option>
             <option value="Albania">Albania</option>
@@ -261,16 +250,14 @@
             <option value="Zambia">Zambia</option>
             <option value="Zimbabwe">Zimbabwe</option>
         </select>
-        <div class="form-check form-check-inline mt-3">
-            <input class="form-check-input" type="radio" onclick="showhide1(11)" name="employeeType" id="inlineRadio1"
-                value="own">
-            <label class="form-check-label" for="inlineRadio1">Own</label>
-        </div>
-        <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" onclick="showhide1(12)" name="employeeType" id="inlineRadio2"
-                value="hired">
-            <label class="form-check-label" for="inlineRadio2">Hired</label>
-        </div>
+       <select class="form-select mt-2" name="employeeType" id="employeeType" aria-label=" Default select example" required>
+                <option value="">Employee Type</option>
+                <option value="Own Labour">Own Labour</option>
+                <option value="Own Staff">Own Staff</option>
+                <option value="Hired Labour">Hired Labour</option>
+                <option value="Hired Staff">Hired Staff</option>            
+                 <option value="Hired Salaried">Hired Salaried</option>
+        </select>
 
         <fieldset id="own" style="display:none;">
             <input class=" form-control mt-3" name="sbasic" id="sbasic" placeholder="Basic">
@@ -280,6 +267,34 @@
         <fieldset id="hired" style="display:none;">
             <input class=" form-control mt-3" name="srateph" id=" sbasic" placeholder="Rate Per Hour">
         </fieldset>
+        <select class="form-select mt-3" name="Employeeasigned" aria-label=" Default select example" required>
+            <option value="">Assign To</option>
+            {{#each users}}
+            <option value="{{this.usernames}}">{{this.usernames}}</option>
+            {{/each}}
+        </select>
+        <input type="hidden" name="Employeestatus" value="Working">
+
+ 
         <button class="mt-5 w-100 btn btn-lg btn-primary" type="submit">Add</button>
     </form>
-</main>
+</div>
+  <script>
+        const employeeTypeSelect = document.getElementById("employeeType");
+        const ownFieldset = document.getElementById("own");
+        const hiredFieldset = document.getElementById("hired");
+
+        employeeTypeSelect.addEventListener("change", function () {
+            const selectedValue = this.value;
+            if (selectedValue === "Own Labour" || selectedValue === "Own Staff" || selectedValue === "Hired Staff" || selectedValue === "Hired Salaried") {
+                ownFieldset.style.display = "block";
+                hiredFieldset.style.display = "none";
+            } else if (selectedValue === "Hired Labour") {
+                ownFieldset.style.display = "none";
+                hiredFieldset.style.display = "block";
+            } else {
+                ownFieldset.style.display = "none";
+                hiredFieldset.style.display = "none";
+            }
+        });
+    </script>

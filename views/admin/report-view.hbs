@@ -1,0 +1,122 @@
+<div class="container">
+    <div class="row mt-4">
+<h3>Employee Name: {{selectedemployee.givenName}}</h3>
+
+        <table class="table table-bordered table-hover .employee-table">
+            <thead>
+             
+                <tr>
+                    <th scope="col">#</th>
+                      <th scope="col">Date</th>
+                             <th scope="col">Working Status</th>
+                    <th scope="col">Work Hour</th>
+                    <th scope="col">Over Time</th>
+               
+                </tr>
+            </thead>
+            <tbody>
+                {{#each tempreport}}
+                <tr>
+                    <th scope=" row">{{@index}}</th>
+                    <td>{{this.datevalue}}</td>
+                         <td>{{this.todaystatus}}</td>
+                    <td>{{this.workhoursum}}</td>
+                      <td>{{this.workhourot}}</td>
+                
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+       {{#if selectedemployee.sallowance}}
+          <table class="table table-bordered table-hover .summary-table">
+            <thead>
+             
+                <tr>
+                    <th scope="col">Working Days</th>
+                      <th scope="col">Paid Leaves</th>
+                             <th scope="col">UnPaidleaves</th>
+                    <th scope="col">Total WorkHour</th>
+                    <th scope="col">Total OverTime</th>
+    
+               <th scope="col">OverTime Salary</th>
+               <th scope="col">Salary</th>
+                </tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                   
+                    <td>{{salarysheet.workingdayc}}</td>
+                      <td>{{salarysheet.paidleavec}}</td>
+                <td>{{salarysheet.Unpaidleavec}}</td>
+            
+                      <td>{{salarysheet.totalworkhour}}</td>
+                
+                      <td>{{salarysheet.totalot}}</td>
+                      <td>{{salarysheet.otsalary}}</td>
+                      <td>{{salarysheet.monthsalary}}</td>
+                    
+                </tr>
+            
+            </tbody>
+        </table>
+        {{/if}}
+        {{#if selectedemployee.srateph}}
+         <table class="table table-bordered table-hover  .summary-table">
+            <thead>
+             
+                <tr>
+                    <th scope="col">Working Days</th>
+                      
+                             
+                    <th scope="col">Total WorkHour</th>
+      
+               <th scope="col">Salary</th>
+                </tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                   
+                    <td>{{salarysheet.workingdayc}}</td>
+                   
+               
+            
+                      <td>{{salarysheet.totalworkhour}}</td>
+                
+               
+                      <td>{{salarysheet.monthsalary}}</td>
+                    
+                </tr>
+            
+            </tbody>
+        </table>
+        {{/if}}
+        
+    </div>
+    <button id="generatePdfButton">Download</button>
+
+</div>
+<script>
+document.getElementById('generatePdfButton').addEventListener('click', function() {
+  const doc = new jspdf();
+
+  // Add text to PDF
+  doc.setFontSize(16);
+  doc.text('Employee Report', 10, 10);
+
+  // Add tables to PDF
+  const employeeTable = document.querySelector('.employee-table');
+  const summaryTable = document.querySelector('.summary-table');
+
+  const employeeTableString = new XMLSerializer().serializeToString(employeeTable);
+  const summaryTableString = new XMLSerializer().serializeToString(summaryTable);
+
+  doc.fromHTML(employeeTableString, 10, 20);
+  doc.addPage();
+  doc.fromHTML(summaryTableString, 10, 20);
+
+  // Save the PDF
+  doc.save('employee_report.pdf');
+});
+</script>

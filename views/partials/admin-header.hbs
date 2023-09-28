@@ -1,0 +1,39 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">ADMIN PAGE</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                 <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="/admin/datasheet">TimeSheet</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="/admin/employee">Employees</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="/admin/projects">Projects</a>
+                </li>
+          
+
+            </ul>
+
+            <div class="btn-group  me-auto ">
+                <button class="btn btn-dark btn-sm dropdown-toggle " type="button" data-bs-toggle="dropdown"
+                    aria-expanded="false">
+                    Admin Setting
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="/admin/logout">Logout</a></li>
+                    <li><a class="dropdown-item" href="/admin/add-employee">Add Employee</a></li>
+                     <li><a class="dropdown-item" href="/admin/add-project">Add Project</a></li>
+                    <li><a class="dropdown-item" href="/admin/user-setting">User Settings</a></li>
+                    <li><a class="dropdown-item" href="/admin/admin-dlogin">Admin Settings</a></li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+</nav>

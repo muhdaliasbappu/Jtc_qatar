@@ -1,0 +1,27 @@
+
+<div class="container">
+<div class="col d-flex  row justify-content-center mt-5">
+    
+     <div class="card m-2"  style="width: 18rem;">
+      <h2>Genarate  Report </h2>
+        <form id="searchdata"  action="/admin/search-report" method="POST">
+         <input type="hidden" name="passno" value="{{this.iddd}}">
+            <div class="p-3">
+                <label>Start Date:</label> <br>
+                 <input type="date" id="startdate" name="startdate">
+
+            </div>
+            <div class="p-3">
+                <label>End Date:</label> <br>
+                 <input type="date" id="enddate" name="enddate">
+
+            </div>
+            <div class=" card-body">
+                <button type="submit" id="submits" class="btn btn-secondary text-end">submit</button>
+            </div>
+
+        </form>
+    </div>
+</div>
+</div>
+</div>

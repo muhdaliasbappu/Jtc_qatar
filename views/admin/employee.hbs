@@ -1,37 +1,57 @@
-<table class="table table-bordered">
+<table id="myTable" class="table display table-bordered table-hover">
     <thead>
         <tr>
             <th scope="col">#</th>
-            <th scope="col">Surname </th>
-            <th scope="col">Name </th>
-            <th scope="col">Passport No</th>
+            <th scope="col">Surname</th>
+            <th scope="col">givenName</th>
+            <th scope="col">Passport Number</th>
             <th scope="col">QID</th>
-            <th scope="col">Nationality</th>
-            <th scope="col">Category</th>
-            <th scope="col">salary</th>
-            <th scope="col">status</th>
-            <th scope="col"></th>
+            <th scope="col">Nation</th>
+            <th scope="col">EmployeeType</th>
+            <th scope="col">Salary</th>
+            <th scope="col">Assigned to</th>
+            <th scope="col">Employeestatus</th>
+            <th scope="col">options</th>
         </tr>
     </thead>
     <tbody>
+        {{#each employee}}
         <tr>
-            <th scope=" row">1</th>
-            <td>muhd alias bappu</td>
-            <td>Mark</td>
-            <td>123456789</td>
-            <td>45638373</td>
-            <td>india</td>
-            <td>hired</td>
+            <th scope="row">{{@index}}</th>
+            <td>{{this.surname}}</td>
+            <td>{{this.givenName}}</td>
+            <td>{{this.passno}}</td>
+            <td>{{this.qid}}</td>
+            <td>{{this.nation}}</td>
+            <td>{{this.employeeType}}</td>
             <td>
                 <dl>
-                    <dd>Basic:</dd>
-                    <dd>Allowance:</dd>
-                    <dd>Bonus:</dd>
+                    {{#if this.sallowance}}
+                    <dd>Basic: {{this.sbasic}}</dd>
+                    <dd>Allowance: {{this.sallowance}}</dd>
+                    <dd>Bonus: {{this.sbonus}}</dd>
+                    {{/if}}
+                    {{#if this.srateph}}
+                    <dd>Per Hour: {{this.srateph}}</dd>
+                    {{/if}}
                 </dl>
             </td>
-            <td>on leave</td>
-            <td><button type="button" class="btn btn-outline-dark">Edit</button></td>
-        </tr>
+            <td>{{this.Employeeasigned}}</td>
+            <td>{{this.Employeestatus}}</td>
+            <td><a href="/admin/edit-employee/{{this._id}}" class="btn btn-outline-dark">Edit</a> <br>
+            <a href="/admin/datasearch/{{this._id}}" class="btn btn-outline-dark mt-3">Timesheet</a>
 
+                         <br>
+            <a href="/admin/search-report/{{this.passno}}" class="btn btn-outline-dark mt-3">Report</a>
+            </td>
+
+        </tr>
+        {{/each}}
     </tbody>
 </table>
+<script>
+    $(document).ready(function () {
+        $('#myTable').DataTable();
+    });
+
+</script>

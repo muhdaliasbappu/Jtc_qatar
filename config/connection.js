@@ -7,7 +7,7 @@ const state = {
 // mongodb connection string
 const url = "mongodb://127.0.0.1:27017";
 // database name
-const dbName = "Jtcqatar";
+const dbName = "Jtcqatars";
 
 // create a new mongodb client object
 const client = new MongoClient(url);
