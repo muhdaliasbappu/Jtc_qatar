@@ -343,26 +343,47 @@ router.get('/employee-data', function (req, res, next) {
       let alloweddatasheet1 = []
       let alloweddatasheet2 = []
       var activeEmployees1 = [];
-      let lastdates = getthedate()
-
-      for (let i = 0; i < employeedatasheet.length; i++) {
-
-
-        if (employeedatasheet[i].datevalue === lastdates[0].date1) {
-          alloweddatasheet1.push(employeedatasheet[i]);
-        } else if (employeedatasheet[i].datevalue === lastdates[0].date2) {
-          alloweddatasheet2.push(employeedatasheet[i]);
-        }
-      }
+      let lastdates = getthedate() 
+      
       employeHelpers.getAllemployee().then(function (employees) {
         for (let i = 0; i < employees.length; i++) {
           if (employees[i].Employeeasigned === req.session.usernames) {
             activeEmployees1.push(employees[i]);
           }
         }
-      })
+     
+      
+
+      for (let z = 0; z < employeedatasheet.length; z++) {
+  
+        if (employeedatasheet[z].datevalue === lastdates[0].date1) {
+       
+      
+          for(let j=0; j < activeEmployees1.length; j++){
+            if(activeEmployees1[j]._id.toString() === employeedatasheet[z].employee_id){
+              alloweddatasheet1.push(employeedatasheet[z]);
+              alloweddatasheet1[j].index = j+1;
+            }
+          }
+         
+        } else if (employeedatasheet[z].datevalue === lastdates[0].date2) {
+          for(x=0;x<activeEmployees1.length;x++){
+            if(activeEmployees1[x]._id.toString() === employeedatasheet[z].employee_id){
+             alloweddatasheet2.push(employeedatasheet[z]);
+             alloweddatasheet2[x].index = x+1;
+            }
+          }
+      
+        }
+      }
+    })
+ 
+
+  
+     
       alloweddatasheet1.date = lastdates[0].date1;
       alloweddatasheet2.date = lastdates[0].date2;
+      console.log(alloweddatasheet1)
       res.render('./users/datasheet', { user: true, alloweddatasheet1, alloweddatasheet2 });
 
     })
@@ -375,7 +396,9 @@ router.get('/edit-datasheet/:id', async (req, res) => {
   projectHelpers.getAllproject().then((projects) => {
     for (let j = 0; j < projects.length; j++) {
       if (projects[j].projectstatus === 'Ongoing') {
+      
         activeProjects.push(projects[j]);
+        
       }
     }
   })
