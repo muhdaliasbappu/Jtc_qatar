@@ -24,8 +24,9 @@ router.get("/employee", function (req, res, next) {
   let admin = req.session.user;
   if (admin) {
     employeHelpers.getAllemployee().then((employee) => {
-   
-     
+   for(let i=0; i<employee.length; i++){
+    employee[i].index = i+1;
+   }
       res.render("./admin/employee", { admin: true, employee });
     });
   }
@@ -35,9 +36,12 @@ router.get("/employee", function (req, res, next) {
 
 router.get("/projects", function (req, res, next) {
   let admin = req.session.user;
-  console.log(admin);
+
   if (admin) {
     projectHelpers.getAllproject().then((project) => {
+      for(let i=0; i<project.length; i++){
+        project[i].index = i+1;
+       }
       res.render("./admin/projects", { admin: true, project });
     });
   }
@@ -87,7 +91,7 @@ router.get("/add-user", function (req, res, next) {
 
 router.post("/add-employee", function (req, res) {
   employeHelpers.addemployee(req.body, (result) => {
-    res.render("./admin/add-employee", { admin: true });
+    res.redirect("./admin/add-employee", { admin: true });
   });
 });
 
@@ -244,6 +248,7 @@ router.post("/datasheet", function (req, res) {
         d.getDate() === employeedatasheet[i].date.getDate()
       ) {
         searchdatasheet[ar] = employeedatasheet[i];
+        searchdatasheet[ar].index = ar + 1;
         ar++;
       }
     }
@@ -302,6 +307,9 @@ router.post("/datasearch", async (req, res) => {
       const searcheddata = searcheddatas.sort(
         (objA, objB) => Number(objA.date) - Number(objB.date)
       );
+      // for(let j = 0 ; j<searcheddata.length ; j++){
+      //  console.log( searcheddata[j]).index //= j+1
+      // }
 
       res.render("./admin/searcheddata", {
         admin: true,
