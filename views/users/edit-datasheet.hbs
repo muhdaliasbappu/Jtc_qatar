@@ -3,7 +3,7 @@
 <div class="col d-flex justify-content-center mt-5">
     <div class="card" style="width: 18rem;">
         <ul class="list-group list-group-flush">
-            <li class="list-group-item">Name: {{edatasheet.givenName}}</li>
+            <li class="list-group-item">Name: {{edatasheet.surname}} {{edatasheet.givenName}}</li>
             <li class="list-group-item">DATE: {{edatasheet.datevalue}}</li>
         </ul>
         <form id="employeeForm" action="/edit-datasheet/{{edatasheet._id}}" method="POST">
@@ -255,7 +255,7 @@
 <script>
      var employeeType = "{{edatasheet.employeetype}}";
     
-    if(employeeType === 'Own Staff' || employeeType === 'Hired Staff_operations'){
+    if(employeeType === 'Own Staff (Operations)' || employeeType === 'Hired Staff (Operations)'){
      projectFieldset.style.display = "none"
    
     }
@@ -362,7 +362,7 @@ if(dis === 6){
         }
 
         if (todayStatusSelect.value === "Working") {
-      if(employeeType === 'Own Staff' || employeeType === 'Hired Staff_operations'){
+      if(employeeType === 'Own Staff (Operations)' || employeeType === 'Hired Staff (Operations)'){
         projectFieldset.style.display = "none";
         }else
             projectFieldset.style.display = "block";
