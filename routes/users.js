@@ -362,7 +362,7 @@ router.get('/employee-data', function (req, res, next) {
           for(let j=0; j < activeEmployees1.length; j++){
             if(activeEmployees1[j]._id.toString() === employeedatasheet[z].employee_id){
               alloweddatasheet1.push(employeedatasheet[z]);
-              alloweddatasheet1[j].index = j+1;
+              //alloweddatasheet1[j].index = j+1;
             }
           }
          
@@ -370,7 +370,7 @@ router.get('/employee-data', function (req, res, next) {
           for(x=0;x<activeEmployees1.length;x++){
             if(activeEmployees1[x]._id.toString() === employeedatasheet[z].employee_id){
              alloweddatasheet2.push(employeedatasheet[z]);
-             alloweddatasheet2[x].index = x+1;
+             //alloweddatasheet2[x].index = x+1;
             }
           }
       
