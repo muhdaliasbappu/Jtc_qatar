@@ -6,7 +6,7 @@
             <li class="list-group-item">Name: {{edatasheet.givenName}}</li>
             <li class="list-group-item">DATE: {{edatasheet.datevalue}}</li>
         </ul>
-        <form id="employeeForm" action="/admin/edit-datasheets/{{edatasheet._id}}" method="POST">
+        <form id="employeeForm" action="/admin/edit-searcheddata/{{edatasheet._id}}" method="POST">
             <div class="p-3">
               <select class="form-select" name="todaystatus" id="todaystatus" aria-label="Default select example" onchange="toggleProjectFieldset()">
                 <option value="{{edatasheet.todaystatus}}">{{edatasheet.todaystatus}}</option>
@@ -17,7 +17,7 @@
             </div>
             
             <fieldset id="projectFieldset">
-                <h5 class=" mt-1 text-center">PROJECT</h5>
+                <h5 class=" mt-1 text-center">PROJECT</h5> 
                 <fieldset>
                     <select class="form-select mt-2" name="projectname1" id="projectname1"
                         aria-label="Default select example">
@@ -253,10 +253,10 @@
 </div>
 
 <script>
-      var employeeType = "{{edatasheet.employeetype}}";
+    var employeeType = "{{edatasheet.employeetype}}";
 
     if(employeeType === 'Own Staff (Operations)' || employeeType === 'Hired Staff (Operations)'){
-     projectFieldset.style.display = "none";
+     projectFieldset.style.display = "none"
    
     }
     if(c === 2){
@@ -373,3 +373,4 @@ if(dis === 6){
 
 
 </script>
+
