@@ -21,13 +21,13 @@
              <select class="form-select mt-2" name="employeeType" id="employeeType" aria-label=" Default select example" required>
                 <option value="{{semployee.employeeType}}">{{semployee.employeeType}}</option>
                
-                <option value="Own Labour">Own Labour</option>
-                <option value="Own Staff">Own Staff (Operation)</option>
-                      <option value="Own Staff_projects">Own Staff (Projects)</option>
-                <option value="Hired Labour">Hired Labour (Hourly)</option>
-                 <option value="Hired Labour(Monthly)">Hired Labour (Monthly)</option>
-                <option value="Hired Staff_operations">Hired Staff (Operation)</option>            
-                      <option value="Hired Staff_projects">Hired Staff (Projects)</option>      
+         <option value="Own Labour">Own Labour</option>
+                <option value="Own Staff (Operations)">Own Staff (Operations)</option>
+                      <option value="Own Staff (Projects)">Own Staff (Projects)</option>
+                <option value="Hired Labour (Hourly)">Hired Labour (Hourly)</option>
+                 <option value="Hired Labour (Monthly)">Hired Labour (Monthly)</option>
+                <option value="Hired Staff (Operations)">Hired Staff (Operations)</option>            
+                     <option value="Hired Staff (Projects)">Hired Staff (Projects)</option>      
         </select>
            <fieldset id="own" >
             <input class=" form-control mt-3"  name="sbasic" id="sbasic" placeholder="Basic">
@@ -59,11 +59,11 @@
    }
         employeeTypeSelect.addEventListener("change", function () {
             const selectedValue = this.value;
-               if (selectedValue === "Own Labour" || selectedValue === "Own Staff" || selectedValue === "Own Staff_projects" || selectedValue === "Hired Labour(Monthly)" || selectedValue === "Hired Staff_operations" || selectedValue === "Hired Staff_projects")  {
+ if (selectedValue === "Own Labour" || selectedValue === "Own Staff (Operations)" || selectedValue === "Own Staff (Projects)" || selectedValue === "Hired Labour (Monthly)" || selectedValue === "Hired Staff (Operations)" || selectedValue === "Hired Staff (Projects)")  {
                
                 ownFieldset.style.display = "block";
                 hiredFieldset.style.display = "none";
-            } else if (selectedValue === "Hired Labour") {
+            } else if (selectedValue === "Hired Labour (Hourly)") {
               
                 ownFieldset.style.display = "none";
                 hiredFieldset.style.display = "block";
