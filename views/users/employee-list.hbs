@@ -6,7 +6,7 @@
 
         <ul class="list-group list-group-flush">
 
-            <li class="list-group-item">Name: <span id="employeeName"></span></li>
+            <li class="list-group-item">Name: <span id="employeeNames"></span> <span id="employeeName"></spa> </li>
             <li class="list-group-item">QID: <span id="employeeQID"></span></li>
 
         </ul>
@@ -262,7 +262,7 @@ var employeetype;
     function displayEmployee() {
         var employee = employees[currentIndex];
 
-       
+         document.getElementById("employeeNames").textContent = employee.surname;
         document.getElementById("employeeName").textContent = employee.givenName;
         document.getElementById("employeeQID").textContent = employee.qid;
          document.getElementById("employee_id").value = employee._id;
@@ -311,7 +311,7 @@ var employeetype;
  
         // Show or hide the projectFieldset based on the selected option
         if (selectedOption === "Working") {
-            if (employeetype === "Own Staff" || employeetype === "Hired Staff"){
+            if (employeetype === "Own Staff" || employeetype === "Hired Staff_operations"){
                  projectFieldset.style.display = "none";
             }else
             projectFieldset.style.display = "block";
