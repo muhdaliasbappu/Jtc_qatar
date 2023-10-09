@@ -351,10 +351,15 @@ var employeetype;
             data: userData,
             dataType: 'JSON',
             success: function (data) {
+                setTimeout(function () {
+                nextEmployee();
+            }, 1000);
                 window.location.reload();
                 console.log('data')
+                
             }
         })
+           nextEmployee();
 
     })
 
