@@ -91,7 +91,7 @@ router.get("/add-user", function (req, res, next) {
 
 router.post("/add-employee", function (req, res) {
   employeHelpers.addemployee(req.body, (result) => {
-    res.redirect("./admin/add-employee", { admin: true });
+    res.redirect("/admin/add-employee");
   });
 });
 
@@ -645,3 +645,4 @@ console.log(reqdate)
  });
 });
 module.exports = router;
+
