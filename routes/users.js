@@ -30,30 +30,31 @@ function getthedate() {
 }
 
 
-// cron.schedule('39 11 * * *', () => {
+// cron.schedule('28 22 * * *', async() => {
 
-//    let expiredata = []
-//   userHelpers.getDatasheet().then(function (employeedatasheet) {
- 
-//     for (let z = 0 ; z<employeedatasheet.length; z++){
-      
-//       if(employeedatasheet[z].datevalue === date2){
-//         expiredata = employeedatasheet[z]
-//       }
-//     }
-//   })
+// console.log('iam running')
 
 //   var dateObj2 = new Date();
 //   dateObj2.setDate(dateObj2.getDate() - 2);
 
 //   var date2 = dateObj2.getFullYear() + '-' + (dateObj2.getMonth() + 1) + '-' + dateObj2.getDate();
 
- 
-//     employeHelpers.getAllemployee().then((employee) => {
-    
-     
-//       for(let i = 0; i<employee.length; i++){
 
+  
+//    let expiredata = []
+
+//    try {
+//     const [employeedatasheet] = await Promise.all([
+//       userHelpers.getDatasheet(),
+     
+//     ]);
+//     let expiredata = employeedatasheet.filter((data) => data.datevalue === date2);
+
+ 
+//   employeHelpers.getAllemployee().then((employee) => {
+
+//       for(let i = 0; i<employee.length; i++){
+       
 
 //         if(employee[i].Employeestatus === 'On Vacation'){
           
@@ -74,7 +75,7 @@ function getthedate() {
 //        tempobj.workhour5 = ''
 //        tempobj.date= dateObj2
 //        tempobj.employeeType = employee[i].employeeType
-//        if(employee[i].employeeType === 'Hired Labour'){
+//        if(employee[i].employeeType === 'Hired Labour (Hourly)'){
 //         tempobj.srateph = employee[i].srateph
 //        }else{
 //        tempobj.sbasic = employee[i].sbasic
@@ -82,7 +83,12 @@ function getthedate() {
 //        tempobj.sbonus = employee[i].sbonus
 //       }
 //        userHelpers.addDatasheet(tempobj, (result) => {
+//         console.log('v worked')
 //        })
+      
+      
+      
+      
 //       }else if(employee[i].Employeestatus === 'Dismissed')   {
 //         return 0;
       
@@ -109,18 +115,19 @@ function getthedate() {
 //          tempobj.workhour5 = ''
 //          tempobj.date= dateObj2
 //          tempobj.employeeType = employee[i].employeeType
-//          if(employee[i].employeeType === 'Hired Labour'){
+//          if(employee[i].employeeType === 'Hired Labour (Hourly)'){
 //           tempobj.srateph = employee[i].srateph
 //          }else{
 //          tempobj.sbasic = employee[i].sbasic
 //          tempobj.sallowance = employee[i].sallowance
 //          tempobj.sbonus = employee[i].sbonus
 //          userHelpers.addDatasheet(tempobj, (result) => {
+//           console.log('friday worked')
 //          })
 //         }
 
 //           }else{
-//             console.log('zero but not friday')
+           
 //             var tempobj = { }
 //             tempobj.employee_id =  employee[i]._id.toString()
 //            tempobj.givenName = employee[i].givenName
@@ -138,45 +145,102 @@ function getthedate() {
 //            tempobj.workhour5 = ''
 //            tempobj.date= dateObj2
 //            tempobj.employeeType = employee[i].employeeType
-//            if(employee[i].employeeType === 'Hired Labour'){
+//            if(employee[i].employeeType === 'Hired Labour (Hourly)'){
 //             tempobj.srateph = employee[i].srateph
 //            }else{
 //            tempobj.sbasic = employee[i].sbasic
 //            tempobj.sallowance = employee[i].sallowance
 //            tempobj.sbonus = employee[i].sbonus
 //            userHelpers.addDatasheet(tempobj, (result) => {
+//             console.log('zero but not friday')
 //            })
 //           }
 //           }
-//         }else{
-     
-//         var checker = 0;
-//        for(let j=0; j<expiredata.length; j++){
-//         console.log('i am not zero')
-// if(expiredata[j].employee_id === employee[i]._id.toString()){
-//  checker++;
-// }
-//       }
-// if(checker=0){
-//   if(dateObj2.getDay() === 5){
-    
 
-//  }else{
-  
-//  }
-// }else {
-//   return 0;
-// }
-//         }
+
+
+//         }else{
+//        var checker = 0;
+     
+//         for(let j=0; j<expiredata.length; j++){
+//     console.log(j)
       
+      
+//         if(employee[i]._id.toString() !== expiredata[j].employee_id){
+//         checker ++;
+//         }else{
+//           if(dateObj2.getDay() === 5){
+//             var tempobj = { }
+//          tempobj.employee_id =  employee[i]._id.toString()
+//         tempobj.givenName = employee[i].givenName
+//         tempobj.datevalue = date2
+//         tempobj.todaystatus =  'Paid Leave'
+//         tempobj.projectname1 = ''
+//         tempobj.workhour1 = ''
+//         tempobj.projectname2 = ''
+//         tempobj.workhour2 = ''
+//         tempobj.projectname3 = ''
+//         tempobj.workhour3 = ''  
+//         tempobj.projectname4 = ''
+//         tempobj.workhour4 = ''
+//         tempobj.projectname5 = ''
+//         tempobj.workhour5 = ''
+//         tempobj.date= dateObj2
+//         tempobj.employeeType = employee[i].employeeType
+//         if(employee[i].employeeType === 'Hired Labour (Hourly)'){
+//          tempobj.srateph = employee[i].srateph
+//         }else{
+//         tempobj.sbasic = employee[i].sbasic
+//         tempobj.sallowance = employee[i].sallowance
+//         tempobj.sbonus = employee[i].sbonus
+//         userHelpers.addDatasheet(tempobj, (result) => {
+//          console.log('new friday worked')
+//         })
+//        }
+  
+//          }else{
+          
+//            var tempobj = { }
+//            tempobj.employee_id =  employee[i]._id.toString()
+//           tempobj.givenName = employee[i].givenName
+//           tempobj.datevalue = date2
+//           tempobj.todaystatus =  'Unpaid Leave'
+//           tempobj.projectname1 = ''
+//           tempobj.workhour1 = ''
+//           tempobj.projectname2 = ''
+//           tempobj.workhour2 = ''
+//           tempobj.projectname3 = ''
+//           tempobj.workhour3 = ''  
+//           tempobj.projectname4 = ''
+//           tempobj.workhour4 = ''
+//           tempobj.projectname5 = ''
+//           tempobj.workhour5 = ''
+//           tempobj.date= dateObj2
+//           tempobj.employeeType = employee[i].employeeType
+//           if(employee[i].employeeType === 'Hired Labour (Hourly)'){
+//            tempobj.srateph = employee[i].srateph
+//           }else{
+//           tempobj.sbasic = employee[i].sbasic
+//           tempobj.sallowance = employee[i].sallowance
+//           tempobj.sbonus = employee[i].sbonus
+//           userHelpers.addDatasheet(tempobj, (result) => {
+//            console.log('new not friday')
+//           })
+//          }
+//          }
+//         }
+//        }
+      
+//         }
 //       }
 //       }
+//     })
+//     } catch (error) {
+//       console.error(error);
+//     }
 //     });
     
   
-//   console.log('cron running')
-//  // Define searchdatasheet array here
-// });
 
 router.get('/', function (req, res, next) {
   res.render('./users/user-login');
@@ -344,51 +408,53 @@ router.get('/employee-data', function (req, res, next) {
       let alloweddatasheet2 = []
       var activeEmployees1 = [];
       let lastdates = getthedate() 
-      
+
       employeHelpers.getAllemployee().then(function (employees) {
         for (let i = 0; i < employees.length; i++) {
           if (employees[i].Employeeasigned === req.session.usernames) {
             activeEmployees1.push(employees[i]);
           }
         }
-     
-      
 
-      for (let z = 0; z < employeedatasheet.length; z++) {
-  
-        if (employeedatasheet[z].datevalue === lastdates[0].date1) {
-       
-      
-          for(let j=0; j < activeEmployees1.length; j++){
-            if(activeEmployees1[j]._id.toString() === employeedatasheet[z].employee_id){
-              alloweddatasheet1.push(employeedatasheet[z]);
-              //alloweddatasheet1[j].index = j+1;
+        for (let z = 0; z < employeedatasheet.length; z++) {
+
+          if (employeedatasheet[z].datevalue === lastdates[0].date1) {
+
+            for(let j=0; j < activeEmployees1.length; j++){
+              if(activeEmployees1[j]._id.toString() === employeedatasheet[z].employee_id){
+                alloweddatasheet1.push(employeedatasheet[z]);
+               
+              }
             }
-          }
          
-        } else if (employeedatasheet[z].datevalue === lastdates[0].date2) {
-          for(x=0;x<activeEmployees1.length;x++){
-            if(activeEmployees1[x]._id.toString() === employeedatasheet[z].employee_id){
-             alloweddatasheet2.push(employeedatasheet[z]);
-             //alloweddatasheet2[x].index = x+1;
+          } else if (employeedatasheet[z].datevalue === lastdates[0].date2) {
+            for(let x=0; x < activeEmployees1.length; x++){
+              if(activeEmployees1[x]._id.toString() === employeedatasheet[z].employee_id){
+                alloweddatasheet2.push(employeedatasheet[z]);
+               
+              } 
             }
           }
-      
         }
-      }
-    })
- 
 
-  
-     
-      alloweddatasheet1.date = lastdates[0].date1;
+        for(let r=0; r<alloweddatasheet1.length; r++){
+          alloweddatasheet1[r].index = r+1
+        }
+        for(let t=0; t<alloweddatasheet2.length; t++){
+          alloweddatasheet2[t].index = t+1
+        }
+
+
+     alloweddatasheet1.date = lastdates[0].date1;
       alloweddatasheet2.date = lastdates[0].date2;
-      console.log(alloweddatasheet1)
-      res.render('./users/datasheet', { user: true, alloweddatasheet1, alloweddatasheet2 });
-
-    })
+      
+        // Move the rendering code inside this block
+        res.render('./users/datasheet', { user: true, alloweddatasheet1, alloweddatasheet2 });
+      });
+    });
   }
 });
+
 router.get('/edit-datasheet/:id', async (req, res) => {
 
   let edatasheet = await userHelpers.getDatasheetDetails(req.params.id)
@@ -412,3 +478,4 @@ router.post('/edit-datasheet/:id', (req, res) => {
 })
 
 module.exports = router;
+
