@@ -13,6 +13,7 @@
         <form id="employeeForm" method="POST">
             <input type="hidden" name="employee_id" id="employee_id" value="">
             <input type="hidden" name="givenName" id="hiddenemployeeName" value="">
+            <input type="hidden" name="surname" id="hiddensurname" value="">
             <input type="hidden" name="qid" id="hiddenemployeeQID" value="">
     
       
@@ -267,7 +268,7 @@ var employeetype;
         document.getElementById("employeeQID").textContent = employee.qid;
          document.getElementById("employee_id").value = employee._id;
         document.getElementById("hiddenemployeeName").value = employee.givenName;
-
+      document.getElementById("hiddensurname").value = employee.surname;
         
         employeetype = employee.employeeType
           handleRadioButtonClick()
@@ -330,6 +331,7 @@ var employeetype;
     $('#submits').click(function () {
         var userData = {
             employee_id: $("#employee_id").val(),
+            surname: $("#hiddensurname").val(),
             givenName: $("#hiddenemployeeName").val(),
             datevalue: $("#datevalue").val(),
             todaystatus: $("#todaystatus").val(),
