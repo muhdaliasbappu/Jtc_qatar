@@ -39,7 +39,7 @@ console.log('iam running')
 
 
   employeHelpers.getAllemployee().then(async (employee) => {
-console.log(employee)
+
     if(expiredata.length === 0 ){
         for(let i = 0; i<employee.length; i++){
             await new Promise(async (resolve, reject) => {
@@ -126,13 +126,11 @@ console.log(employee)
          
           if(employee[i]._id.toString() === expiredata[j].employee_id){
             check = 1;
-            break;
+            
           }
         }
-        if(check === 1){
-            return 0
-            
-          }else{
+        if(check != 1){
+           
             await new Promise(async (resolve, reject) => {
       
 
@@ -241,7 +239,7 @@ console.log(employee)
       
       
         employeHelpers.getAllemployee().then(async (employee) => {
-      console.log(employee)
+      
           if(expiredata.length === 0 ){
               for(let i = 0; i<employee.length; i++){
                   await new Promise(async (resolve, reject) => {
@@ -322,19 +320,19 @@ console.log(employee)
           }
           
           }else{
+           
             for(let i = 0; i<employee.length; i++){
+              
               let check = 0;
               for(let j = 0; j<expiredata.length; j++){
                
                 if(employee[i]._id.toString() === expiredata[j].employee_id){
                   check = 1;
-                  break;
+     
                 }
               }
-              if(check === 1){
-                  return 0;
-                  
-                }else{
+              if(check != 1){
+                 
                   await new Promise(async (resolve, reject) => {
             
       
