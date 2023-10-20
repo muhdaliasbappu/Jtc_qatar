@@ -59,7 +59,7 @@ router.get("/add-employee", function (req, res, next) {
 });
 
 //add project
-
+ 
 router.get("/add-project", function (req, res, next) {
   let admin = req.session.user;
   if (admin) {
@@ -638,11 +638,56 @@ router.post("/edit-salary/:id", (req, res) => {
  if(todaydate === reqdate){
 
  }
-console.log(reqdate)
-  console.log(req.body)
-  employeHelpers.updateSalary(req.params.id, req.body).then(() => {
-     res.redirect("/admin/employee");
- });
+
+  if(reqdate === todaydate){
+      employeHelpers.updateSalary(req.params.id, req.body).then(() => {
+      res.redirect("/admin/employee");
+    })
+  }else{
+   userHelpers.getdatabdate(reqdate, todaydate).then(function (databdate) {
+    let targetdata = databdate.filter((data) => data.employee_id === req.params.id);
+   
+    if(targetdata.length === 0){
+      employeHelpers.updateSalary(req.params.id, req.body).then(() => {
+        res.redirect("/admin/employee");
+      })
+    }else{
+      for(i=0; i<targetdata.length; i++){ 
+        console.log(targetdata[i])
+       userHelpers.deleteTimesheet(targetdata[i]._id.toString()).then((response) => {
+        
+        
+    });
+    if(targetdata[i].employeeType === 'Hired Labour (Hourly)' && req.body.employeeType === 'Hired Labour (Hourly)'){
+      targetdata[i].srateph = req.body.srateph
+    }else if(req.body.employeeType === 'Hired Labour (Hourly)' ){
+      targetdata[i].employeeType = req.body.employeeType 
+      targetdata[i].srateph = req.body.srateph
+      delete targetdata[i].sbasic
+      delete targetdata[i].sallowance
+      delete targetdata[i].sbonus
+    }else{
+       targetdata[i].employeeType = req.body.employeeType 
+       targetdata[i].sbasic = req.body.sbasic
+       targetdata[i].sallowance = req.body.sallowance
+       targetdata[i].sbonus = req.body.sbonus
+       delete targetdata[i].srateph
+    }
+   
+    userHelpers.addDatasheet(targetdata[i], (result) => {
+              
+    })
+    
+    }
+
+    employeHelpers.updateSalary(req.params.id, req.body).then(() => {
+      res.redirect("/admin/employee");
+    })
+  }
+  
+  });
+  }
+  
 });
 module.exports = router;
 
