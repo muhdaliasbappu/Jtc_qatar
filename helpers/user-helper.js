@@ -128,7 +128,36 @@ module.exports = {
             });
         });
     },
-    
+    updateDatasheetsalary: (dataId, datasheetDetails) => {
+
+        return new Promise((resolve, reject) => {
+            db.get().collection('datasheet').updateOne({ _id: new objectId(dataId) }, {
+                $set: {
+                    todaystatus: datasheetDetails.todaystatus,
+                    projectname1: datasheetDetails.projectname1,
+                    workhour1: datasheetDetails.workhour1,
+                    projectname2: datasheetDetails.projectname2,
+                    workhour2: datasheetDetails.workhour2,
+                    projectname3: datasheetDetails.projectname3,
+                    workhour3: datasheetDetails.workhour3,
+                    projectname4: datasheetDetails.projectname4,
+                    workhour4: datasheetDetails.workhour4,
+                    projectname5: datasheetDetails.projectname5,
+                    workhour5: datasheetDetails.workhour5
+                }
+            }).then((response) => {
+                resolve()
+            })
+        })
+    },
+    deleteTimesheet: (objId) => {
+        return new Promise((resolve, reject) => {
+            db.get().collection('datasheet').deleteOne({ _id: new objectId(objId) }).then((response) => {
+                resolve(response)
+            })
+        })
+    }
 
     
 }
+
