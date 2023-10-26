@@ -25,6 +25,7 @@ cron.schedule('55 23 * * *',() => {
   }
 })
 
+
 function getthedate() {
   var dateObj1 = new Date();
   dateObj1.setDate(dateObj1.getDate() - 1);
@@ -40,10 +41,67 @@ function getthedate() {
 }
 
 
+
 router.get('/', function (req, res, next) {
   res.render('./users/user-login');
 });
 router.get('/employeelist', function (req, res) {
+  if (req.session.users) {
+        var dateObj1 = new Date();
+        dateObj1.setDate(dateObj1.getDate() - 1);
+        var date1 = dateObj1.getFullYear() + '-' + (dateObj1.getMonth() + 1) + '-' + dateObj1.getDate();
+        let datess = []
+        datess.date1 = date1
+        // let ondaytimesheet = []
+        // userHelpers.getDatasheet().then(function (edatasheet) {
+        //  for(i=0 ; i<edatasheet.length ; i++){
+        //   if(edatasheet[i].datevalue === date1)
+        //   ondaytimesheet.push(edatasheet[i])
+        //  }
+          
+        // })
+
+
+    employeHelpers.getAllemployee().then(function (employees) {
+      var activeEmployees = [];
+      for (let i = 0; i < employees.length; i++) {
+        if (employees[i].Employeestatus === 'Working') {
+          if (employees[i].Employeeasigned === req.session.usernames) {
+          activeEmployees.push(employees[i]);
+            // if(ondaytimesheet.length === 0){
+            //   activeEmployees.push(employees[i]);
+            // }else{
+            //   for(let z = 0 ; z <ondaytimesheet.length ; z++){
+            //   if(employees[i]._id.toString() != ondaytimesheet[z].employee_id){
+            //     activeEmployees.push(employees[i]);
+            //   }
+            // }
+            // }
+            
+            
+          }
+        }
+      }
+      projectHelpers.getAllproject().then((projects) => {
+        var activeProjects = [];
+        for (let j = 0; j < projects.length; j++) {
+          if (projects[j].projectstatus === 'Ongoing') {
+            activeProjects.push(projects[j]);
+
+          }
+        }
+        
+        res.render('./users/employee-list', {
+
+          user: true, employees: JSON.stringify(activeEmployees), activeProjects, datess
+        });
+      })
+
+    });
+  }
+})
+
+router.get('/employeelist2', function (req, res) {
   if (req.session.users) {
 
     employeHelpers.getAllemployee().then(function (employees) {
@@ -63,9 +121,12 @@ router.get('/employeelist', function (req, res) {
 
           }
         }
-        let datess = getthedate()
-
-        res.render('./users/employee-list', {
+        var dateObj2 = new Date();
+        dateObj2.setDate(dateObj2.getDate() - 2);
+        var date2 = dateObj2.getFullYear() + '-' + (dateObj2.getMonth() + 1) + '-' + dateObj2.getDate();
+        let datess = []
+        datess.date2 = date2
+        res.render('./users/employee-list2', {
 
           user: true, employees: JSON.stringify(activeEmployees), activeProjects, datess
         });
@@ -74,6 +135,11 @@ router.get('/employeelist', function (req, res) {
     });
   }
 })
+
+
+
+
+
 router.post('/', (req, res) => {
   userHelpers.uLogin(req.body).then((response) => {
     if (response.status) {
@@ -93,6 +159,9 @@ router.get('/logout', (req, res) => {
   req.session.destroy()
   res.redirect('/')
 })
+
+
+
 
 
 //Time sheet upload
@@ -245,7 +314,7 @@ router.get('/employee-data', function (req, res, next) {
 
      alloweddatasheet1.date = lastdates[0].date1;
       alloweddatasheet2.date = lastdates[0].date2;
-      
+    
         // Move the rendering code inside this block
         res.render('./users/datasheet', { user: true, alloweddatasheet1, alloweddatasheet2 });
       });
