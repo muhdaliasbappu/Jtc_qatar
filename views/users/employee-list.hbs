@@ -1,31 +1,26 @@
-<h1 class="h2 mb-3 fw-normal text-center mt-1 ">Employees</h1>
 
 
-<div class="col d-flex justify-content-center mt-5">
-    <div class="card" style="width: 18rem;">
+
+<div class="col d-flex justify-content-center mt-5" >
+    <div class="card"   style="width: 18rem; border: none; border-radius: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+<div class="card-header" style="background-color: #3c837b; color: #fff; border-top-left-radius: 10px; border-top-right-radius: 10px; text-align: center; padding: 10px; font-family: 'Helvetica Neue', sans-serif;">
+                    <h3 style="margin: 0;">Add Timesheet</h3>
+                </div>
+      
 
         <ul class="list-group list-group-flush">
-
             <li class="list-group-item">Name: <span id="employeeNames"></span> <span id="employeeName"></spa> </li>
             <li class="list-group-item">QID: <span id="employeeQID"></span></li>
-
+            <li class="list-group-item">Date: {{datess.date1}}</li>
         </ul>
         <form id="employeeForm" method="POST">
             <input type="hidden" name="employee_id" id="employee_id" value="">
             <input type="hidden" name="givenName" id="hiddenemployeeName" value="">
             <input type="hidden" name="surname" id="hiddensurname" value="">
             <input type="hidden" name="qid" id="hiddenemployeeQID" value="">
-    
+            <input type="hidden"  name="datevalue" id="datevalue" value="{{datess.date1}}" >
       
 
-            <select class="form-select mt-2" name="datevalue" id="datevalue" aria-label="Default select example "
-                required>
-                <option value="">Select Date:</option>
-                {{#each datess}}
-                <option value="{{this.date1}}">{{this.date1}}</option>
-                <option value="{{this.date2}}">{{this.date2}}</option>
-                {{/each}}
-            </select>
 
             <select class="form-select mt-2" name="todaystatus" id="todaystatus" aria-label=" Default select example"  required>
                 <option value="">Working Status</option>
@@ -57,7 +52,7 @@
                         <option value="7">7</option>
                         <option value="8">8</option>
                         <option value="9">9</option>
-                        <option value="10">10</option>
+                          <option value="10">10</option>
                         <option value="11">11</option>
                         <option value="12">12</option>
                         <option value="13">13</option>
@@ -66,12 +61,12 @@
                         <option value="16">16</option>
                         <option value="17">17</option>
                         <option value="18">18</option>
-                        <option value="12">19</option>
-                        <option value="13">20</option>
-                        <option value="13">21</option>
-                        <option value="13">22</option>
-                        <option value="13">23</option>
-                        <option value="13">24</option>
+                        <option value="19">19</option>
+                        <option value="20">20</option>
+                        <option value="21">21</option>
+                        <option value="22">22</option>
+                        <option value="23">23</option>
+                        <option value="24">24</option>
                     </select>
                 </fieldset>
                 <fieldset id="project2" style="display: block;">
@@ -94,7 +89,7 @@
                         <option value="7">7</option>
                         <option value="8">8</option>
                         <option value="9">9</option>
-                        <option value="10">10</option>
+                      <option value="10">10</option>
                         <option value="11">11</option>
                         <option value="12">12</option>
                         <option value="13">13</option>
@@ -103,12 +98,12 @@
                         <option value="16">16</option>
                         <option value="17">17</option>
                         <option value="18">18</option>
-                        <option value="12">19</option>
-                        <option value="13">20</option>
-                        <option value="13">21</option>
-                        <option value="13">22</option>
-                        <option value="13">23</option>
-                        <option value="13">24</option>
+                        <option value="19">19</option>
+                        <option value="20">20</option>
+                        <option value="21">21</option>
+                        <option value="22">22</option>
+                        <option value="23">23</option>
+                        <option value="24">24</option>
                     </select>
                 </fieldset>
                 <div id="project3" style="display: block;">
@@ -131,7 +126,7 @@
                         <option value="7">7</option>
                         <option value="8">8</option>
                         <option value="9">9</option>
-                        <option value="10">10</option>
+                         <option value="10">10</option>
                         <option value="11">11</option>
                         <option value="12">12</option>
                         <option value="13">13</option>
@@ -140,12 +135,12 @@
                         <option value="16">16</option>
                         <option value="17">17</option>
                         <option value="18">18</option>
-                        <option value="12">19</option>
-                        <option value="13">20</option>
-                        <option value="13">21</option>
-                        <option value="13">22</option>
-                        <option value="13">23</option>
-                        <option value="13">24</option>
+                        <option value="19">19</option>
+                        <option value="20">20</option>
+                        <option value="21">21</option>
+                        <option value="22">22</option>
+                        <option value="23">23</option>
+                        <option value="24">24</option>
                     </select>
                 </div>
                 <fieldset id="project4" style="display: block;">
@@ -177,12 +172,12 @@
                         <option value="16">16</option>
                         <option value="17">17</option>
                         <option value="18">18</option>
-                        <option value="12">19</option>
-                        <option value="13">20</option>
-                        <option value="13">21</option>
-                        <option value="13">22</option>
-                        <option value="13">23</option>
-                        <option value="13">24</option>
+                        <option value="19">19</option>
+                        <option value="20">20</option>
+                        <option value="21">21</option>
+                        <option value="22">22</option>
+                        <option value="23">23</option>
+                        <option value="24">24</option>
                     </select>
                 </fieldset>
                 <fieldset id="project5" style="display: block;">
@@ -214,12 +209,12 @@
                         <option value="16">16</option>
                         <option value="17">17</option>
                         <option value="18">18</option>
-                        <option value="12">19</option>
-                        <option value="13">20</option>
-                        <option value="13">21</option>
-                        <option value="13">22</option>
-                        <option value="13">23</option>
-                        <option value="13">24</option>
+                        <option value="19">19</option>
+                        <option value="20">20</option>
+                        <option value="21">21</option>
+                        <option value="22">22</option>
+                        <option value="23">23</option>
+                        <option value="24">24</option>
                     </select>
                 </fieldset>
                 <div class="card-body">
@@ -232,10 +227,10 @@
 
                 
             </fieldset>
-            <div class=" card-body">
-                <button type="button" class="btn btn-secondary" onclick="previousEmployee()">Back</button>
-                <button type="button"  id="submits"  class="btn btn-secondary text-end">submit</button>
-                <button type="button" onclick="nextEmployee()" class="btn btn-secondary text-end">Next</button>
+            <div class=" card-body ">
+                <button type="button" style="background-color: #3c837b; border: none; color: #fff; font-family: 'Helvetica Neue', sans-serif;" class="btn btn-secondary" onclick="previousEmployee()">Back</button>
+                <button type="button" style="background-color: #3c837b; border: none; color: #fff; font-family: 'Helvetica Neue', sans-serif;"  id="submits"  class="btn btn-secondary text-end">submit</button>
+                <button type="button" style="background-color: #3c837b; border: none; color: #fff; font-family: 'Helvetica Neue', sans-serif;" onclick="nextEmployee()" class="btn btn-secondary text-end">Next</button>
 
             </div>
 
@@ -247,6 +242,7 @@
 var employeetype;
     var employees = JSON.parse('{{{employees}}}');
     var currentIndex = 0;
+    
 
     var radioButtons = document.getElementsByName("todaystatus");
     var projectFieldset = document.getElementById("projectFieldset");
@@ -262,7 +258,8 @@ var employeetype;
 
     function displayEmployee() {
         var employee = employees[currentIndex];
-
+ 
+    
          document.getElementById("employeeNames").textContent = employee.surname;
         document.getElementById("employeeName").textContent = employee.givenName;
         document.getElementById("employeeQID").textContent = employee.qid;
@@ -272,6 +269,7 @@ var employeetype;
         
         employeetype = employee.employeeType
           handleRadioButtonClick()
+   
     }
     
 
@@ -361,8 +359,10 @@ var employeetype;
                 
             }
         })
-           nextEmployee();
-
+           
+          var employeeId = $("#employee_id").val();
+ 
+    nextEmployee();
     })
 
     var numpro = 0;
