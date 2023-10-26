@@ -1,7 +1,12 @@
-<div class="text-center" style="width: 100%; max-width: 330px; padding: 15px; margin: auto;">
+
+<div class="text-center pt-3 mb-5" style="width: 100%; max-width: 350px;  margin: auto; border: none; border-radius: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+     <div class="card-header " style="background-color: #3c837b; color: #fff; border-top-left-radius: 10px; border-top-right-radius: 10px; text-align: center; padding: 15px; font-family: 'Helvetica Neue', sans-serif;">
+        <h2 style="margin: 0;">Add Employee</h2>
+    </div>
+    <div class="p-2">
     <form action="/admin/add-employee" method="POST">
         <img class="mb-4" src="" alt="">
-        <h1 class=" h3 mb-3 fw-normal">Add Employee</h1>
+        
         <input class="form-control" name="surname" id="surname" placeholder="Surname" required>
         <input class="form-control mt-3" name="givenName" id="givenname" placeholder="Given name" required>
         <input class="form-control mt-3" type="number" maxlength="11" minlength="11" name="qid" id="qid"
@@ -276,9 +281,13 @@
         </select>
         <input type="hidden" name="Employeestatus" value="Working">
 
+     <button class="mt-4 mb-3 w-75 btn btn-block  " style="background-color: #3c837b; border: none; color: #fff; font-family: 'Helvetica Neue', sans-serif;" type="submit">Add</button>
+
  
-        <button class="mt-5 w-100 btn btn-lg btn-primary" type="submit">Add</button>
+       
     </form>
+    </div>
+</div>
 </div>
   <script>
         const employeeTypeSelect = document.getElementById("employeeType");
