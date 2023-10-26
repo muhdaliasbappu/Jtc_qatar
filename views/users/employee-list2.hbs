@@ -1,0 +1,397 @@
+<div class="col d-flex justify-content-center mt-5" >
+    <div class="card"   style="width: 18rem; border: none; border-radius: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+<div class="card-header" style="background-color: #3c837b; color: #fff; border-top-left-radius: 10px; border-top-right-radius: 10px; text-align: center; padding: 10px; font-family: 'Helvetica Neue', sans-serif;">
+                    <h3 style="margin: 0;">Add Timesheet</h3>
+                </div>
+      
+
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">Name: <span id="employeeNames"></span> <span id="employeeName"></spa> </li>
+            <li class="list-group-item">QID: <span id="employeeQID"></span></li>
+            <li class="list-group-item">Date: {{datess.date2}}</li>
+        </ul>
+        <form id="employeeForm" method="POST">
+            <input type="hidden" name="employee_id" id="employee_id" value="">
+            <input type="hidden" name="givenName" id="hiddenemployeeName" value="">
+            <input type="hidden" name="surname" id="hiddensurname" value="">
+            <input type="hidden" name="qid" id="hiddenemployeeQID" value="">
+            <input type="hidden"  name="datevalue" id="datevalue" value="{{datess.date2}}" >
+      
+
+
+            <select class="form-select mt-2" name="todaystatus" id="todaystatus" aria-label=" Default select example"  required>
+                <option value="">Working Status</option>
+                <option value="Working">Working</option>
+                <option value="Paid Leave">Paid Leave</option>
+                <option value="Unpaid Leave">Unpaid Leave</option>
+            </select>
+
+
+            <fieldset id="projectFieldset" style="display: block;">
+                <h5 class="mt-1 text-center">PROJECT</h5>
+                <fieldset >
+                    <select class="form-select mt-2" name="projectname1" id="projectname1"
+                        aria-label="Default select example">
+                        <option value="">Project Name:</option>
+                        {{#each activeProjects}}
+                        <option value="{{this.projectname}}">{{this.projectname}}</option>
+                        {{/each}}
+                    </select>
+                    <select class="form-select mt-2" id="workhour1" name="workhour1"
+                        aria-label="Default select example">
+                        <option value="0">Work Hour:</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
+                        <option value="9">9</option>
+                          <option value="10">10</option>
+                        <option value="11">11</option>
+                        <option value="12">12</option>
+                        <option value="13">13</option>
+                        <option value="14">14</option>
+                        <option value="15">15</option>
+                        <option value="16">16</option>
+                        <option value="17">17</option>
+                        <option value="18">18</option>
+                        <option value="19">19</option>
+                        <option value="20">20</option>
+                        <option value="21">21</option>
+                        <option value="22">22</option>
+                        <option value="23">23</option>
+                        <option value="24">24</option>
+                    </select>
+                </fieldset>
+                <fieldset id="project2" style="display: block;">
+                    <select class="form-select mt-4" name="projectname2" id="projectname2"
+                        aria-label="Default select example">
+                        <option value="">Project Name:</option>
+                        {{#each activeProjects}}
+                        <option value="{{this.projectname}}">{{this.projectname}}</option>
+                        {{/each}}
+                    </select>
+                    <select class="form-select mt-2" id="workhour2" name="workhour2"
+                        aria-label="Default select example">
+                        <option value="0">Work Hour:</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
+                        <option value="9">9</option>
+                      <option value="10">10</option>
+                        <option value="11">11</option>
+                        <option value="12">12</option>
+                        <option value="13">13</option>
+                        <option value="14">14</option>
+                        <option value="15">15</option>
+                        <option value="16">16</option>
+                        <option value="17">17</option>
+                        <option value="18">18</option>
+                        <option value="19">19</option>
+                        <option value="20">20</option>
+                        <option value="21">21</option>
+                        <option value="22">22</option>
+                        <option value="23">23</option>
+                        <option value="24">24</option>
+                    </select>
+                </fieldset>
+                <div id="project3" style="display: block;">
+                    <select class="form-select mt-4" name="projectname3" id="projectname3"
+                        aria-label="Default select example">
+                        <option value="">Project Name:</option>
+                        {{#each activeProjects}}
+                        <option value="{{this.projectname}}">{{this.projectname}}</option>
+                        {{/each}}
+                    </select>
+                    <select class="form-select mt-2" id="workhour3" name="workhour3"
+                        aria-label="Default select example">
+                        <option value="0">Work Hour:</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
+                        <option value="9">9</option>
+                         <option value="10">10</option>
+                        <option value="11">11</option>
+                        <option value="12">12</option>
+                        <option value="13">13</option>
+                        <option value="14">14</option>
+                        <option value="15">15</option>
+                        <option value="16">16</option>
+                        <option value="17">17</option>
+                        <option value="18">18</option>
+                        <option value="19">19</option>
+                        <option value="20">20</option>
+                        <option value="21">21</option>
+                        <option value="22">22</option>
+                        <option value="23">23</option>
+                        <option value="24">24</option>
+                    </select>
+                </div>
+                <fieldset id="project4" style="display: block;">
+                    <select class="form-select mt-4" name="projectname4" id="projectname4"
+                        aria-label="Default select example">
+                        <option value="">Project Name:</option>
+                        {{#each activeProjects}}
+                        <option value="{{this.projectname}}">{{this.projectname}}</option>
+                        {{/each}}
+                    </select>
+                    <select class="form-select mt-2" id="workhour4" name="workhour4"
+                        aria-label="Default select example">
+                        <option value="0">Work Hour:</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
+                        <option value="9">9</option>
+                        <option value="10">10</option>
+                        <option value="11">11</option>
+                        <option value="12">12</option>
+                        <option value="13">13</option>
+                        <option value="14">14</option>
+                        <option value="15">15</option>
+                        <option value="16">16</option>
+                        <option value="17">17</option>
+                        <option value="18">18</option>
+                        <option value="19">19</option>
+                        <option value="20">20</option>
+                        <option value="21">21</option>
+                        <option value="22">22</option>
+                        <option value="23">23</option>
+                        <option value="24">24</option>
+                    </select>
+                </fieldset>
+                <fieldset id="project5" style="display: block;">
+                    <select class=" form-select mt-4" name="projectname5" id="projectname5"
+                        aria-label="Default select example">
+                        <option value="">Project Name:</option>
+                        {{#each activeProjects}}
+                        <option value="{{this.projectname}}">{{this.projectname}}</option>
+                        {{/each}}
+                    </select>
+                    <select class="form-select mt-2" id="workhour5" name="workhour5"
+                        aria-label="Default select example">
+                        <option value="0">Work Hour:</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
+                        <option value="9">9</option>
+                        <option value="10">10</option>
+                        <option value="11">11</option>
+                        <option value="12">12</option>
+                        <option value="13">13</option>
+                        <option value="14">14</option>
+                        <option value="15">15</option>
+                        <option value="16">16</option>
+                        <option value="17">17</option>
+                        <option value="18">18</option>
+                        <option value="19">19</option>
+                        <option value="20">20</option>
+                        <option value="21">21</option>
+                        <option value="22">22</option>
+                        <option value="23">23</option>
+                        <option value="24">24</option>
+                    </select>
+                </fieldset>
+                <div class="card-body">
+                    <button type="button" class="btn btn-outline-secondary mt-2" onclick="addproject()">Add
+                        Project</button>
+                    <button type="button" class="btn btn-outline-secondary mt-2"
+                        onclick="removeproject()">remove</button>
+                </div>
+
+
+                
+            </fieldset>
+            <div class=" card-body ">
+                <button type="button" style="background-color: #3c837b; border: none; color: #fff; font-family: 'Helvetica Neue', sans-serif;" class="btn btn-secondary" onclick="previousEmployee()">Back</button>
+                <button type="button" style="background-color: #3c837b; border: none; color: #fff; font-family: 'Helvetica Neue', sans-serif;"  id="submits"  class="btn btn-secondary text-end">submit</button>
+                <button type="button" style="background-color: #3c837b; border: none; color: #fff; font-family: 'Helvetica Neue', sans-serif;" onclick="nextEmployee()" class="btn btn-secondary text-end">Next</button>
+
+            </div>
+
+        </form>
+    </div>
+</div>
+
+<script>
+var employeetype;
+    var employees = JSON.parse('{{{employees}}}');
+    var currentIndex = 0;
+
+    var radioButtons = document.getElementsByName("todaystatus");
+    var projectFieldset = document.getElementById("projectFieldset");
+
+    function resetForm() {
+        document.getElementById("employeeForm").reset();
+    }
+    // Add event listener to each radio button
+    for (var i = 0; i < radioButtons.length; i++) {
+        radioButtons[i].addEventListener("click", handleRadioButtonClick);
+    }
+
+
+    function displayEmployee() {
+        var employee = employees[currentIndex];
+
+         document.getElementById("employeeNames").textContent = employee.surname;
+        document.getElementById("employeeName").textContent = employee.givenName;
+        document.getElementById("employeeQID").textContent = employee.qid;
+         document.getElementById("employee_id").value = employee._id;
+        document.getElementById("hiddenemployeeName").value = employee.givenName;
+      document.getElementById("hiddensurname").value = employee.surname;
+        
+        employeetype = employee.employeeType
+          handleRadioButtonClick()
+    }
+    
+
+    function nextEmployee() {
+        resetForm()
+        resetTodayStatus()
+
+
+        currentIndex++;
+        if (currentIndex >= employees.length) {
+            currentIndex = employees.length - 1;
+        }
+        displayEmployee();
+
+    }
+
+    function previousEmployee() {
+        resetForm()
+        resetTodayStatus()
+        //getdata();
+
+        currentIndex--;
+        if (currentIndex < 0) {
+            currentIndex = 0;
+        }
+        displayEmployee();
+
+    }
+    displayEmployee();
+
+    function resetTodayStatus() {
+        var todayStatusSelect = document.getElementById("todaystatus");
+        todayStatusSelect.value = "";
+    }
+    function handleRadioButtonClick() {
+     
+        var selectedOption = document.getElementById("todaystatus").value;
+ 
+        // Show or hide the projectFieldset based on the selected option
+        if (selectedOption === "Working") {
+            if (employeetype === "Own Staff (Operations)" || employeetype === "Hired Staff (Operations)"){
+                 projectFieldset.style.display = "none";
+            }else
+            projectFieldset.style.display = "block";
+        } else {
+            projectFieldset.style.display = "none";
+
+            var selects = projectFieldset.getElementsByTagName("select");
+
+            // Clear select values
+            for (var i = 0; i < selects.length; i++) {
+                selects[i].value = "";
+            }
+        }
+    }
+
+    $('#submits').click(function () {
+        var userData = {
+            employee_id: $("#employee_id").val(),
+            surname: $("#hiddensurname").val(),
+            givenName: $("#hiddenemployeeName").val(),
+            datevalue: $("#datevalue").val(),
+            todaystatus: $("#todaystatus").val(),
+            projectname1: $("#projectname1").val(),
+            workhour1: $("#workhour1").val(),
+            projectname2: $("#projectname2").val(),
+            workhour2: $("#workhour2").val(),
+            projectname3: $("#projectname3").val(),
+            workhour3: $("#workhour3").val(),
+            projectname4: $("#projectname4").val(),
+            workhour4: $("#workhour4").val(),
+            projectname5: $("#projectname5").val(),
+            workhour5: $("#workhour5").val(),
+        }
+
+        $.ajax({
+            url: '/users/employee-list/',
+            type: 'POST',
+            data: userData,
+            dataType: 'JSON',
+            success: function (data) {
+                setTimeout(function () {
+                nextEmployee();
+            }, 1000);
+                window.location.reload();
+                console.log('data')
+                
+            }
+        })
+           nextEmployee();
+           removeemployee()
+    })
+
+    var numpro = 0;
+    updateProjectVisibility();
+    function addproject() {
+        if (numpro < 4) {
+            numpro++;
+            updateProjectVisibility();
+
+        }
+    }
+
+    function removeproject() {
+        if (numpro > 0) {
+            numpro--;
+            updateProjectVisibility();
+            clearRemovedProjectFields();
+        }
+    }
+
+    function updateProjectVisibility() {
+        for (var i = 2; i <= 5; i++) {
+            var projectField = document.getElementById("project" + i);
+            if (i <= numpro + 1) {
+                projectField.style.display = "block";
+
+            } else {
+                projectField.style.display = "none";
+            }
+        }
+    }
+
+    function clearRemovedProjectFields() {
+        var removedProjectFields = document.getElementById("project" + (numpro + 2)).getElementsByTagName("select");
+        for (var i = 0; i < removedProjectFields.length; i++) {
+            removedProjectFields[i].value = "";
+        }
+    }
+
+</script>
