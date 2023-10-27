@@ -7,6 +7,7 @@ var employeHelpers = require('../helpers/employee-helpers')
 var projectHelpers = require('../helpers/project-helpers')
 var userHelpers = require('../helpers/user-helper');
 var expiringTimeliest = require('../modules/cron');
+var DayView = require('../modules/DayView')
 const { all } = require('../app');
 const async = require('hbs/lib/async');
 router.use(express.json());
@@ -42,6 +43,8 @@ function getthedate() {
 
 
 
+
+
 router.get('/', function (req, res, next) {
   res.render('./users/user-login');
 });
@@ -52,6 +55,9 @@ router.get('/employeelist', function (req, res) {
         var date1 = dateObj1.getFullYear() + '-' + (dateObj1.getMonth() + 1) + '-' + dateObj1.getDate();
         let datess = []
         datess.date1 = date1
+        var days = DayView.dayview(date1)
+        datess.days = days
+
         // let ondaytimesheet = []
         // userHelpers.getDatasheet().then(function (edatasheet) {
         //  for(i=0 ; i<edatasheet.length ; i++){
@@ -126,6 +132,8 @@ router.get('/employeelist2', function (req, res) {
         var date2 = dateObj2.getFullYear() + '-' + (dateObj2.getMonth() + 1) + '-' + dateObj2.getDate();
         let datess = []
         datess.date2 = date2
+        var days = DayView.dayview(date2)
+        datess.days = days
         res.render('./users/employee-list2', {
 
           user: true, employees: JSON.stringify(activeEmployees), activeProjects, datess
@@ -311,9 +319,9 @@ router.get('/employee-data', function (req, res, next) {
           alloweddatasheet2[t].index = t+1
         }
 
-
-     alloweddatasheet1.date = lastdates[0].date1;
-      alloweddatasheet2.date = lastdates[0].date2;
+     
+     alloweddatasheet1.date = DayView.dayview(lastdates[0].date1) ;
+      alloweddatasheet2.date = DayView.dayview(lastdates[0].date2) ;
     
         // Move the rendering code inside this block
         res.render('./users/datasheet', { user: true, alloweddatasheet1, alloweddatasheet2 });
