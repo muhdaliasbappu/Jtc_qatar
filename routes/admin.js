@@ -7,6 +7,7 @@ var userHelpers = require("../helpers/user-helper");
 const { response } = require("../app");
 const async = require("hbs/lib/async");
 const { search } = require("./users");
+var DayView = require('../modules/DayView')
 
 /* GET home page. */
 
@@ -253,7 +254,7 @@ router.post("/datasheet", function (req, res) {
       }
     }
     if(searchdatasheet[0]){
-    searchdatasheet.date = searchdatasheet[0].datevalue;
+    searchdatasheet.date =DayView.dayview(searchdatasheet[0].datevalue) ;
     }
 
     res.render("./admin/searchdatasheet", { admin: true, searchdatasheet });
@@ -653,7 +654,7 @@ router.post("/edit-salary/:id", (req, res) => {
       })
     }else{
       for(i=0; i<targetdata.length; i++){ 
-        console.log(targetdata[i])
+      
        userHelpers.deleteTimesheet(targetdata[i]._id.toString()).then((response) => {
         
         
