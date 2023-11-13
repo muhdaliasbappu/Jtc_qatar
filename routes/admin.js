@@ -447,7 +447,7 @@ router.post("/search-report", async (req, res) => {
       const timesheet = await userHelpers.getDatabByMonthAndEmployee(req.body.searchdate, employees[i]._id.toString());
       const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
       const thedata = await allsalaryreport.allsalaryreport(searcheddata);
-      thedata.employeename = employees[i].givenName
+      thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
       thedata.index = i+1;
       employeereport.push(thedata);
     }
