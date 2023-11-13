@@ -8,6 +8,7 @@ const { response } = require("../app");
 const async = require("hbs/lib/async");
 const { search } = require("./users");
 var DayView = require('../modules/DayView')
+var allsalaryreport = require('../modules/report')
 
 /* GET home page. */
 
@@ -428,7 +429,7 @@ router.post("/edit-searcheddata/:id", (req, res) => {
 //   res.redirect("/admin/employee");
 // });
 
-router.get("/search-report/:id", function (req, res) {
+router.get("/search-report/", function (req, res) {
   let admin = req.session.user;
   if (admin) {
     var iddd = req.params.id;
@@ -436,121 +437,26 @@ router.get("/search-report/:id", function (req, res) {
     res.render("./admin/report-search", { admin: true, iddd });
   }
 });
-router.post("/search-report", (req, res) => {
-  var searcheddatas = [];
 
-  userHelpers
-    .getdatabdate(req.body.startdate, req.body.enddate)
-    .then(function (databdate) {
-      for (i = 0; i < databdate.length; i++) {
-        if (databdate[i].passno === req.body.passno) {
-          searcheddatas.push(databdate[i]);
-        }
-      }
-      const searcheddata = searcheddatas.sort(
-        (objA, objB) => Number(objA.date) - Number(objB.date)
-      );
-
-      var datadetail = databdate[0];
-      //report
-      var workingdayc = 0;
-      var paidleavec = 0;
-      var Unpaidleavec = 0;
-      var tempreport = [];
-      var totalot = 0;
-      var totalworkhour = 0;
-      for (j = 0; j < searcheddata.length; j++) {
-        if (searcheddata[j].todaystatus === "working") {
-          workingdayc++;
-          tempreport.push(searcheddata[j]);
-
-          const dd = new Date(searcheddata[j].datevalue);
-          let day = dd.getDay();
-
-          if (day === 5) {
-            tempreport[j].workhourot =
-              Number(tempreport[j].workhour1) +
-              Number(tempreport[j].workhour2) +
-              Number(tempreport[j].workhour3) +
-              Number(tempreport[j].workhour4) +
-              Number(tempreport[j].workhour5);
-            tempreport[j].workhoursum = 0;
-          } else {
-            const reportresult =
-              Number(tempreport[j].workhour1) +
-              Number(tempreport[j].workhour2) +
-              Number(tempreport[j].workhour3) +
-              Number(tempreport[j].workhour4) +
-              Number(tempreport[j].workhour5);
-
-            tempreport[j].workhoursum = reportresult;
-            if (reportresult > 8) {
-              tempreport[j].workhourot = reportresult - 8;
-            } else {
-              tempreport[j].workhourot = 0;
-            }
-          }
-        } else if (searcheddata[j].todaystatus === "Paid Leave") {
-          paidleavec++;
-          tempreport.push(searcheddata[j]);
-          tempreport[j].workhoursum = 0;
-          tempreport[j].workhourot = 0;
-        } else if (searcheddata[j].todaystatus === "Unpaid Leave") {
-          Unpaidleavec++;
-          tempreport.push(searcheddata[j]);
-          tempreport[j].workhoursum = 0;
-          tempreport[j].workhourot = 0;
-        }
-      }
-      for (c = 0; c < tempreport.length; c++) {
-        totalot = totalot + tempreport[c].workhourot;
-        totalworkhour = totalworkhour + tempreport[c].workhoursum;
-      }
-
-      var salarysheet = {};
-      var monthlyallowance = 0;
-      var monthlybonus = 0;
-      var monthlybasic = 0;
-      var otsalary = 0;
-      var monthsalary = 0;
-      employeHelpers.getAllemployee().then((employee) => {
-        for (z = 0; z < employee.length; z++) {
-          if (employee[z].passno === req.body.passno) {
-            var selectedemployee = employee[z];
-
-            if (
-              employee[z].employeeType === "own" ||
-              employee[z].employeeType === "hiredsalaried"
-            ) {
-              otsalary = (totalot * employee[z].sbasic) / 240;
-              monthlyallowance =
-                employee[z].sallowance -
-                (employee[z].sallowance / 30) * Unpaidleavec;
-              monthlybonus =
-                employee[z].sbonus - (employee[z].sbonus / 30) * Unpaidleavec;
-              monthlybasic =
-                employee[z].sbasic - (employee[z].sbasic / 30) * Unpaidleavec;
-              monthsalary =
-                otsalary + monthlyallowance + monthlybasic + monthlybonus;
-            } else if (employee[z].employeeType === "hired") {
-              monthsalary = employee[z].srateph * totalworkhour;
-            }
-          }
-        }
-
-        salarysheet.monthsalary = monthsalary;
-        salarysheet.otsalary = otsalary;
-        salarysheet.totalot = totalot;
-        salarysheet.totalworkhour = totalworkhour;
-        salarysheet.workingdayc = workingdayc;
-        salarysheet.Unpaidleavec = Unpaidleavec;
-        salarysheet.paidleavec = paidleavec;
-
-        res.render("./admin/report-view", {  admin: true,tempreport,salarysheet,datadetail, selectedemployee,
-        
-        });
-      });
-    });
+router.post("/search-report", async (req, res) => {
+  try {
+    var employeereport = [];
+    const employees = await employeHelpers.getAllemployee();
+    for (let i = 0; i < employees.length; i++) {
+    if(employees[i].employeeType === 'Own Labour'){
+      const timesheet = await userHelpers.getDatabByMonthAndEmployee(req.body.searchdate, employees[i]._id.toString());
+      const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
+      const thedata = await allsalaryreport.allsalaryreport(searcheddata);
+      thedata.employeename = employees[i].givenName
+      thedata.index = i+1;
+      employeereport.push(thedata);
+    }
+  }
+    res.render("./admin/report-view", { admin: true, employeereport });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Internal Server Error");
+  }
 });
 
 // project report
