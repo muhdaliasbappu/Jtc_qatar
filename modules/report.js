@@ -461,13 +461,15 @@ for(i=0;i<timesheet.length;i++){
     
 }
 
-report.basic = basicsalary
-report.allowance = allowance
-report.bonus = bonus
-report.otsalary = otsalary
+report.basic = Math.round(basicsalary)
+report.allowance =  Math.round(allowance)
+report.bonus = Math.round(bonus)
+report.otsalary =  Math.round(otsalary)
 report.workdays = workday
 report.othours = othours
-report.totalsalary = basicsalary+allowance+bonus+otsalary
+report.totalsalary =  Math.round(basicsalary+allowance+bonus+otsalary)
+report.othours = othours
+
 resolve(report)
 })
 
