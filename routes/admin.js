@@ -9,6 +9,7 @@ const async = require("hbs/lib/async");
 const { search } = require("./users");
 var DayView = require('../modules/DayView')
 var allsalaryreport = require('../modules/report')
+var cronhelp = require("../modules/notcron")
 
 /* GET home page. */
 
@@ -238,6 +239,14 @@ router.get("/datasheet", function (req, res) {
 
 router.post("/datasheet", function (req, res) {
   const d = new Date(req.body.searchdate);
+  console.log(d.getDay())
+  if(d.getDay() === 5 ){
+cronhelp.cronfridaynotyou(req.body.searchdate)
+console.log('i friday')
+  }else{
+    cronhelp.cronnotforyou(req.body.searchdate)
+    console.log('i not friday')
+  }
 
   userHelpers.getDatasheet().then(function (employeedatasheet) {
     let ar = 0;
@@ -444,7 +453,7 @@ router.post("/search-report", async (req, res) => {
     var index = 0
     const employees = await employeHelpers.getAllemployee();
     for (let i = 0; i < employees.length; i++) {
-       if(employees[i].employeeType === 'Own Labour' || employees[i].employeeType === 'Hired Labour (Monthly)' || employees[i].employeeType === 'Own Staff (Projects)' || employees[i].employeeType === 'Hired Staff (Projects)' || employees[i].employeeType === 'Hired Salaried'){
+    if(employees[i].employeeType === 'Own Labour' || employees[i].employeeType === 'Hired Labour (Monthly)' || employees[i].employeeType === 'Own Staff (Projects)' || employees[i].employeeType === 'Hired Staff (Projects)' || employees[i].employeeType === 'Hired Salaried'){
       const timesheet = await userHelpers.getDatabByMonthAndEmployee(req.body.searchdate, employees[i]._id.toString());
       const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
       const thedata = await allsalaryreport.salaryreportlabour(searcheddata);
@@ -615,3 +624,4 @@ router.post("/edit-salary/:id", (req, res) => {
   
 });
 module.exports = router;
+
