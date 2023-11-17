@@ -444,7 +444,7 @@ router.post("/search-report", async (req, res) => {
     var index = 0
     const employees = await employeHelpers.getAllemployee();
     for (let i = 0; i < employees.length; i++) {
-    if(employees[i].employeeType === 'Own Labour' || employees[i].employeeType === 'Hired Labour (Monthly)' || employees[i].employeeType === 'Own Staff (Projects)' || employees[i].employeeType === 'Hired Staff (Projects)'){
+       if(employees[i].employeeType === 'Own Labour' || employees[i].employeeType === 'Hired Labour (Monthly)' || employees[i].employeeType === 'Own Staff (Projects)' || employees[i].employeeType === 'Hired Staff (Projects)' || employees[i].employeeType === 'Hired Salaried'){
       const timesheet = await userHelpers.getDatabByMonthAndEmployee(req.body.searchdate, employees[i]._id.toString());
       const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
       const thedata = await allsalaryreport.salaryreportlabour(searcheddata);
