@@ -615,5 +615,3 @@ router.post("/edit-salary/:id", (req, res) => {
   
 });
 module.exports = router;
-
-
