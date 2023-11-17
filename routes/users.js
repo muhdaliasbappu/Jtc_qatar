@@ -8,7 +8,7 @@ var projectHelpers = require('../helpers/project-helpers')
 var userHelpers = require('../helpers/user-helper');
 var expiringTimeliest = require('../modules/cron');
 var DayView = require('../modules/DayView')
-const pdfController = require('../modules/pdf.controller');
+
 const { all } = require('../app');
 const async = require('hbs/lib/async');
 router.use(express.json());
