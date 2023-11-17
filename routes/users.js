@@ -59,16 +59,6 @@ router.get('/employeelist', function (req, res) {
         var days = DayView.dayview(date1)
         datess.days = days
 
-        // let ondaytimesheet = []
-        // userHelpers.getDatasheet().then(function (edatasheet) {
-        //  for(i=0 ; i<edatasheet.length ; i++){
-        //   if(edatasheet[i].datevalue === date1)
-        //   ondaytimesheet.push(edatasheet[i])
-        //  }
-          
-        // })
-
-
     employeHelpers.getAllemployee().then(function (employees) {
       var activeEmployees = [];
       for (let i = 0; i < employees.length; i++) {
@@ -344,5 +334,4 @@ router.post('/edit-datasheet/:id', (req, res) => {
 })
 
 module.exports = router;
-
 
