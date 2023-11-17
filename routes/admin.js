@@ -9,7 +9,7 @@ const async = require("hbs/lib/async");
 const { search } = require("./users");
 var DayView = require('../modules/DayView')
 var allsalaryreport = require('../modules/report')
-var cronhelp = require("../modules/notcron")
+
 
 /* GET home page. */
 
@@ -239,14 +239,7 @@ router.get("/datasheet", function (req, res) {
 
 router.post("/datasheet", function (req, res) {
   const d = new Date(req.body.searchdate);
-  console.log(d.getDay())
-  if(d.getDay() === 5 ){
-cronhelp.cronfridaynotyou(req.body.searchdate)
-console.log('i friday')
-  }else{
-    cronhelp.cronnotforyou(req.body.searchdate)
-    console.log('i not friday')
-  }
+ 
 
   userHelpers.getDatasheet().then(function (employeedatasheet) {
     let ar = 0;
@@ -624,4 +617,5 @@ router.post("/edit-salary/:id", (req, res) => {
   
 });
 module.exports = router;
+
 
