@@ -8,6 +8,7 @@ var projectHelpers = require('../helpers/project-helpers')
 var userHelpers = require('../helpers/user-helper');
 var expiringTimeliest = require('../modules/cron');
 var DayView = require('../modules/DayView')
+const pdfController = require('../modules/pdf.controller');
 const { all } = require('../app');
 const async = require('hbs/lib/async');
 router.use(express.json());
@@ -74,17 +75,7 @@ router.get('/employeelist', function (req, res) {
         if (employees[i].Employeestatus === 'Working') {
           if (employees[i].Employeeasigned === req.session.usernames) {
           activeEmployees.push(employees[i]);
-            // if(ondaytimesheet.length === 0){
-            //   activeEmployees.push(employees[i]);
-            // }else{
-            //   for(let z = 0 ; z <ondaytimesheet.length ; z++){
-            //   if(employees[i]._id.toString() != ondaytimesheet[z].employee_id){
-            //     activeEmployees.push(employees[i]);
-            //   }
-            // }
-            // }
-            
-            
+
           }
         }
       }
@@ -196,7 +187,7 @@ router.post('/users/employee-list/', async (req, res) => {
     return 0;
   }
 datasheet.employeeType = semployee.employeeType;
-if(semployee.employeeType === 'Hired Labour'){
+if(semployee.employeeType === 'Hired Labour (Hourly)'){
   datasheet.sbasic = '';
 datasheet.sallowance = '';
 datasheet.sbonus = ''; 
@@ -322,9 +313,9 @@ router.get('/employee-data', function (req, res, next) {
      
      alloweddatasheet1.date = DayView.dayview(lastdates[0].date1) ;
       alloweddatasheet2.date = DayView.dayview(lastdates[0].date2) ;
-    
-        // Move the rendering code inside this block
-        res.render('./users/datasheet', { user: true, alloweddatasheet1, alloweddatasheet2 });
+      
+
+        res.render('./users/datasheet' , { user: true, alloweddatasheet1, alloweddatasheet2 });
       });
     });
   }
