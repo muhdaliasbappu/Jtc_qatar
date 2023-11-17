@@ -441,14 +441,32 @@ router.get("/search-report/", function (req, res) {
 router.post("/search-report", async (req, res) => {
   try {
     var employeereport = [];
+    var index = 0
     const employees = await employeHelpers.getAllemployee();
     for (let i = 0; i < employees.length; i++) {
-    if(employees[i].employeeType === 'Own Labour'){
+    if(employees[i].employeeType === 'Own Labour' || employees[i].employeeType === 'Hired Labour (Monthly)' || employees[i].employeeType === 'Own Staff (Projects)' || employees[i].employeeType === 'Hired Staff (Projects)'){
       const timesheet = await userHelpers.getDatabByMonthAndEmployee(req.body.searchdate, employees[i]._id.toString());
       const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
-      const thedata = await allsalaryreport.allsalaryreport(searcheddata);
+      const thedata = await allsalaryreport.salaryreportlabour(searcheddata);
       thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
-      thedata.index = i+1;
+      index++;
+      thedata.index = index;
+      employeereport.push(thedata);
+    }else if(employees[i].employeeType === 'Hired Labour (Hourly)'){
+      const timesheet = await userHelpers.getDatabByMonthAndEmployee(req.body.searchdate, employees[i]._id.toString());
+      const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
+      const thedata = await allsalaryreport.salaryreportlabourhourly(searcheddata);
+      thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
+      index++;
+      thedata.index = index;
+      employeereport.push(thedata);
+    }else if(employees[i].employeeType ==='Own Staff (Operations)' || employees[i].employeeType ==='Hired Staff (Operations)'){
+      const timesheet = await userHelpers.getDatabByMonthAndEmployee(req.body.searchdate, employees[i]._id.toString());
+      const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
+      const thedata = await allsalaryreport.salaryreportoperations(searcheddata);
+      thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
+      index++;
+      thedata.index = index;
       employeereport.push(thedata);
     }
   }
@@ -597,4 +615,5 @@ router.post("/edit-salary/:id", (req, res) => {
   
 });
 module.exports = router;
+
 
