@@ -625,8 +625,7 @@ router.get("/edit-delete/:id", async function (req, res) {
         
         
     });
- 
-    res.redirect("/admin/employee");
+
   }
 })
 module.exports = router;
