@@ -616,7 +616,9 @@ router.post("/edit-salary/:id", (req, res) => {
   }
   
 });
-`router.get("/edit-delete/:id", async function (req, res) {
+
+
+router.get("/edit-delete/:id", async function (req, res) {
   let admin = req.session.user;
   if (admin) {
     userHelpers.deleteTimesheet(req.params.id).then((response) => {
@@ -628,5 +630,4 @@ router.post("/edit-salary/:id", (req, res) => {
   }
 })
 module.exports = router;
-
 
