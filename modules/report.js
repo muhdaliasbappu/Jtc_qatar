@@ -12,6 +12,7 @@ let otsalary = 0
 let basicsalary =0
 let allowance = 0
 let bonus = 0
+let monlen = 1
 for(i=0;i<timesheet.length;i++){
     const dd = new Date(timesheet[i].datevalue);
     let day = dd.getDay();
@@ -39,11 +40,11 @@ for(i=0;i<timesheet.length;i++){
          
         }else {
             tempwhto =
-            Number(timesheet[i].workhour1) +
-            Number(timesheet[i].workhour2) +
-            Number(timesheet[i].workhour3) +
-            Number(timesheet[i].workhour4) +
-            Number(timesheet[i].workhour5);
+            Number(timesheet[i].workhour1) 
+            // Number(timesheet[i].workhour2) +
+            // Number(timesheet[i].workhour3) +
+            // Number(timesheet[i].workhour4) +
+            // Number(timesheet[i].workhour5);
 
             if(tempwhto > 8){
                 tempot = tempwhto-8;
@@ -60,8 +61,11 @@ for(i=0;i<timesheet.length;i++){
             }else{
                 tempotsal = tempot*timesheet[i].sbasic/240;
                 tempbasic = 8*timesheet[i].sbasic/240;
+                // console.log(tempbasic)
                 tempallow = 8*timesheet[i].sallowance/240;
+                // console.log(tempallow)
                 tempbonus = 8*timesheet[i].sbonus/240;
+                // console.log(tempbonus)
                 basicsalary = basicsalary+tempbasic;
                 allowance = allowance+tempallow;
                 bonus = bonus+tempbonus;
@@ -165,10 +169,221 @@ for(i=0;i<timesheet.length;i++){
                                         break;                     
                 
         }
-    }else if(timesheet[i].todaystatus === 'Paid Leave'){
+    }
+    else if(timesheet[i].todaystatus === 'Paid Leave'){
+        if(timesheet.length === 31){
+            if(day === 5){
+                console.log('here',monlen)
+                if(monlen < 4){
+                    console.log('here too')
+                    monlen++;
+                    basicsalary = basicsalary+8*timesheet[i].sbasic/240;
+                allowance = allowance+8*timesheet[i].sallowance/240;
+                bonus = bonus+8*timesheet[i].sbonus/240;
+                switch (date){
+                    case 1:
+                        report.d1wh = 'F';
+                        break;
+                    case 2:
+                        report.d2wh = 'F';
+                        break; 
+                    case 3:
+                        report.d3wh = 'F';
+                        break;
+                        case 4:
+                            report.d4wh ='F';
+                            break;
+                        case 5:
+                            report.d5wh = 'F';
+                            break;
+                        case 6:
+                            report.d6wh = 'F';
+                            break;
+                        case 7:
+                            report.d7wh = 'F';
+                            break;
+                        case 8:
+                            report.d8wh = 'F';
+                            break;
+                        case 9:
+                            report.d9wh = 'F';
+                            break;
+                        case 10:
+                            report.d10wh = 'F';
+                            break;      
+                            case 11:
+                                report.d11wh = 'F';
+                                break;
+                            case 12:
+                                report.d12wh = 'F';
+                                break; 
+                            case 13:
+                                report.d13wh = 'F';
+                                break;
+                                case 14:
+                                    report.d14wh = 'F';
+                                    break;
+                                case 15:
+                                    report.d15wh = 'F';
+                                    break;
+                                case 16:
+                                    report.d16wh = 'F'
+                                    break;
+                                case 17:
+                                    report.d17wh = 'F';
+                                    break;
+                                case 18:
+                                    report.d18wh = 'F';
+                                    break;
+                                case 19:
+                                    report.d19wh = 'F';
+                                    break;
+                                case 20:
+                                    report.d20wh = 'F';
+                                    break; 
+                                    case 21:
+                                        report.d21wh = 'F';
+                                        break;
+                                    case 22:
+                                        report.d22wh = 'F';
+                                        break; 
+                                    case 23:
+                                        report.d23wh ='F';
+                                        break;
+                                        case 24:
+                                            report.d24wh = 'F';
+                                            break;
+                                        case 25:
+                                            report.d25wh = 'F';
+                                            break;
+                                        case 26:
+                                            report.d26wh = 'F';
+                                            break;
+                                        case 27:
+                                            report.d27wh = 'F';
+                                            break;
+                                        case 28:
+                                            report.d28wh = 'F';
+                                            break;
+                                        case 29:
+                                            report.d29wh = 'F';
+                                            break;
+                                        case 30:
+                                            report.d30wh = 'F';
+                                            break;          
+                                            case 31:
+                                                report.d31wh = 'F';
+                                                break;                     
+                        
+                }
+
+                }
+            
+            }
+            }else{
                 basicsalary = basicsalary+8*timesheet[i].sbasic/240;
                 allowance = allowance+8*timesheet[i].sallowance/240;
                 bonus = bonus+8*timesheet[i].sbonus/240;
+                if(day === 5){
+                    switch (date){
+                        case 1:
+                            report.d1wh = 'F';
+                            break;
+                        case 2:
+                            report.d2wh = 'F';
+                            break; 
+                        case 3:
+                            report.d3wh = 'F';
+                            break;
+                            case 4:
+                                report.d4wh ='F';
+                                break;
+                            case 5:
+                                report.d5wh = 'F';
+                                break;
+                            case 6:
+                                report.d6wh = 'F';
+                                break;
+                            case 7:
+                                report.d7wh = 'F';
+                                break;
+                            case 8:
+                                report.d8wh = 'F';
+                                break;
+                            case 9:
+                                report.d9wh = 'F';
+                                break;
+                            case 10:
+                                report.d10wh = 'F';
+                                break;      
+                                case 11:
+                                    report.d11wh = 'F';
+                                    break;
+                                case 12:
+                                    report.d12wh = 'F';
+                                    break; 
+                                case 13:
+                                    report.d13wh = 'F';
+                                    break;
+                                    case 14:
+                                        report.d14wh = 'F';
+                                        break;
+                                    case 15:
+                                        report.d15wh = 'F';
+                                        break;
+                                    case 16:
+                                        report.d16wh = 'F'
+                                        break;
+                                    case 17:
+                                        report.d17wh = 'F';
+                                        break;
+                                    case 18:
+                                        report.d18wh = 'F';
+                                        break;
+                                    case 19:
+                                        report.d19wh = 'F';
+                                        break;
+                                    case 20:
+                                        report.d20wh = 'F';
+                                        break; 
+                                        case 21:
+                                            report.d21wh = 'F';
+                                            break;
+                                        case 22:
+                                            report.d22wh = 'F';
+                                            break; 
+                                        case 23:
+                                            report.d23wh ='F';
+                                            break;
+                                            case 24:
+                                                report.d24wh = 'F';
+                                                break;
+                                            case 25:
+                                                report.d25wh = 'F';
+                                                break;
+                                            case 26:
+                                                report.d26wh = 'F';
+                                                break;
+                                            case 27:
+                                                report.d27wh = 'F';
+                                                break;
+                                            case 28:
+                                                report.d28wh = 'F';
+                                                break;
+                                            case 29:
+                                                report.d29wh = 'F';
+                                                break;
+                                            case 30:
+                                                report.d30wh = 'F';
+                                                break;          
+                                                case 31:
+                                                    report.d31wh = 'F';
+                                                    break;                     
+                            
+                    }
+    
+
+                }else{
                 switch (date){
                     case 1:
                         report.d1wh = 'P';
@@ -265,7 +480,9 @@ for(i=0;i<timesheet.length;i++){
                                                 break;                     
                         
                 }
-    }else if(timesheet[i].todaystatus === 'Unpaid Leave'){
+            }
+            }
+  }else if(timesheet[i].todaystatus === 'Unpaid Leave'){
         switch (date){
             case 1:
                 report.d1wh = 'L';
@@ -463,7 +680,6 @@ for(i=0;i<timesheet.length;i++){
     }
     
 }
-
 report.basic = Math.round(basicsalary)
 report.allowance =  Math.round(allowance)
 report.bonus = Math.round(bonus)
@@ -806,6 +1022,7 @@ let otsalary = 0
 let basicsalary =0
 let allowance = 0
 let bonus = 0
+let monlen = 1
 for(i=0;i<timesheet.length;i++){
     const dd = new Date(timesheet[i].datevalue);
     let day = dd.getDay();
@@ -928,9 +1145,219 @@ for(i=0;i<timesheet.length;i++){
                 
         }
     }else if(timesheet[i].todaystatus === 'Paid Leave'){
+        if(timesheet.length === 31){
+            if(day === 5){
+               
+                if(monlen < 4){
+                  
+                    monlen++;
+                    basicsalary = basicsalary+8*timesheet[i].sbasic/240;
+                allowance = allowance+8*timesheet[i].sallowance/240;
+                bonus = bonus+8*timesheet[i].sbonus/240;
+                switch (date){
+                    case 1:
+                        report.d1wh = 'F';
+                        break;
+                    case 2:
+                        report.d2wh = 'F';
+                        break; 
+                    case 3:
+                        report.d3wh = 'F';
+                        break;
+                        case 4:
+                            report.d4wh ='F';
+                            break;
+                        case 5:
+                            report.d5wh = 'F';
+                            break;
+                        case 6:
+                            report.d6wh = 'F';
+                            break;
+                        case 7:
+                            report.d7wh = 'F';
+                            break;
+                        case 8:
+                            report.d8wh = 'F';
+                            break;
+                        case 9:
+                            report.d9wh = 'F';
+                            break;
+                        case 10:
+                            report.d10wh = 'F';
+                            break;      
+                            case 11:
+                                report.d11wh = 'F';
+                                break;
+                            case 12:
+                                report.d12wh = 'F';
+                                break; 
+                            case 13:
+                                report.d13wh = 'F';
+                                break;
+                                case 14:
+                                    report.d14wh = 'F';
+                                    break;
+                                case 15:
+                                    report.d15wh = 'F';
+                                    break;
+                                case 16:
+                                    report.d16wh = 'F'
+                                    break;
+                                case 17:
+                                    report.d17wh = 'F';
+                                    break;
+                                case 18:
+                                    report.d18wh = 'F';
+                                    break;
+                                case 19:
+                                    report.d19wh = 'F';
+                                    break;
+                                case 20:
+                                    report.d20wh = 'F';
+                                    break; 
+                                    case 21:
+                                        report.d21wh = 'F';
+                                        break;
+                                    case 22:
+                                        report.d22wh = 'F';
+                                        break; 
+                                    case 23:
+                                        report.d23wh ='F';
+                                        break;
+                                        case 24:
+                                            report.d24wh = 'F';
+                                            break;
+                                        case 25:
+                                            report.d25wh = 'F';
+                                            break;
+                                        case 26:
+                                            report.d26wh = 'F';
+                                            break;
+                                        case 27:
+                                            report.d27wh = 'F';
+                                            break;
+                                        case 28:
+                                            report.d28wh = 'F';
+                                            break;
+                                        case 29:
+                                            report.d29wh = 'F';
+                                            break;
+                                        case 30:
+                                            report.d30wh = 'F';
+                                            break;          
+                                            case 31:
+                                                report.d31wh = 'F';
+                                                break;                     
+                        
+                }
+
+                }
+            
+            }
+            }else{
                 basicsalary = basicsalary+8*timesheet[i].sbasic/240;
                 allowance = allowance+8*timesheet[i].sallowance/240;
                 bonus = bonus+8*timesheet[i].sbonus/240;
+                if(day === 5){
+                    switch (date){
+                        case 1:
+                            report.d1wh = 'F';
+                            break;
+                        case 2:
+                            report.d2wh = 'F';
+                            break; 
+                        case 3:
+                            report.d3wh = 'F';
+                            break;
+                            case 4:
+                                report.d4wh ='F';
+                                break;
+                            case 5:
+                                report.d5wh = 'F';
+                                break;
+                            case 6:
+                                report.d6wh = 'F';
+                                break;
+                            case 7:
+                                report.d7wh = 'F';
+                                break;
+                            case 8:
+                                report.d8wh = 'F';
+                                break;
+                            case 9:
+                                report.d9wh = 'F';
+                                break;
+                            case 10:
+                                report.d10wh = 'F';
+                                break;      
+                                case 11:
+                                    report.d11wh = 'F';
+                                    break;
+                                case 12:
+                                    report.d12wh = 'F';
+                                    break; 
+                                case 13:
+                                    report.d13wh = 'F';
+                                    break;
+                                    case 14:
+                                        report.d14wh = 'F';
+                                        break;
+                                    case 15:
+                                        report.d15wh = 'F';
+                                        break;
+                                    case 16:
+                                        report.d16wh = 'F'
+                                        break;
+                                    case 17:
+                                        report.d17wh = 'F';
+                                        break;
+                                    case 18:
+                                        report.d18wh = 'F';
+                                        break;
+                                    case 19:
+                                        report.d19wh = 'F';
+                                        break;
+                                    case 20:
+                                        report.d20wh = 'F';
+                                        break; 
+                                        case 21:
+                                            report.d21wh = 'F';
+                                            break;
+                                        case 22:
+                                            report.d22wh = 'F';
+                                            break; 
+                                        case 23:
+                                            report.d23wh ='F';
+                                            break;
+                                            case 24:
+                                                report.d24wh = 'F';
+                                                break;
+                                            case 25:
+                                                report.d25wh = 'F';
+                                                break;
+                                            case 26:
+                                                report.d26wh = 'F';
+                                                break;
+                                            case 27:
+                                                report.d27wh = 'F';
+                                                break;
+                                            case 28:
+                                                report.d28wh = 'F';
+                                                break;
+                                            case 29:
+                                                report.d29wh = 'F';
+                                                break;
+                                            case 30:
+                                                report.d30wh = 'F';
+                                                break;          
+                                                case 31:
+                                                    report.d31wh = 'F';
+                                                    break;                     
+                            
+                    }
+    
+
+                }else{
                 switch (date){
                     case 1:
                         report.d1wh = 'P';
@@ -1027,7 +1454,9 @@ for(i=0;i<timesheet.length;i++){
                                                 break;                     
                         
                 }
-    }else if(timesheet[i].todaystatus === 'Unpaid Leave'){
+            }
+            }
+  }else if(timesheet[i].todaystatus === 'Unpaid Leave'){
         switch (date){
             case 1:
                 report.d1wh = 'L';
@@ -1242,4 +1671,5 @@ resolve(report)
 
 
 }
+
 
