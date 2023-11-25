@@ -41,10 +41,10 @@ for(i=0;i<timesheet.length;i++){
         }else {
             tempwhto =
             Number(timesheet[i].workhour1) 
-            // Number(timesheet[i].workhour2) +
-            // Number(timesheet[i].workhour3) +
-            // Number(timesheet[i].workhour4) +
-            // Number(timesheet[i].workhour5);
+            Number(timesheet[i].workhour2) +
+            Number(timesheet[i].workhour3) +
+            Number(timesheet[i].workhour4) +
+            Number(timesheet[i].workhour5);
 
             if(tempwhto > 8){
                 tempot = tempwhto-8;
@@ -61,11 +61,11 @@ for(i=0;i<timesheet.length;i++){
             }else{
                 tempotsal = tempot*timesheet[i].sbasic/240;
                 tempbasic = 8*timesheet[i].sbasic/240;
-                // console.log(tempbasic)
+         
                 tempallow = 8*timesheet[i].sallowance/240;
-                // console.log(tempallow)
+         
                 tempbonus = 8*timesheet[i].sbonus/240;
-                // console.log(tempbonus)
+             
                 basicsalary = basicsalary+tempbasic;
                 allowance = allowance+tempallow;
                 bonus = bonus+tempbonus;
@@ -1671,5 +1671,4 @@ resolve(report)
 
 
 }
-
 
