@@ -34,38 +34,42 @@ for(i=0;i<timesheet.length;i++){
             Number(timesheet[i].workhour3) +
             Number(timesheet[i].workhour4) +
             Number(timesheet[i].workhour5);
+          
             tempotsal = tempwhto*timesheet[i].sbasic/240;
+           
             othours = othours+tempwhto
             otsalary = otsalary+tempotsal
          
         }else {
             tempwhto =
             Number(timesheet[i].workhour1) 
-            Number(timesheet[i].workhour2) +
-            Number(timesheet[i].workhour3) +
-            Number(timesheet[i].workhour4) +
-            Number(timesheet[i].workhour5);
+            // Number(timesheet[i].workhour2) +
+            // Number(timesheet[i].workhour3) +
+            // Number(timesheet[i].workhour4) +
+            // Number(timesheet[i].workhour5);
 
             if(tempwhto > 8){
                 tempot = tempwhto-8;
+               
                 othours = othours+tempot
                 tempotsal = tempot*timesheet[i].sbasic/240;
+          
                 tempbasic = 8*timesheet[i].sbasic/240;
                 tempallow = 8*timesheet[i].sallowance/240;
                 tempbonus = 8*timesheet[i].sbonus/240;
                 basicsalary = basicsalary+tempbasic;
                 allowance = allowance+tempallow;
                 bonus = bonus+tempbonus;
-                otsalary = otsalary+tempot
+                otsalary = otsalary+tempotsal
                 tempwhto = tempwhto-8;
             }else{
                 tempotsal = tempot*timesheet[i].sbasic/240;
                 tempbasic = 8*timesheet[i].sbasic/240;
-         
+      
                 tempallow = 8*timesheet[i].sallowance/240;
          
                 tempbonus = 8*timesheet[i].sbonus/240;
-             
+        
                 basicsalary = basicsalary+tempbasic;
                 allowance = allowance+tempallow;
                 bonus = bonus+tempbonus;
@@ -1671,4 +1675,5 @@ resolve(report)
 
 
 }
+
 
