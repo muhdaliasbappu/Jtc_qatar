@@ -158,7 +158,7 @@ router.post('/users/employee-list/', async (req, res) => {
 
    
     let semployee = await employeHelpers.getEmployeeDetails(req.body.employee_id);
-
+console.log(req.body)
 
 
   var datasheet = req.body
@@ -259,8 +259,52 @@ router.get('/employee-data', function (req, res, next) {
 
   if (req.session.users) {
     userHelpers.getDatasheet().then(function (employeedatasheet) {
-      let alloweddatasheet = []
+     
       let alloweddatasheet1 = []
+      var activeEmployees1 = [];
+      let lastdates = getthedate() 
+
+      employeHelpers.getAllemployee().then(function (employees) {
+        for (let i = 0; i < employees.length; i++) {
+          if (employees[i].Employeeasigned === req.session.usernames) {
+            activeEmployees1.push(employees[i]);
+          }
+        }
+
+        for (let z = 0; z < employeedatasheet.length; z++) {
+           if (employeedatasheet[z].datevalue === lastdates[0].date1) {
+            for(let x=0; x < activeEmployees1.length; x++){
+              if(activeEmployees1[x]._id.toString() === employeedatasheet[z].employee_id){
+                alloweddatasheet1.push(employeedatasheet[z]);
+               
+              } 
+            }
+          }
+        }
+
+   
+        for(let t=0; t<alloweddatasheet1.length; t++){
+          alloweddatasheet1[t].index = t+1
+        }
+
+     
+    
+      alloweddatasheet1.date = DayView.dayview(lastdates[0].date1) ;
+      
+
+        res.render('./users/datasheet' , { user: true,  alloweddatasheet1 });
+      });
+    });
+  }
+});
+
+
+
+router.get('/employee-data2', function (req, res, next) {
+
+  if (req.session.users) {
+    userHelpers.getDatasheet().then(function (employeedatasheet) {
+     
       let alloweddatasheet2 = []
       var activeEmployees1 = [];
       let lastdates = getthedate() 
@@ -273,17 +317,7 @@ router.get('/employee-data', function (req, res, next) {
         }
 
         for (let z = 0; z < employeedatasheet.length; z++) {
-
-          if (employeedatasheet[z].datevalue === lastdates[0].date1) {
-
-            for(let j=0; j < activeEmployees1.length; j++){
-              if(activeEmployees1[j]._id.toString() === employeedatasheet[z].employee_id){
-                alloweddatasheet1.push(employeedatasheet[z]);
-               
-              }
-            }
-         
-          } else if (employeedatasheet[z].datevalue === lastdates[0].date2) {
+           if (employeedatasheet[z].datevalue === lastdates[0].date2) {
             for(let x=0; x < activeEmployees1.length; x++){
               if(activeEmployees1[x]._id.toString() === employeedatasheet[z].employee_id){
                 alloweddatasheet2.push(employeedatasheet[z]);
@@ -293,19 +327,17 @@ router.get('/employee-data', function (req, res, next) {
           }
         }
 
-        for(let r=0; r<alloweddatasheet1.length; r++){
-          alloweddatasheet1[r].index = r+1
-        }
+   
         for(let t=0; t<alloweddatasheet2.length; t++){
           alloweddatasheet2[t].index = t+1
         }
 
      
-     alloweddatasheet1.date = DayView.dayview(lastdates[0].date1) ;
+    
       alloweddatasheet2.date = DayView.dayview(lastdates[0].date2) ;
       
 
-        res.render('./users/datasheet' , { user: true, alloweddatasheet1, alloweddatasheet2 });
+        res.render('./users/datasheet2' , { user: true,  alloweddatasheet2 });
       });
     });
   }
@@ -334,4 +366,3 @@ router.post('/edit-datasheet/:id', (req, res) => {
 })
 
 module.exports = router;
-
