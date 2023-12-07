@@ -9,6 +9,8 @@ const async = require("hbs/lib/async");
 const { search } = require("./users");
 var DayView = require('../modules/DayView')
 var allsalaryreport = require('../modules/report')
+var allprojectreport = require('../modules/project-report')
+
 
 
 /* GET home page. */
@@ -17,10 +19,18 @@ var allsalaryreport = require('../modules/report')
 
 router.get("/", function (req, res, next) {
   if (req.session.loggedIn) {
-    res.redirect("/admin/employee");
+    res.redirect("/admin/dashboard");
   } else res.render("./admin/admin-login");
 });
 
+
+router.get("/dashboard", function (req, res, next) {
+  let admin = req.session.user;
+
+      res.render("./admin/dashboard", { admin: true});
+    
+  
+});
 //employee list
 
 router.get("/employee", function (req, res, next) {
@@ -76,6 +86,9 @@ router.get("/user-setting", function (req, res, next) {
   let admin = req.session.user;
   if (admin) {
     userHelpers.getAlluser().then((users) => {
+      for(let i = 0; i<users.length; i++){
+        users[i].index = i+1;
+      }
       res.render("./admin/user-setting", { admin: true, users });
     });
   }
@@ -121,7 +134,7 @@ router.post("/", (req, res) => {
     if (response.status) {
       req.session.user = response.admin;
       req.session.user = true;
-      res.redirect("/admin/employee");
+      res.redirect("/admin/dashboard");
     } else {
       res.redirect("/");
     }
@@ -238,6 +251,7 @@ router.get("/datasheet", function (req, res) {
 });
 
 router.post("/datasheet", function (req, res) {
+  console.log(req.body)
   const d = new Date(req.body.searchdate);
  
 
@@ -311,10 +325,7 @@ router.post("/datasearch", async (req, res) => {
       const searcheddata = searcheddatas.sort(
         (objA, objB) => Number(objA.date) - Number(objB.date)
       );
-      // for(let j = 0 ; j<searcheddata.length ; j++){
-      //  console.log( searcheddata[j]).index //= j+1
-      // }
-
+   
       res.render("./admin/searcheddata", {
         admin: true,
         searcheddata,
@@ -345,6 +356,10 @@ router.post("/edit-searcheddata/:id", (req, res) => {
   });
 });
 
+
+
+
+// ///addd
 // router.get("/add-datasheet/:id", async function (req, res) {
 //   let admin = req.session.user;
 
@@ -431,6 +446,11 @@ router.post("/edit-searcheddata/:id", (req, res) => {
 //   res.redirect("/admin/employee");
 // });
 
+
+
+
+
+
 router.get("/search-report/", function (req, res) {
   let admin = req.session.user;
   if (admin) {
@@ -472,6 +492,7 @@ router.post("/search-report", async (req, res) => {
       employeereport.push(thedata);
     }
   }
+
     res.render("./admin/report-view", { admin: true, employeereport });
   } catch (error) {
     console.error(error);
@@ -480,75 +501,24 @@ router.post("/search-report", async (req, res) => {
 });
 
 // project report
-router.get("/project-search/:id", async (req, res) => {
-  let sproject = await projectHelpers.getProjectDetails(req.params.id);
+router.get("/project-search/",  (req, res) => {
 
   let admin = req.session.user;
   if (admin) {
-    res.render("./admin/project-search", { admin: true, sproject });
+    res.render("./admin/project-search", { admin: true });
   }
 });
 
-router.post("/project-report", (req, res) => {
-  var projectemploye = [];
-  var zone1 = 0;
-  var projectworkhour = 0;
-  var ec = 0;
-  userHelpers.getdatabdate(req.body.startdate, req.body.enddate).then(function (databdate)
-     {
-      for (i = 0; i < databdate.length; i++) {
-        var workhourc = 0;
-        if (databdate[i].projectname1 === req.body.projectname) {
-          workhourc = workhourc + Number(databdate[i].workhour1);
-          zone1++;
-        }
-        if (databdate[i].projectname2 === req.body.projectname) {
-          workhourc = workhourc + Number(databdate[i].workhour2);
-          zone1++;
-        }
-        if (databdate[i].projectname3 === req.body.projectname) {
-          workhourc = workhourc + Number(databdate[i].workhour3);
-          zone1++;
-        }
-        if (databdate[i].projectname4 === req.body.projectname) {
-          workhourc = workhourc + Number(databdate[i].workhour4);
-          zone1++;
-        }
-        if (databdate[i].projectname5 === req.body.projectname) {
-          workhourc = workhourc + Number(databdate[i].workhour5);
-          zone1++;
-        }
-        projectworkhour = projectworkhour + workhourc;
-        if (zone1 != 0) {
-          var zone = 0;
-          for (j = 0; j <= i; j++) {
-            if (projectemploye.length === 0) {
-              console.log("i am zero");
-            } else if (j >= projectemploye.length) {
-              console.log("i am repeated");
-            } else if (projectemploye[j].passno === databdate[i].passno) {
-              projectemploye[j].workhourc =
-                projectemploye[j].workhourc + workhourc;
-              projectemploye[j].noofday = projectemploye[j].noofday + 1;
-             
-              zone++;
-            }
-          }
-          if (zone === 0) {
-            projectdetails = {};
-            projectdetails.passno = databdate[i].passno;
-            projectdetails.givenName = databdate[i].givenName;
-            projectdetails.workhourc = workhourc;
-            projectdetails.noofday = 1;
-            projectemploye.push(projectdetails);
-            ec++;
-          }
-
-        }
-      }
-     
-      res.render("./admin/project-report", { admin: true , projectemploye,projectworkhour,ec});
-    });
+router.post("/project-search",async (req, res) => {
+  let projectimesheet = await userHelpers.getDatabByproject1(req.body.searchdate, 'kATARA' , 'Own Labour');
+projectimesheet.push(...await userHelpers.getDatabByproject2(req.body.searchdate, 'kATARA' , 'Own Labour'))
+projectimesheet.push(...await userHelpers.getDatabByproject3(req.body.searchdate, 'kATARA' , 'Own Labour'))
+projectimesheet.push(...await userHelpers.getDatabByproject4(req.body.searchdate, 'kATARA' , 'Own Labour'))
+projectimesheet.push(...await userHelpers.getDatabByproject5(req.body.searchdate, 'kATARA' , 'Own Labour'))
+  
+     allprojectreport.projectreportlabour(projectimesheet, 'kATARA')
+      res.render("./admin/project-report", { admin: true });
+    
 });
 
 router.get("/edit-salary/:id", async function (req, res) {
@@ -618,15 +588,19 @@ router.post("/edit-salary/:id", (req, res) => {
 });
 
 
-router.get("/edit-delete/:id", async function (req, res) {
-  let admin = req.session.user;
-  if (admin) {
-    userHelpers.deleteTimesheet(req.params.id).then((response) => {
+// router.get("/edit-delete/:id", async function (req, res) {
+//   let admin = req.session.user;
+//   if (admin) {
+//     userHelpers.deleteTimesheet(req.params.id).then((response) => {
         
         
-    });
+//     });
+ 
+  
+//   }
+// })
 
-  }
-})
+
+
+
 module.exports = router;
-
