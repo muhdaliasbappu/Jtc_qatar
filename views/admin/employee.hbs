@@ -1,0 +1,91 @@
+
+            <div class="content-page">
+                <div class="content">
+
+                    <!-- Start Content-->
+                    <div class="container-fluid">
+
+      <div class="row">
+                            <div class="col-12">
+                                <div class="page-title-box">
+                                 <div style="float: right; margin-top: 20px;">
+                                       <a href="/admin/add-employee" class="btn btn-danger rounded-pill mb-3"><i class="mdi mdi-plus"></i> Add Employee</a>
+                                    </div>
+                                    <h4 class="page-title">Employee List</h4>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- end page title -->
+
+                        <div class="row mb-2">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-body">
+                                
+                                      
+                                        <div class="tab-content">
+                                            <div class="tab-pane show active" id="scroll-horizontal-preview">
+                                                <table id="scroll-horizontal-datatable" class="table table-striped w-100 nowrap">
+                                                    <thead>
+                                                        <tr>
+                                                          <th scope="col">#</th>
+              <th scope="col">Surname</th>
+            <th scope="col">givenName</th>
+            <th scope="col">Passport Number</th>
+            <th scope="col">QID</th>
+            <th scope="col">Nation</th>
+            <th scope="col">EmployeeType</th>
+            <th scope="col">Salary</th>
+            <th scope="col">Assigned to</th>
+            <th scope="col">Employeestatus</th>
+            <th scope="col">options</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                          {{#each employee}}
+        <tr>
+            <th scope="row">{{this.index}}</th>
+            <td>{{this.surname}}</td>
+            <td>{{this.givenName}}</td>
+            <td>{{this.passno}}</td>
+            <td>{{this.qid}}</td>
+            <td>{{this.nation}}</td>
+            <td>{{this.employeeType}}</td>
+            <td>
+                <dl>
+                    {{#if this.sbasic}}
+                    <dd>Basic: {{this.sbasic}}</dd>
+                    <dd>Allowance: {{this.sallowance}}</dd>
+                    <dd>Bonus: {{this.sbonus}}</dd>
+                    {{/if}}
+                    {{#if this.srateph}}
+                    <dd>Per Hour: {{this.srateph}}</dd>
+                    {{/if}}
+                </dl>
+            </td>
+            <td>{{this.Employeeasigned}}</td>
+            <td>{{this.Employeestatus}}</td>
+            <td><a href="/admin/edit-employee/{{this._id}}" class="btn btn-outline-dark">Edit</a> <br>
+
+            <a href="/admin/datasearch/{{this._id}}" class="btn btn-outline-dark mt-3">Timesheet</a>
+
+    
+            </td>
+
+        </tr>
+        {{/each}}
+                                               
+                                                    </tbody>
+                                                </table>                                          
+                                            </div> <!-- end preview-->
+                                        
+                                           
+                                        </div> <!-- end tab-content-->
+
+                                    </div> <!-- end card body-->
+                                </div> <!-- end card -->
+                            </div><!-- end col-->
+                        </div> <!-- end row-->
+                        </div> 
+                        </div> 
+                        </div> 

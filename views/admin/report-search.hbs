@@ -1,0 +1,27 @@
+<div class="content-page">
+    <div class="content">         
+        <div class="container-fluid">
+             <div class="row">
+                 <div class="col-12">
+                    <div class="page-title-box">                                                                       
+                        <h4 class="page-title">Employee Report</h4>
+                    </div>
+                 </div>
+            </div>
+            <div class="row mb-2 justify-content-center">
+                <div class="col-md-4">
+                        <div class="card">
+                        <div class="card-body">
+                            <form id="employeeForm" action="/admin/search-report" method="POST">
+                             <div class="form-group" style="margin-bottom: 20px;">
+                                <label for="searchdate" style="font-weight: bold;">Select Month:</label>
+                                <input type="month" id="searchdate" name="searchdate" class="form-control"  >
+                            </div>
+                                 <button type="submit" id="submits" class="btn btn-primary" >Submit</button>
+                            </form>   
+                        </div>          
+                        </div> <!-- end card-->
+                </div>                     
+            </div>
+        </div>
+</div>

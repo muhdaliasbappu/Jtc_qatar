@@ -1,0 +1,105 @@
+<h1 class=" h2 mb-3 fw-normal text-center mt-1">Edit Salary</h1>
+
+<div class="col d-flex justify-content-center mt-4 ">
+    <div class=" card" style="width: 18rem;">
+        <ul class="list-group list-group-flush">
+          
+            <li class="list-group-item">GivenName: {{semployee.givenName}}</li>
+            <li class="list-group-item">EmployeeType: {{semployee.employeeType}}</li>
+            {{#if semployee.sbasic}}
+             <li class="list-group-item">Basic: {{semployee.sbasic}}</li>
+            <li class="list-group-item">Allowance: {{semployee.sallowance}}</li>
+            <li class="list-group-item">Bonus:  {{semployee.sbonus}}</li>
+            {{/if}}
+               {{#if semployee.srateph}}
+            <li class="list-group-item">Rate Per Hour: {{semployee.srateph}}</li>
+              {{/if}}
+        </ul>
+         <form id="employeeSalary" action="/admin/edit-salary/{{semployee._id}}" method="POST">
+      
+    
+             <select class="form-select mt-2" name="employeeType" id="employeeType" aria-label=" Default select example" required>
+                <option value="{{semployee.employeeType}}">{{semployee.employeeType}}</option>
+               
+         <option value="Own Labour">Own Labour</option>
+                <option value="Own Staff (Operations)">Own Staff (Operations)</option>
+                      <option value="Own Staff (Projects)">Own Staff (Projects)</option>
+                <option value="Hired Labour (Hourly)">Hired Labour (Hourly)</option>
+                 <option value="Hired Labour (Monthly)">Hired Labour (Monthly)</option>
+                <option value="Hired Staff (Operations)">Hired Staff (Operations)</option>            
+                     <option value="Hired Staff (Projects)">Hired Staff (Projects)</option>      
+        </select>
+           <fieldset id="own" >
+            <input class=" form-control mt-3"  name="sbasic" id="sbasic" placeholder="Basic">
+            <input class="form-control mt-2"  name="sallowance" id=" sallowance" placeholder="Allowance">
+            <input class="form-control mt-2"  name="sbonus" id=" sbonus" placeholder="Bonus">
+        </fieldset>
+        <fieldset id="hired" >
+            <input class=" form-control mt-3"  name="srateph" placeholder="Rate Per Hour">
+        </fieldset>
+        <label class="p-2">Select Date: </label> 
+                 <input type="date" name="datevalue"  id="datevalue" required>
+        <button class="mt-2 w-100 btn btn-lg btn-primary" type="submit">Update</button>
+        </form>
+    </div>
+</div>
+  <script>
+      
+        const employeeTypeSelect = document.getElementById("employeeType");
+        const ownFieldset = document.getElementById("own");
+        const hiredFieldset = document.getElementById("hired");
+     const semployeeType = "{{semployee.employeeType}}";
+     console.log(semployeeType)
+   if(semployeeType != 'Hired Labour'){
+     ownFieldset.style.display = "block";
+                hiredFieldset.style.display = "none";
+   }else if(semployeeType === 'Hired Labour' ){
+     ownFieldset.style.display = "none";
+                hiredFieldset.style.display = "block";
+   }
+        employeeTypeSelect.addEventListener("change", function () {
+            const selectedValue = this.value;
+ if (selectedValue === "Own Labour" || selectedValue === "Own Staff (Operations)" || selectedValue === "Own Staff (Projects)" || selectedValue === "Hired Labour (Monthly)" || selectedValue === "Hired Staff (Operations)" || selectedValue === "Hired Staff (Projects)")  {
+               
+                ownFieldset.style.display = "block";
+                hiredFieldset.style.display = "none";
+            } else if (selectedValue === "Hired Labour (Hourly)") {
+              
+                ownFieldset.style.display = "none";
+                hiredFieldset.style.display = "block";
+            } else {
+                ownFieldset.style.display = "none";
+                hiredFieldset.style.display = "none";
+            }
+        });
+
+     function get30DaysAgoDate() {
+        const today = new Date();
+        today.setDate(today.getDate() - 45);
+
+        // Format the date as yyyy-mm-dd (which is the format used by the date input)
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const day = String(today.getDate()).padStart(2, '0');
+
+        return `${year}-${month}-${day}`;
+    }
+
+    const dateInput = document.getElementById("datevalue");
+
+    // Set the min attribute to the date 30 days ago
+    dateInput.min = get30DaysAgoDate();
+
+    // Function to get the current date as yyyy-mm-dd
+    function getCurrentDate() {
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const day = String(today.getDate()).padStart(2, '0');
+
+        return `${year}-${month}-${day}`;
+    }
+
+    // Set the max attribute to the current date
+    dateInput.max = getCurrentDate();
+    </script>

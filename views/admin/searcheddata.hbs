@@ -1,0 +1,51 @@
+<div class="container">
+     
+    <div class="row mt-4">
+<h3>Employee Name: {{datadetail.givenName}} </h3>
+        <table class="table table-bordered table-hover">
+            <thead>
+             
+                <tr>
+                    <th scope="col">#</th>
+                      <th scope="col">Date</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Project1</th>
+                    <th scope="col"></th>
+                    <th scope="col">Project2</th>
+                    <th scope="col"></th>
+                    <th scope="col">Project3</th>
+                    <th scope="col"></th>
+                    <th scope="col">Project4</th>
+                    <th scope="col"></th>
+                    <th scope="col">Project5</th>
+                    <th scope="col"></th>
+                    <th scope="col">options</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each searcheddata}}
+                <tr>
+                    <th scope=" row">{{this.index}}</th>
+                    <td>{{this.datevalue}}</td>
+                    <td>{{this.todaystatus}}</td>
+                    <td>{{this.projectname1}}</td>
+                    <td>{{this.workhour1}}</td>
+                    <td>{{this.projectname2}}</td>
+                    <td>{{this.workhour2}}</td>
+                    <td>{{this.projectname3}}</td>
+                    <td>{{this.workhour3}}</td>
+                    <td>{{this.projectname4}}</td>
+                    <td>{{this.workhour4}}</td>
+                    <td>{{this.projectname5}}</td>
+                    <td>{{this.workhour5}}</td>
+                    <td><a href="/admin/edit-searcheddata/{{this._id}}" class="btn btn-outline-dark">Edit</a></td>
+                    <td><a href="/admin/edit-delete/{{this._id}}" class="btn btn-outline-dark">delete</a></td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+{{!--        
+        <a href="/admin/add-datasheet/{{datadetail._id}}" class="btn btn-outline-dark">Add Datasheet</a> --}}
+        
+    </div>
+</div>

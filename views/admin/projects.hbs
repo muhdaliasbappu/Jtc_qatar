@@ -1,0 +1,71 @@
+
+            <div class="content-page">
+                <div class="content">
+
+                    <!-- Start Content-->
+                    <div class="container-fluid">
+                      <div class="row">
+                            <div class="col-12">
+                                <div class="page-title-box">
+                                    <div style="float: right; margin-top: 20px;">
+                                       <a href="/admin/add-project" class="btn btn-danger rounded-pill mb-3"><i class="mdi mdi-plus"></i> Create Project</a>
+                                    </div>
+                                    <h4 class="page-title">Projects List</h4>
+                                    <div class="col-sm-4">
+                               
+                            </div>
+                                </div>
+                            </div>
+                        </div>
+
+                           <div class="row mb-2">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-body">
+                                        
+                                      
+                                        <div class="tab-content">
+                                            <div class="tab-pane show active" id="scroll-horizontal-preview">
+                                                 <div class="board">
+<table class="table table-centered mb-0">
+    <thead>
+        <tr>
+           <th scope="col">#</th>
+            <th scope="col">Project Name </th>
+            <th scope="col">Project Code</th>
+            <th scope="col">Status</th>
+            <th scope="">Action</th>
+        </tr>
+    </thead>
+    <tbody>
+          {{#each project}}
+        <tr>
+            <th scope=" row">{{this.index}}</th>
+            <td>{{this.projectname}}</td>
+            <td>{{this.projectcode}}</td>
+            <td>{{this.projectstatus}}</td>
+            <td><a href="/admin/edit-project/{{this._id}}" class="action-icon"> <i class="mdi mdi-pencil"></i></a></td>
+          
+        </tr>
+        {{/each}}
+  
+           
+        </tr>
+    
+    </tbody>
+</table>
+</div>
+
+
+                                                 </div> <!-- end preview-->
+                                        
+                                           
+                                        </div> <!-- end tab-content-->
+
+                                    </div> <!-- end card body-->
+                                </div> <!-- end card -->
+                            </div><!-- end col-->
+                        </div> <!-- end row-->
+                        </div> 
+                        </div> 
+                        </div> 
