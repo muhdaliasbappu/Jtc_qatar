@@ -16,6 +16,7 @@ router.use(express.urlencoded({ extended: true }));
 const cron = require('node-cron')
 const schedule = require('node-schedule');
 process.env.TZ = 'Asia/Qatar';
+const pdf = require('html-pdf');
 
 cron.schedule('55 23 * * *',() => {
   var dateObj2 = new Date();
@@ -121,12 +122,123 @@ router.get('/employeelist2', function (req, res) {
         });
       })
 
-    });
+    }); 
   }
 })
+router.get('/printdatasheet', (req, res) => {
 
+  userHelpers.getDatasheet().then(function (employeedatasheet) {
+     
+    let alloweddatasheet1 = []
+    var activeEmployees1 = [];
+    let lastdates = getthedate() 
 
+    employeHelpers.getAllemployee().then(function (employees) {
+      for (let i = 0; i < employees.length; i++) {
+        if (employees[i].Employeeasigned === req.session.usernames) {
+          activeEmployees1.push(employees[i]);
+        }
+      }
 
+      for (let z = 0; z < employeedatasheet.length; z++) {
+         if (employeedatasheet[z].datevalue === lastdates[0].date1) {
+          for(let x=0; x < activeEmployees1.length; x++){
+            if(activeEmployees1[x]._id.toString() === employeedatasheet[z].employee_id){
+              alloweddatasheet1.push(employeedatasheet[z]);
+             
+            } 
+          }
+        }
+      }
+
+ 
+      for(let t=0; t<alloweddatasheet1.length; t++){
+        alloweddatasheet1[t].index = t+1
+      }
+
+   
+  
+    alloweddatasheet1.date = DayView.dayview(lastdates[0].date1) ;
+    
+    res.render('template',  {alloweddatasheet1}, (err, html) => {
+        if (err) {
+            return res.status(500).send(err);
+        }
+
+        const options = {
+            format: 'Letter',
+        };
+
+        pdf.create(html, options).toStream((err, stream) => {
+            if (err) {
+                return res.status(500).send(err);
+            }
+
+            res.setHeader('Content-Type', 'application/pdf');
+            res.setHeader('Content-Disposition', 'attachment; filename="Timesheet.pdf"');
+            stream.pipe(res);
+        });
+    });
+  });
+});
+});
+router.get('/printdatasheet2', (req, res) => {
+
+  userHelpers.getDatasheet().then(function (employeedatasheet) {
+     
+    let alloweddatasheet1 = []
+      var activeEmployees1 = [];
+      let lastdates = getthedate() 
+
+      employeHelpers.getAllemployee().then(function (employees) {
+        for (let i = 0; i < employees.length; i++) {
+          if (employees[i].Employeeasigned === req.session.usernames) {
+            activeEmployees1.push(employees[i]);
+          }
+        }
+
+        for (let z = 0; z < employeedatasheet.length; z++) {
+           if (employeedatasheet[z].datevalue === lastdates[0].date2) {
+            for(let x=0; x < activeEmployees1.length; x++){
+              if(activeEmployees1[x]._id.toString() === employeedatasheet[z].employee_id){
+                alloweddatasheet1.push(employeedatasheet[z]);
+               
+              } 
+            }
+          }
+        }
+
+   
+        for(let t=0; t<alloweddatasheet1.length; t++){
+          alloweddatasheet1[t].index = t+1
+        }
+
+     
+    
+      alloweddatasheet1.date = DayView.dayview(lastdates[0].date2) ;
+    
+    res.render('template',  {alloweddatasheet1}, (err, html) => {
+        if (err) {
+            return res.status(500).send(err);
+        }
+
+        const options = {
+            format: 'Letter',
+        };
+
+        pdf.create(html, options).toStream((err, stream) => {
+            if (err) {
+                return res.status(500).send(err);
+            }
+
+            res.setHeader('Content-Type', 'application/pdf');
+            res.setHeader('Content-Disposition', 'attachment; filename="Timesheet.pdf"');
+            stream.pipe(res);
+        });
+    });
+  });
+});
+});
 
 
 router.post('/', (req, res) => {
@@ -366,3 +478,4 @@ router.post('/edit-datasheet/:id', (req, res) => {
 })
 
 module.exports = router;
+
