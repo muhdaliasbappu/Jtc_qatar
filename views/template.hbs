@@ -1,0 +1,74 @@
+<style>
+  table {
+    font-family: 'Roboto', sans-serif; /* Updated to a modern font */
+    border-collapse: collapse;
+    width: 100%;
+  }
+
+  th {
+    background-color: #f5f5f5;
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+  }
+
+  td {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+  }
+
+  tr:nth-child(even) {
+    background-color: #f5f5f5;
+  }
+  h2 {
+    color: #303030;
+    font-family: 'Roboto', sans-serif;
+    text-align: center; /* Center align the heading */
+  }
+</style>
+<div style="padding-top:10px;" >
+
+<h2>EMPLOYEE TIMESHEET</h2>
+
+
+   <p style="font-weight: bold; font-family: 'Roboto', sans-serif;">Date: {{alloweddatasheet1.date}}</p>
+  <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Given Name</th>
+        <th scope="col">Status</th>
+        <th scope="col">Project1</th>
+        <th scope="col"></th>
+        <th scope="col">Project2</th>
+        <th scope="col"></th>
+        <th scope="col">Project3</th>
+        <th scope="col"></th>
+        <th scope="col">Project4</th>
+        <th scope="col"></th>
+        <th scope="col">Project5</th>
+        <th scope="col"></th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each alloweddatasheet1}}
+      <tr>
+        <th scope="row">{{this.index}}</th>
+        <td>{{this.surname}} {{this.givenName}}</td>
+        <td>{{this.todaystatus}}</td>
+        <td>{{this.projectname1}}</td>
+        <td>{{this.workhour1}}</td>
+        <td>{{this.projectname2}}</td>
+        <td>{{this.workhour2}}</td>
+        <td>{{this.projectname3}}</td>
+        <td>{{this.workhour3}}</td>
+        <td>{{this.projectname4}}</td>
+        <td>{{this.workhour4}}</td>
+        <td>{{this.projectname5}}</td>
+        <td>{{this.workhour5}}</td>
+      </tr>
+      {{/each}}
+    </tbody>
+  </table>
+</div>
