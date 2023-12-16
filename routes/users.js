@@ -459,7 +459,7 @@ router.get('/edit-datasheet/:id', async (req, res) => {
 
   let edatasheet = await userHelpers.getDatasheetDetails(req.params.id)
   var activeProjects = [];
-  projectHelpers.getAllproject().then((projects) => {
+  projectHelpers.getAllproject().then((projects) => { 
     for (let j = 0; j < projects.length; j++) {
       if (projects[j].projectstatus === 'Ongoing') {
       
