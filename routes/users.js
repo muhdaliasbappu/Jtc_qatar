@@ -153,9 +153,9 @@ router.get('/printdatasheet', async (req, res) => {
       alloweddatasheet1[t].index = t + 1;
     }
 
-    const dates = lastdates.map(date => DayView.dayview(date));
+    alloweddatasheet1.date = DayView.dayview(lastdates[0].date2) ;
 
-    res.render('template', { alloweddatasheet1, dates }, (err, html) => {
+    res.render('template', { alloweddatasheet1 }, (err, html) => {
       if (err) {
         return res.status(500).send(err);
       }
@@ -179,63 +179,61 @@ router.get('/printdatasheet', async (req, res) => {
     res.status(500).send('Internal Server Error');
   }
 });
-router.get('/printdatasheet2', (req, res) => {
+router.get('/printdatasheet2', async (req, res) => {
+  try {
+    const employeedatasheet = await userHelpers.getDatasheet();
+    const alloweddatasheet1 = [];
+    const activeEmployees1 = [];
+    const lastdates = getthedate();
 
-  userHelpers.getDatasheet().then(function (employeedatasheet) {
-     
-    let alloweddatasheet1 = []
-      var activeEmployees1 = [];
-      let lastdates = getthedate() 
+    const employees = await employeHelpers.getAllemployee();
+    for (let i = 0; i < employees.length; i++) {
+      if (employees[i].Employeeasigned === req.session.usernames) {
+        activeEmployees1.push(employees[i]);
+      }
+    }
 
-      employeHelpers.getAllemployee().then(function (employees) {
-        for (let i = 0; i < employees.length; i++) {
-          if (employees[i].Employeeasigned === req.session.usernames) {
-            activeEmployees1.push(employees[i]);
+    for (let z = 0; z < employeedatasheet.length; z++) {
+      if (employeedatasheet[z].datevalue === lastdates[0].date2) {
+        for (let x = 0; x < activeEmployees1.length; x++) {
+          if (activeEmployees1[x]._id.toString() === employeedatasheet[z].employee_id) {
+            alloweddatasheet1.push(employeedatasheet[z]);
           }
         }
+      }
+    }
 
-        for (let z = 0; z < employeedatasheet.length; z++) {
-           if (employeedatasheet[z].datevalue === lastdates[0].date2) {
-            for(let x=0; x < activeEmployees1.length; x++){
-              if(activeEmployees1[x]._id.toString() === employeedatasheet[z].employee_id){
-                alloweddatasheet1.push(employeedatasheet[z]);
-               
-              } 
-            }
-          }
-        }
+    for (let t = 0; t < alloweddatasheet1.length; t++) {
+      alloweddatasheet1[t].index = t + 1;
+    }
 
-   
-        for(let t=0; t<alloweddatasheet1.length; t++){
-          alloweddatasheet1[t].index = t+1
-        }
+    alloweddatasheet1.date = DayView.dayview(lastdates[0].date2) ;
 
-     
-    
-      alloweddatasheet1.date = DayView.dayview(lastdates[0].date2) ;
-    
-    res.render('template',  {alloweddatasheet1}, (err, html) => {
-        if (err) {
-            return res.status(500).send(err);
-        }
+    res.render('template', { alloweddatasheet1 }, (err, html) => {
+      if (err) {
+        return res.status(500).send(err);
+      }
 
-        const options = {
-            format: 'Letter',
-        };
+      (async () => {
+        const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox'] });
+        const page = await browser.newPage();
+        await page.setContent(html);
 
-        pdf.create(html, options).toStream((err, stream) => {
-            if (err) {
-                return res.status(500).send(err);
-            }
+        const pdfBuffer = await page.pdf({ format: 'Letter' });
 
-            res.setHeader('Content-Type', 'application/pdf');
-            res.setHeader('Content-Disposition', 'attachment; filename="Timesheet.pdf"');
-            stream.pipe(res);
-        });
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', 'attachment; filename="Timesheet.pdf"');
+        res.send(pdfBuffer);
+
+        await browser.close();
+      })();
     });
-  });
+  } catch (error) {
+    console.error('Error generating PDF:', error);
+    res.status(500).send('Internal Server Error');
+  }
 });
-});
+
 
 
 router.post('/', (req, res) => {
@@ -475,4 +473,5 @@ router.post('/edit-datasheet/:id', (req, res) => {
 })
 
 module.exports = router;
+
 
