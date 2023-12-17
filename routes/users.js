@@ -17,7 +17,7 @@ const cron = require('node-cron')
 const schedule = require('node-schedule');
 process.env.TZ = 'Asia/Qatar';
 const pdf = require('html-pdf');
-
+const puppeteer = require('puppeteer');
 cron.schedule('55 23 * * *',() => {
   var dateObj2 = new Date();
   dateObj2.setDate(dateObj2.getDate() - 2);
@@ -125,62 +125,59 @@ router.get('/employeelist2', function (req, res) {
     }); 
   }
 })
-router.get('/printdatasheet', (req, res) => {
+router.get('/printdatasheet', async (req, res) => {
+  try {
+    const employeedatasheet = await userHelpers.getDatasheet();
+    const alloweddatasheet1 = [];
+    const activeEmployees1 = [];
+    const lastdates = getthedate();
 
-  userHelpers.getDatasheet().then(function (employeedatasheet) {
-     
-    let alloweddatasheet1 = []
-    var activeEmployees1 = [];
-    let lastdates = getthedate() 
-
-    employeHelpers.getAllemployee().then(function (employees) {
-      for (let i = 0; i < employees.length; i++) {
-        if (employees[i].Employeeasigned === req.session.usernames) {
-          activeEmployees1.push(employees[i]);
-        }
+    const employees = await employeHelpers.getAllemployee();
+    for (let i = 0; i < employees.length; i++) {
+      if (employees[i].Employeeasigned === req.session.usernames) {
+        activeEmployees1.push(employees[i]);
       }
+    }
 
-      for (let z = 0; z < employeedatasheet.length; z++) {
-         if (employeedatasheet[z].datevalue === lastdates[0].date1) {
-          for(let x=0; x < activeEmployees1.length; x++){
-            if(activeEmployees1[x]._id.toString() === employeedatasheet[z].employee_id){
-              alloweddatasheet1.push(employeedatasheet[z]);
-             
-            } 
+    for (let z = 0; z < employeedatasheet.length; z++) {
+      if (employeedatasheet[z].datevalue === lastdates[0].date1) {
+        for (let x = 0; x < activeEmployees1.length; x++) {
+          if (activeEmployees1[x]._id.toString() === employeedatasheet[z].employee_id) {
+            alloweddatasheet1.push(employeedatasheet[z]);
           }
         }
       }
+    }
 
- 
-      for(let t=0; t<alloweddatasheet1.length; t++){
-        alloweddatasheet1[t].index = t+1
+    for (let t = 0; t < alloweddatasheet1.length; t++) {
+      alloweddatasheet1[t].index = t + 1;
+    }
+
+    const dates = lastdates.map(date => DayView.dayview(date));
+
+    res.render('template', { alloweddatasheet1, dates }, (err, html) => {
+      if (err) {
+        return res.status(500).send(err);
       }
 
-   
-  
-    alloweddatasheet1.date = DayView.dayview(lastdates[0].date1) ;
-    
-    res.render('template',  {alloweddatasheet1}, (err, html) => {
-        if (err) {
-            return res.status(500).send(err);
-        }
+      (async () => {
+        const browser = await puppeteer.launch();
+        const page = await browser.newPage();
+        await page.setContent(html);
 
-        const options = {
-            format: 'Letter',
-        };
+        const pdfBuffer = await page.pdf({ format: 'Letter' });
 
-        pdf.create(html, options).toStream((err, stream) => {
-            if (err) {
-                console.log('error is here',err)
-            }
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', 'attachment; filename="Timesheet.pdf"');
+        res.send(pdfBuffer);
 
-            res.setHeader('Content-Type', 'application/pdf');
-            res.setHeader('Content-Disposition', 'attachment; filename="Timesheet.pdf"');
-            stream.pipe(res);
-        });
+        await browser.close();
+      })();
     });
-  });
-});
+  } catch (error) {
+    console.error('Error generating PDF:', error);
+    res.status(500).send('Internal Server Error');
+  }
 });
 router.get('/printdatasheet2', (req, res) => {
 
@@ -459,7 +456,7 @@ router.get('/edit-datasheet/:id', async (req, res) => {
 
   let edatasheet = await userHelpers.getDatasheetDetails(req.params.id)
   var activeProjects = [];
-  projectHelpers.getAllproject().then((projects) => { 
+  projectHelpers.getAllproject().then((projects) => {
     for (let j = 0; j < projects.length; j++) {
       if (projects[j].projectstatus === 'Ongoing') {
       
