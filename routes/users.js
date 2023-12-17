@@ -171,7 +171,7 @@ router.get('/printdatasheet', (req, res) => {
 
         pdf.create(html, options).toStream((err, stream) => {
             if (err) {
-                return res.status(500).send(err);
+                console.log('error is here')
             }
 
             res.setHeader('Content-Type', 'application/pdf');
