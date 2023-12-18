@@ -168,7 +168,8 @@ router.get('/printdatasheet', async (req, res) => {
         const pdfBuffer = await page.pdf({ format: 'Letter' });
 
         res.setHeader('Content-Type', 'application/pdf');
-        res.setHeader('Content-Disposition', 'attachment; filename="Timesheet.pdf"');
+        const formattedDate = DayView.dayview(lastdates[0].date1);
+        res.setHeader('Content-Disposition', `attachment; filename="${formattedDate}_Timesheet.pdf"`);
         res.send(pdfBuffer);
 
         await browser.close();
@@ -222,7 +223,8 @@ router.get('/printdatasheet2', async (req, res) => {
         const pdfBuffer = await page.pdf({ format: 'Letter' });
 
         res.setHeader('Content-Type', 'application/pdf');
-        res.setHeader('Content-Disposition', 'attachment; filename="Timesheet.pdf"');
+        const formattedDate = DayView.dayview(lastdates[0].date2);
+        res.setHeader('Content-Disposition', `attachment; filename="${formattedDate}_Timesheet.pdf"`);
         res.send(pdfBuffer);
 
         await browser.close();
