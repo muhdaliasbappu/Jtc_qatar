@@ -153,7 +153,7 @@ router.get('/printdatasheet', async (req, res) => {
       alloweddatasheet1[t].index = t + 1;
     }
 
-    alloweddatasheet1.date = DayView.dayview(lastdates[0].date2) ;
+    alloweddatasheet1.date = DayView.dayview(lastdates[0].date1) ;
 
     res.render('template', { alloweddatasheet1 }, (err, html) => {
       if (err) {
