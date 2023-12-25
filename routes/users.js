@@ -153,6 +153,7 @@ router.get('/printdatasheet', async (req, res) => {
       alloweddatasheet1[t].index = t + 1;
     }
 
+
     alloweddatasheet1.date = DayView.dayview(lastdates[0].date1) ;
 
     res.render('template', { alloweddatasheet1 }, (err, html) => {
@@ -170,6 +171,7 @@ router.get('/printdatasheet', async (req, res) => {
         res.setHeader('Content-Type', 'application/pdf');
         const formattedDate = DayView.dayview(lastdates[0].date1);
         res.setHeader('Content-Disposition', `attachment; filename="${formattedDate}_Timesheet.pdf"`);
+
         res.send(pdfBuffer);
 
         await browser.close();
@@ -267,7 +269,7 @@ router.post('/users/employee-list/', async (req, res) => {
 
    
     let semployee = await employeHelpers.getEmployeeDetails(req.body.employee_id);
-console.log(req.body)
+
 
 
   var datasheet = req.body
@@ -291,11 +293,13 @@ if(semployee.employeeType === 'Hired Labour (Hourly)'){
 datasheet.sallowance = '';
 datasheet.sbonus = ''; 
 datasheet.srateph = semployee.srateph;
+datasheet.workinghour = '8';
 }else{
 datasheet.sbasic = semployee.sbasic;
 datasheet.sallowance = semployee.sallowance;
 datasheet.sbonus = semployee.sbonus;
 datasheet.srateph = '';
+datasheet.workinghour = '8';
 }
 
 userHelpers.getDatasheet().then(function (edatasheet) {
@@ -475,5 +479,3 @@ router.post('/edit-datasheet/:id', (req, res) => {
 })
 
 module.exports = router;
-
-
