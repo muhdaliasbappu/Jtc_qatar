@@ -8,10 +8,20 @@
       <div class="row">
                             <div class="col-12">
                                 <div class="page-title-box">
-                                 
-                                    <h4 class="page-title">DATE: {{searchdatasheet.date}}</h4>
-            
+                                  <div style="float: right; margin-top: 20px;">
+                                    <form action="/admin/change-workhour/{{searchdatasheet.date1}}" method="POST" >
+                                <div class="input-group">
+                                    <input type="number" name="workhour" class="form-control dropdown-toggle" placeholder="Change Working Hour" id="top-search" required>
+                                    
+                                    <button class="input-group-text btn btn-primary" type="submit" onclick="return confirm('Are you sure you want to change the working hours on {{searchdatasheet.date}}')">Apply</button>
                                 </div>
+                                   </form>
+                                    
+                                    </div>
+                                    <h4 class="page-title">DATE: {{searchdatasheet.date}}</h4>
+        
+                                </div>
+
                             </div>
                         </div>
                         <!-- end page title -->
