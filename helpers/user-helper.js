@@ -179,9 +179,199 @@ module.exports = {
             });
         });
     },
+    gettimesheetbydate:(date)=>{
+        return new Promise((resolve, reject) => {
+           
+            const endOfDay = new Date(date);
+            endOfDay.setHours(23, 59, 59, 999);
+        
+            db.get().collection('datasheet').find({
+                date: { $gte: date, $lte: endOfDay }
+            }).toArray()
+            .then((response) => {
+               
+                resolve(response);
+                
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                reject(error);
+            });
+        });
+
+
+    },
+
+    getDatabByproject1: ( month, projectname , employeeType) => {
+        
+        return new Promise((resolve, reject) => {
+            const [year, monthNumber] = month.split('-');
+            const firstDayOfMonth = new Date(year, monthNumber - 1, 1);
+            const lastDayOfMonth = new Date(year, monthNumber, 0, 23, 59, 59, 999); // Set to the end of the last day of the month
+            db.get().collection('datasheet').find({
+                $and: [
+                    { date: { $gte: firstDayOfMonth } },
+                    { date: { $lte: lastDayOfMonth } },
+                    { projectname1: projectname } ,
+                    { employeeType: employeeType } ,
+                    // Adjust the field name based on your actual schema
+                ]
+                
+                
+            }).toArray()
+            .then((response) => {
+                resolve(response);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                reject(error);
+            });
+        });
+    },
+    getDatabByproject2: ( month, projectname , employeeType) => {
+        
+        return new Promise((resolve, reject) => {
+            const [year, monthNumber] = month.split('-');
+            const firstDayOfMonth = new Date(year, monthNumber - 1, 1);
+            const lastDayOfMonth = new Date(year, monthNumber, 0, 23, 59, 59, 999); // Set to the end of the last day of the month
+            db.get().collection('datasheet').find({
+                $and: [
+                    { date: { $gte: firstDayOfMonth } },
+                    { date: { $lte: lastDayOfMonth } },
+                    { projectname2: projectname } ,
+                    { employeeType: employeeType } ,
+                    // Adjust the field name based on your actual schema
+                ]
+                
+                
+            }).toArray()
+            .then((response) => {
+                resolve(response);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                reject(error);
+            });
+        });
+    }, getDatabByproject3: ( month, projectname , employeeType) => {
+        
+        return new Promise((resolve, reject) => {
+            const [year, monthNumber] = month.split('-');
+            const firstDayOfMonth = new Date(year, monthNumber - 1, 1);
+            const lastDayOfMonth = new Date(year, monthNumber, 0, 23, 59, 59, 999); // Set to the end of the last day of the month
+            db.get().collection('datasheet').find({
+                $and: [
+                    { date: { $gte: firstDayOfMonth } },
+                    { date: { $lte: lastDayOfMonth } },
+                    { projectname3: projectname } ,
+                    { employeeType: employeeType } ,
+                    // Adjust the field name based on your actual schema
+                ]
+                
+                
+            }).toArray()
+            .then((response) => {
+                resolve(response);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                reject(error);
+            });
+        });
+    }, getDatabByproject4: ( month, projectname , employeeType) => {
+        
+        return new Promise((resolve, reject) => {
+            const [year, monthNumber] = month.split('-');
+            const firstDayOfMonth = new Date(year, monthNumber - 1, 1);
+            const lastDayOfMonth = new Date(year, monthNumber, 0, 23, 59, 59, 999); // Set to the end of the last day of the month
+            db.get().collection('datasheet').find({
+                $and: [
+                    { date: { $gte: firstDayOfMonth } },
+                    { date: { $lte: lastDayOfMonth } },
+                    { projectname4: projectname } ,
+                    { employeeType: employeeType } ,
+                    // Adjust the field name based on your actual schema
+                ]
+                
+                
+            }).toArray()
+            .then((response) => {
+                resolve(response);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                reject(error);
+            });
+        });
+    }, getDatabByproject5: ( month, projectname , employeeType) => {
+        
+        return new Promise((resolve, reject) => {
+            const [year, monthNumber] = month.split('-');
+            const firstDayOfMonth = new Date(year, monthNumber - 1, 1);
+            const lastDayOfMonth = new Date(year, monthNumber, 0, 23, 59, 59, 999); // Set to the end of the last day of the month
+            db.get().collection('datasheet').find({
+                $and: [
+                    { date: { $gte: firstDayOfMonth } },
+                    { date: { $lte: lastDayOfMonth } },
+                    { projectname5: projectname } ,
+                    { employeeType: employeeType } ,
+                    // Adjust the field name based on your actual schema
+                ]
+                
+                
+            }).toArray()
+            .then((response) => {
+                resolve(response);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                reject(error);
+            });
+        });
+    },updateWorkingHourForDate: (targetDate, newWorkingHour, callback) => {
+        const startOfDay= new Date(targetDate);
+        const endOfDay= new Date(targetDate);
+        endOfDay.setHours(23, 59, 59, 999);
+       
+    
+        db.get().collection('datasheet').updateMany(
+            { date: { $gte: startOfDay, $lte: endOfDay } }, // Using $gte and $lte for a range covering the entire day
+            { $set: { workinghour: newWorkingHour } },
+            (err, result) => {
+                if (err) {
+                    console.error('Error updating datasheets:', err);
+                    callback(false);
+                } else {
+                    // Log the update result for debugging
+                    console.log('Update Result:', result);
+    
+                    console.log('Working hour updated for matching date:', result.modifiedCount);
+                    callback(true);
+                }
+            }
+        );
+    },
+    updateElementInAllDatasheets: (elementToAdd, callback) => {
+        db.get().collection('datasheet').updateMany(
+            // The filter to match all documents (empty filter matches all)
+            {},
+            // The update operation to add the element as a string
+            { $set: { workinghour: elementToAdd } },
+            // Callback function to handle the result
+            (err, result) => {
+                if (err) {
+                    console.error('Error updating datasheets:', err);
+                    callback(false);
+                } else {
+                    console.log('String element added to all datasheets:', result.modifiedCount);
+                    callback(true);
+                }
+            }
+        );
+    },
+    
+
     
 
     
 }
-
-
