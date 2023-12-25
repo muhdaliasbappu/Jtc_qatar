@@ -260,8 +260,10 @@ router.post("/datasheet", function (req, res) {
         ar++;
     }
     if(searchdatasheet[0]){
+
     searchdatasheet.date =DayView.dayview(searchdatasheet[0].datevalue) ;
     searchdatasheet.date1 = searchdatasheet[0].datevalue
+    searchdatasheet.workinghour1 = searchdatasheet[0].workinghour
     }
 
     res.render("./admin/searchdatasheet", { admin: true, searchdatasheet });
@@ -282,6 +284,7 @@ const d = new Date(req.params.date);
     if(searchdatasheet[0]){
     searchdatasheet.date =DayView.dayview(searchdatasheet[0].datevalue) ;
     searchdatasheet.date1 = searchdatasheet[0].datevalue
+    searchdatasheet.workinghour1 = searchdatasheet[0].workinghour
     }
 
     res.render("./admin/searchdatasheet", { admin: true, searchdatasheet });
@@ -598,12 +601,34 @@ router.post("/edit-salary/:id", (req, res) => {
   }
   
 });
+router.get("/addtemp", async function (req, res) {
+const elementToAdd = '8';
+
+userHelpers.updateElementInAllDatasheets(elementToAdd, (success) => {
+    if (success) {
+        console.log('Element added to all datasheets successfully.');
+    } else {
+        console.log('Failed to add element to datasheets.');
+    }
+});
+})
 
 
 
-
+// router.get("/edit-delete/:id", async function (req, res) {
+//   let admin = req.session.user;
+//   if (admin) {
+//     userHelpers.deleteTimesheet(req.params.id).then((response) => {
+        
+        
+//     });
+ 
+  
+//   }
+// })
 
 
 
 
 module.exports = router;
+
