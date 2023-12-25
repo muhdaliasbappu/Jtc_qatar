@@ -598,31 +598,10 @@ router.post("/edit-salary/:id", (req, res) => {
   }
   
 });
-router.get("/addtemp", async function (req, res) {
-const elementToAdd = '8';
-
-userHelpers.updateElementInAllDatasheets(elementToAdd, (success) => {
-    if (success) {
-        console.log('Element added to all datasheets successfully.');
-    } else {
-        console.log('Failed to add element to datasheets.');
-    }
-});
-})
 
 
 
-// router.get("/edit-delete/:id", async function (req, res) {
-//   let admin = req.session.user;
-//   if (admin) {
-//     userHelpers.deleteTimesheet(req.params.id).then((response) => {
-        
-        
-//     });
- 
-  
-//   }
-// })
+
 
 
 
