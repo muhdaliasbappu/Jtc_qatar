@@ -351,24 +351,7 @@ module.exports = {
             }
         );
     },
-    updateElementInAllDatasheets: (elementToAdd, callback) => {
-        db.get().collection('datasheet').updateMany(
-            // The filter to match all documents (empty filter matches all)
-            {},
-            // The update operation to add the element as a string
-            { $set: { workinghour: elementToAdd } },
-            // Callback function to handle the result
-            (err, result) => {
-                if (err) {
-                    console.error('Error updating datasheets:', err);
-                    callback(false);
-                } else {
-                    console.log('String element added to all datasheets:', result.modifiedCount);
-                    callback(true);
-                }
-            }
-        );
-    },
+    
     
 
     
