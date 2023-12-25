@@ -251,31 +251,42 @@ router.get("/datasheet", function (req, res) {
 });
 
 router.post("/datasheet", function (req, res) {
-  console.log(req.body)
-  const d = new Date(req.body.searchdate);
  
-
-  userHelpers.getDatasheet().then(function (employeedatasheet) {
+  const d = new Date(req.body.searchdate);
+ userHelpers.gettimesheetbydate(d).then(function ( searchdatasheet){
     let ar = 0;
-    let searchdatasheet = []; // Define searchdatasheet array here
-
-    for (let i = 0; i < employeedatasheet.length; i++) {
-      if (
-        d.getFullYear() === employeedatasheet[i].date.getFullYear() &&
-        d.getMonth() === employeedatasheet[i].date.getMonth() &&
-        d.getDate() === employeedatasheet[i].date.getDate()
-      ) {
-        searchdatasheet[ar] = employeedatasheet[i];
+    for (let i = 0; i < searchdatasheet.length; i++) {
         searchdatasheet[ar].index = ar + 1;
         ar++;
-      }
     }
     if(searchdatasheet[0]){
     searchdatasheet.date =DayView.dayview(searchdatasheet[0].datevalue) ;
+    searchdatasheet.date1 = searchdatasheet[0].datevalue
     }
 
     res.render("./admin/searchdatasheet", { admin: true, searchdatasheet });
   });
+});
+router.post("/change-workhour/:date", function (req, res) {
+
+const targetDate = req.params.date; // Replace with your target date
+const newWorkingHour = req.body.workhour; // Replace with the new working hour
+userHelpers.updateWorkingHourForDate(targetDate, newWorkingHour);
+const d = new Date(req.params.date);
+ userHelpers.gettimesheetbydate(d).then(function ( searchdatasheet){
+    let ar = 0;
+    for (let i = 0; i < searchdatasheet.length; i++) {
+        searchdatasheet[ar].index = ar + 1;
+        ar++;
+    }
+    if(searchdatasheet[0]){
+    searchdatasheet.date =DayView.dayview(searchdatasheet[0].datevalue) ;
+    searchdatasheet.date1 = searchdatasheet[0].datevalue
+    }
+
+    res.render("./admin/searchdatasheet", { admin: true, searchdatasheet });
+  });
+  
 });
 
 router.get("/edit-datasheets/:id", async (req, res) => {
@@ -333,6 +344,7 @@ router.post("/datasearch", async (req, res) => {
       });
     });
 });
+
 
 router.get("/edit-searcheddata/:id", async (req, res) => {
   let edatasheet = await userHelpers.getDatasheetDetails(req.params.id);
@@ -586,6 +598,18 @@ router.post("/edit-salary/:id", (req, res) => {
   }
   
 });
+router.get("/addtemp", async function (req, res) {
+const elementToAdd = '8';
+
+userHelpers.updateElementInAllDatasheets(elementToAdd, (success) => {
+    if (success) {
+        console.log('Element added to all datasheets successfully.');
+    } else {
+        console.log('Failed to add element to datasheets.');
+    }
+});
+})
+
 
 
 // router.get("/edit-delete/:id", async function (req, res) {
