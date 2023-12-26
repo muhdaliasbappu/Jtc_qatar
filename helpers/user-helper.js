@@ -350,11 +350,38 @@ module.exports = {
                 }
             }
         );
+    },updateWorkingHourAndStatusForDate: (targetDate, newWorkingHour,  callback) => {
+      
+        const startOfDay = new Date(targetDate);
+        const endOfDay = new Date(targetDate);
+        endOfDay.setHours(23, 59, 59, 999);
+    
+        db.get().collection('datasheet').updateMany(
+            {
+                date: { $gte: startOfDay, $lte: endOfDay },
+                todaystatus: "Unpaid Leave"
+            },
+            {
+                $set: {
+                    workinghour: newWorkingHour,
+                    todaystatus: 'Paid Leave'
+                }
+            },
+            (err, result) => {
+                if (err) {
+                    console.error('Error updating datasheets:', err);
+                    callback(false);
+                } else {
+                    // Log the update result for debugging
+                    console.log('Update Result:', result);
+    
+                    console.log('Working hour and todaystatus updated for matching date:', result.modifiedCount);
+                    callback(true);
+                }
+            }
+        );
     },
     
     
-
-    
-
-    
 }
+
