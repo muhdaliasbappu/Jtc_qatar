@@ -272,8 +272,16 @@ router.post("/datasheet", function (req, res) {
 router.post("/change-workhour/:date", function (req, res) {
 
 const targetDate = req.params.date; // Replace with your target date
-const newWorkingHour = req.body.workhour; // Replace with the new working hour
-userHelpers.updateWorkingHourForDate(targetDate, newWorkingHour);
+const newWorkingHour = req.body.workhour;
+if(newWorkingHour > 0){
+  userHelpers.updateWorkingHourForDate(targetDate, newWorkingHour);
+
+}else{
+  
+  userHelpers.updateWorkingHourAndStatusForDate(targetDate, newWorkingHour)
+  userHelpers.updateWorkingHourForDate(targetDate, newWorkingHour);
+}
+
 const d = new Date(req.params.date);
  userHelpers.gettimesheetbydate(d).then(function ( searchdatasheet){
     let ar = 0;
