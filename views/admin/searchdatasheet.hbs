@@ -8,11 +8,23 @@
       <div class="row">
                             <div class="col-12">
                                 <div class="page-title-box">
-                                  <div style="float: right; margin-top: 20px;">
+                                         {{!-- <div class="page-title-right">
+                                        <form  action="/admin/change-workhour/{{searchdatasheet.date1}}" method="POST">
+                                            <div class="input-group">
+                                                <input type="number" name="workhour" class="form-control dropdown-toggle" placeholder="Change Working Hour" id="top-search"  required>
+                                                <button class="input-group-text btn btn-primary " type="submit" data-bs-toggle="dropdown"
+                                                    aria-haspopup="true" aria-expanded="false" onclick="return confirm('Are you sure you want to change the working hours on {{searchdatasheet.date}}')">
+                                                    Apply
+                                                </button>
+                                          
+                                            </div>
+                                        </form>
+                                    </div> --}}
+                                  <div class="page-title-right">
                                     <form action="/admin/change-workhour/{{searchdatasheet.date1}}" method="POST" >
                                 <div class="input-group">
-                                    <input type="number" name="workhour" class="form-control dropdown-toggle" placeholder="Change Working Hour" id="top-search" required>
-                                    
+                                    <input type="number" name="workhour" class="form-control dropdown-toggle" placeholder="Change Working Hour" min="0" max="16" required style="width: 200px;">
+
                                     <button class="input-group-text btn btn-primary" type="submit" onclick="return confirm('Are you sure you want to change the working hours on {{searchdatasheet.date}}')">Apply</button>
                                 </div>
                                    </form>
