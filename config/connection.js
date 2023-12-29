@@ -4,38 +4,35 @@ const state = {
   db: null,
 };
 
-// mongodb connection string
 const url = "mongodb://127.0.0.1:27017";
-// database name
-const dbName = "Jtcqatars";
 
-// create a new mongodb client object
 const client = new MongoClient(url);
 
-// function to establish mongodb connection
-const connect = async (cb) => {
+const connect = async (dbName, cb) => {
   try {
-    // connecting to mongodb
     await client.connect();
-    // setting up database name to the connected client
     const db = client.db(dbName);
-    // setting up database name to the state
     state.db = db;
-    // callback after connected
-    return cb();
+    // Check if cb is a function before calling it
+    if (typeof cb === 'function') {
+      return cb();
+    } else {
+      console.error('Callback is not a function');
+    }
   } catch (err) {
-    // callback when an error occurs
-    return cb(err);
+    // Check if cb is a function before calling it with the error
+    if (typeof cb === 'function') {
+      return cb(err);
+    } else {
+      console.error('Callback is not a function');
+    }
   }
 };
 
-// function to get the database instance
 const get = () => state.db;
 
-// exporting functions
 module.exports = {
   connect,
   get,
 };
-
 
