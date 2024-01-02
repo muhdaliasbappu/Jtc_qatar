@@ -1,642 +1,501 @@
-var express = require("express");
+var express = require('express');
+
+const bodyParser = require('body-parser');
+
 var router = express.Router();
-var employeHelpers = require("../helpers/employee-helpers");
-var projectHelpers = require("../helpers/project-helpers");
-var adminHelpers = require("../helpers/admin-helper");
-var userHelpers = require("../helpers/user-helper");
-const { response } = require("../app");
-const async = require("hbs/lib/async");
-const { search } = require("./users");
+var employeHelpers = require('../helpers/employee-helpers')
+var projectHelpers = require('../helpers/project-helpers')
+var userHelpers = require('../helpers/user-helper');
+var expiringTimeliest = require('../modules/cron');
 var DayView = require('../modules/DayView')
-var allsalaryreport = require('../modules/report')
-var allprojectreport = require('../modules/project-report')
 
-
-
-/* GET home page. */
-
-//admin login
-
-router.get("/", function (req, res, next) {
-  if (req.session.loggedIn) {
-    res.redirect("/admin/dashboard");
-  } else res.render("./admin/admin-login");
-});
-
-
-router.get("/dashboard", function (req, res, next) {
-  let admin = req.session.user;
-
-      res.render("./admin/dashboard", { admin: true});
-    
-  
-});
-//employee list
-
-router.get("/employee", function (req, res, next) {
-  let admin = req.session.user;
-  if (admin) {
-    employeHelpers.getAllemployee().then((employee) => {
-   for(let i=0; i<employee.length; i++){
-    employee[i].index = i+1;
-   }
-      res.render("./admin/employee", { admin: true, employee });
-    });
+const { all } = require('../app');
+const async = require('hbs/lib/async');
+router.use(express.json());
+router.use(express.urlencoded({ extended: true }));
+const cron = require('node-cron')
+const schedule = require('node-schedule');
+process.env.TZ = 'Asia/Qatar';
+const pdf = require('html-pdf');
+const puppeteer = require('puppeteer');
+cron.schedule('55 23 * * *',() => {
+  var dateObj2 = new Date();
+  dateObj2.setDate(dateObj2.getDate() - 2);
+  if(dateObj2.getDay() === 5){
+ expiringTimeliest.cronfriday()
+  }else{
+    expiringTimeliest.cronnotfriday()
   }
-});
+})
 
-//project list
 
-router.get("/projects", function (req, res, next) {
-  let admin = req.session.user;
+function getthedate() {
+  var dateObj1 = new Date();
+  dateObj1.setDate(dateObj1.getDate() - 1);
 
-  if (admin) {
-    projectHelpers.getAllproject().then((project) => {
-      for(let i=0; i<project.length; i++){
-        project[i].index = i+1;
-       }
-      res.render("./admin/projects", { admin: true, project });
-    });
-  }
-});
+  var date1 = dateObj1.getFullYear() + '-' + (dateObj1.getMonth() + 1) + '-' + dateObj1.getDate();
+  var dateObj2 = new Date();
+  dateObj2.setDate(dateObj2.getDate() - 2);
 
-//add employee
+  var date2 = dateObj2.getFullYear() + '-' + (dateObj2.getMonth() + 1) + '-' + dateObj2.getDate();
+  const dates = [{ date1, date2 }]
 
-router.get("/add-employee", function (req, res, next) {
-  let admin = req.session.user;
-  if (admin) {
-    userHelpers.getAlluser().then((users) => {
-      res.render("./admin/add-employee", { admin: true, users });
-    });
-  }
-});
-
-//add project
- 
-router.get("/add-project", function (req, res, next) {
-  let admin = req.session.user;
-  if (admin) {
-    res.render("./admin/add-project", { admin: true });
-  }
-});
-
-//user setting
-
-router.get("/user-setting", function (req, res, next) {
-  let admin = req.session.user;
-  if (admin) {
-    userHelpers.getAlluser().then((users) => {
-      for(let i = 0; i<users.length; i++){
-        users[i].index = i+1;
-      }
-      res.render("./admin/user-setting", { admin: true, users });
-    });
-  }
-});
-
-//add user
-
-router.get("/add-user", function (req, res, next) {
-  let admin = req.session.user;
-  if (admin) {
-    res.render("./admin/add-user", { admin: true });
-  }
-});
-
-//post add employee
-
-router.post("/add-employee", function (req, res) {
-  employeHelpers.addemployee(req.body, (result) => {
-    res.redirect("/admin/add-employee");
-  });
-});
-
-//post add project
-
-router.post("/add-project", function (req, res) {
-  projectHelpers.addproject(req.body, () => {
-    res.render("./admin/add-project", { admin: true });
-  });
-});
-
-//post add user
-
-router.post("/add-user", function (req, res) {
-  userHelpers.adduser(req.body, () => {
-    res.redirect("/admin/user-setting");
-  });
-});
-
-//post login
-
-router.post("/", (req, res) => {
-  adminHelpers.doLogin(req.body).then((response) => {
-    if (response.status) {
-      req.session.user = response.admin;
-      req.session.user = true;
-      res.redirect("/admin/dashboard");
-    } else {
-      res.redirect("/");
-    }
-  });
-});
-
-// logout
-router.get("/logout", (req, res) => {
-  req.session.destroy();
-  res.redirect("/admin");
-});
-
-//edit employee
-
-router.get("/edit-employee/:id", async (req, res) => {
-  let semployee = await employeHelpers.getEmployeeDetails(req.params.id);
-
-  userHelpers.getAlluser().then((users) => {
-    res.render("admin/edit-employee", { admin: true, semployee, users });
-  });
-});
-router.post("/edit-employee/:id", (req, res) => {
-  employeHelpers.updateEmployee(req.params.id, req.body).then(() => {
-    res.redirect("/admin/employee");
-  });
-});
-//delete employee
-
-router.get("/delete-employee/:id", (req, res) => {
-  let empId = req.params.id;
-  employeHelpers.deleteEmployee(empId).then((response) => {
-    res.redirect("/admin/employee");
-  });
-});
-
-//edit project
-
-router.get("/edit-project/:id", async (req, res) => {
-  let sproject = await projectHelpers.getProjectDetails(req.params.id);
-
-  res.render("admin/edit-project", { admin: true, sproject });
-});
-router.post("/edit-project/:id", (req, res) => {
-  projectHelpers.updateProject(req.params.id, req.body).then(() => {
-    res.redirect("/admin/projects");
-  });
-});
-//delete project
-
-router.get("/delete-project/:id", (req, res) => {
-  let proId = req.params.id;
-  projectHelpers.deleteProject(proId).then((response) => {
-    res.redirect("/admin/projects");
-  });
-});
-//edit user
-
-router.get("/edit-user/:id", async (req, res) => {
-  let suser = await userHelpers.getuserDetails(req.params.id);
-  res.render("admin/edit-user", { admin: true, suser });
-});
-router.post("/edit-user/:id", (req, res) => {
-  userHelpers.updateuser(req.params.id, req.body).then(() => {
-    res.redirect("/admin/user-setting");
-  });
-});
-//delete user
-
-router.get("/delete-user/:id", (req, res) => {
-  let userId = req.params.id;
-  userHelpers.deleteuser(userId).then((response) => {
-    res.redirect("/admin/user-setting");
-  });
-});
-
-//adminsetting
-
-router.get("/admin-dlogin", function (req, res, next) {
-  let admin = req.session.user;
-  if (admin) {
-    res.render("./admin/admin-dlogin", { admin: true });
-  }
-});
-router.get("/edit-admin", async function (req, res) {
-  let sadmin = await adminHelpers.getadminDetails();
-  if (req.session.adminuser) {
-    res.render("admin/edit-admin", { admin: true, sadmin });
-  }
-});
-
-router.post("/admin-dlogin", (req, res) => {
-  adminHelpers.doLogin(req.body).then((response) => {
-    if (response.status) {
-      req.session.adminuser = response.admin;
-      req.session.adminuser = true;
-      res.redirect("/admin/edit-admin");
-    } else {
-      res.redirect("/admin/admin-dlogin");
-    }
-  });
-});
-router.post("/edit-admin/:id", (req, res) => {
-  adminHelpers.updateadmin(req.params.id, req.body).then(() => {
-    res.redirect("/admin/employee/");
-  });
-});
-
-//  datasheet
-router.get("/datasheet", function (req, res) {
-  let admin = req.session.user;
-  if (admin) {
-    res.render("./admin/datasheet", { admin: true });
-  }
-});
-
-router.post("/datasheet", function (req, res) {
- 
-  const d = new Date(req.body.searchdate);
- userHelpers.gettimesheetbydate(d).then(function ( searchdatasheet){
-    let ar = 0;
-    for (let i = 0; i < searchdatasheet.length; i++) {
-        searchdatasheet[ar].index = ar + 1;
-        ar++;
-    }
-    if(searchdatasheet[0]){
-
-    searchdatasheet.date =DayView.dayview(searchdatasheet[0].datevalue) ;
-    searchdatasheet.date1 = searchdatasheet[0].datevalue
-    searchdatasheet.workinghour1 = searchdatasheet[0].workinghour
-    }
-
-    res.render("./admin/searchdatasheet", { admin: true, searchdatasheet });
-  });
-});
-router.post("/change-workhour/:date", function (req, res) {
-
-const targetDate = req.params.date; // Replace with your target date
-const newWorkingHour = req.body.workhour;
-if(newWorkingHour > 0){
-  userHelpers.updateWorkingHourForDate(targetDate, newWorkingHour);
-
-}else{
-  
-  userHelpers.updateWorkingHourAndStatusForDate(targetDate, newWorkingHour)
-  userHelpers.updateWorkingHourForDate(targetDate, newWorkingHour);
+  return dates;
 }
 
-const d = new Date(req.params.date);
- userHelpers.gettimesheetbydate(d).then(function ( searchdatasheet){
-    let ar = 0;
-    for (let i = 0; i < searchdatasheet.length; i++) {
-        searchdatasheet[ar].index = ar + 1;
-        ar++;
-    }
-    if(searchdatasheet[0]){
-    searchdatasheet.date =DayView.dayview(searchdatasheet[0].datevalue) ;
-    searchdatasheet.date1 = searchdatasheet[0].datevalue
-    searchdatasheet.workinghour1 = searchdatasheet[0].workinghour
-    }
 
-    res.render("./admin/searchdatasheet", { admin: true, searchdatasheet });
-  });
-  
+
+
+
+router.get('/', function (req, res, next) {
+  res.render('./users/user-login');
 });
+router.get('/employeelist', function (req, res) {
+  if (req.session.users) {
+        var dateObj1 = new Date();
+        dateObj1.setDate(dateObj1.getDate() - 1);
+        var date1 = dateObj1.getFullYear() + '-' + (dateObj1.getMonth() + 1) + '-' + dateObj1.getDate();
+        let datess = []
+        datess.date1 = date1
+        var days = DayView.dayview(date1)
+        datess.days = days
 
-router.get("/edit-datasheets/:id", async (req, res) => {
-  let edatasheet = await userHelpers.getDatasheetDetails(req.params.id);
-  var activeProjects = [];
-  projectHelpers.getAllproject().then((projects) => {
-    for (let j = 0; j < projects.length; j++) {
-      if (projects[j].projectstatus === "Ongoing") {
-        activeProjects.push(projects[j]);
-      }
-    }
-  });
-  res.render("./admin/edit-datasheets", {
-    admin: true,
-    edatasheet,
-    activeProjects,
-  });
-});
-router.post("/edit-datasheets/:id", (req, res) => {
-  userHelpers.updateDatasheet(req.params.id, req.body).then(() => {
-    res.redirect("/admin/datasheet");
-  });
-});
+    employeHelpers.getAllemployee().then(function (employees) {
+      var activeEmployees = [];
+      for (let i = 0; i < employees.length; i++) {
+        if (employees[i].Employeestatus === 'Working') {
+          if (employees[i].Employeeasigned === req.session.usernames) {
+          activeEmployees.push(employees[i]);
 
-router.get("/datasearch/:id", function (req, res) {
-  let admin = req.session.user;
-
-  if (admin) {
-    var idd = req.params.id;
-
-    res.render("./admin/datasearch", { admin: true, idd });
-  }
-});
-router.post("/datasearch", async (req, res) => {
-  var searcheddatas = [];
-  let datadetail = await employeHelpers.getEmployeeDetails(req.body.employee_id);
-  userHelpers.getdatabdate(req.body.startdate, req.body.enddate).then(function (databdate) {
-   
-    
-      for (i = 0; i < databdate.length; i++) {
-        if (databdate[i].employee_id === req.body.employee_id) {
-          searcheddatas[i] = databdate[i];
-     
+          }
         }
       }
+      projectHelpers.getAllproject().then((projects) => {
+        var activeProjects = [];
+        for (let j = 0; j < projects.length; j++) {
+          if (projects[j].projectstatus === 'Ongoing') {
+            activeProjects.push(projects[j]);
 
-      const searcheddata = searcheddatas.sort(
-        (objA, objB) => Number(objA.date) - Number(objB.date)
-      );
-   
-      res.render("./admin/searcheddata", {
-        admin: true,
-        searcheddata,
-        datadetail,
-      });
+          }
+        }
+        
+        res.render('./users/employee-list', {
+
+          user: true, employees: JSON.stringify(activeEmployees), activeProjects, datess
+        });
+      })
+
     });
+  }
+})
+
+router.get('/employeelist2', function (req, res) {
+  if (req.session.users) {
+
+    employeHelpers.getAllemployee().then(function (employees) {
+      var activeEmployees = [];
+      for (let i = 0; i < employees.length; i++) {
+        if (employees[i].Employeestatus === 'Working') {
+          if (employees[i].Employeeasigned === req.session.usernames) {
+            activeEmployees.push(employees[i]);
+          }
+        }
+      }
+      projectHelpers.getAllproject().then((projects) => {
+        var activeProjects = [];
+        for (let j = 0; j < projects.length; j++) {
+          if (projects[j].projectstatus === 'Ongoing') {
+            activeProjects.push(projects[j]);
+
+          }
+        }
+        var dateObj2 = new Date();
+        dateObj2.setDate(dateObj2.getDate() - 2);
+        var date2 = dateObj2.getFullYear() + '-' + (dateObj2.getMonth() + 1) + '-' + dateObj2.getDate();
+        let datess = []
+        datess.date2 = date2
+        var days = DayView.dayview(date2)
+        datess.days = days
+        res.render('./users/employee-list2', {
+
+          user: true, employees: JSON.stringify(activeEmployees), activeProjects, datess
+        });
+      })
+
+    }); 
+  }
+})
+router.get('/printdatasheet', async (req, res) => {
+  try {
+    const employeedatasheet = await userHelpers.getDatasheet();
+    const alloweddatasheet1 = [];
+    const activeEmployees1 = [];
+    const lastdates = getthedate();
+
+    const employees = await employeHelpers.getAllemployee();
+    for (let i = 0; i < employees.length; i++) {
+      if (employees[i].Employeeasigned === req.session.usernames) {
+        activeEmployees1.push(employees[i]);
+      }
+    }
+
+    for (let z = 0; z < employeedatasheet.length; z++) {
+      if (employeedatasheet[z].datevalue === lastdates[0].date1) {
+        for (let x = 0; x < activeEmployees1.length; x++) {
+          if (activeEmployees1[x]._id.toString() === employeedatasheet[z].employee_id) {
+            alloweddatasheet1.push(employeedatasheet[z]);
+          }
+        }
+      }
+    }
+
+    for (let t = 0; t < alloweddatasheet1.length; t++) {
+      alloweddatasheet1[t].index = t + 1;
+    }
+
+
+    alloweddatasheet1.date = DayView.dayview(lastdates[0].date1) ;
+
+    res.render('template', { alloweddatasheet1 }, (err, html) => {
+      if (err) {
+        return res.status(500).send(err);
+      }
+
+      (async () => {
+        const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox'] });
+        const page = await browser.newPage();
+        await page.setContent(html);
+
+        const pdfBuffer = await page.pdf({ format: 'Letter' });
+
+        res.setHeader('Content-Type', 'application/pdf');
+        const formattedDate = DayView.dayview(lastdates[0].date1);
+        res.setHeader('Content-Disposition', `attachment; filename="${formattedDate}_Timesheet.pdf"`);
+
+        res.send(pdfBuffer);
+
+        await browser.close();
+      })();
+    });
+  } catch (error) {
+    console.error('Error generating PDF:', error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+router.get('/printdatasheet2', async (req, res) => {
+  try {
+    const employeedatasheet = await userHelpers.getDatasheet();
+    const alloweddatasheet1 = [];
+    const activeEmployees1 = [];
+    const lastdates = getthedate();
+
+    const employees = await employeHelpers.getAllemployee();
+    for (let i = 0; i < employees.length; i++) {
+      if (employees[i].Employeeasigned === req.session.usernames) {
+        activeEmployees1.push(employees[i]);
+      }
+    }
+
+    for (let z = 0; z < employeedatasheet.length; z++) {
+      if (employeedatasheet[z].datevalue === lastdates[0].date2) {
+        for (let x = 0; x < activeEmployees1.length; x++) {
+          if (activeEmployees1[x]._id.toString() === employeedatasheet[z].employee_id) {
+            alloweddatasheet1.push(employeedatasheet[z]);
+          }
+        }
+      }
+    }
+
+    for (let t = 0; t < alloweddatasheet1.length; t++) {
+      alloweddatasheet1[t].index = t + 1;
+    }
+
+    alloweddatasheet1.date = DayView.dayview(lastdates[0].date2) ;
+
+    res.render('template', { alloweddatasheet1 }, (err, html) => {
+      if (err) {
+        return res.status(500).send(err);
+      }
+
+      (async () => {
+        const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox'] });
+        const page = await browser.newPage();
+        await page.setContent(html);
+
+        const pdfBuffer = await page.pdf({ format: 'Letter' });
+
+        res.setHeader('Content-Type', 'application/pdf');
+        const formattedDate = DayView.dayview(lastdates[0].date2);
+        res.setHeader('Content-Disposition', `attachment; filename="${formattedDate}_Timesheet.pdf"`);
+        res.send(pdfBuffer);
+
+        await browser.close();
+      })();
+    });
+  } catch (error) {
+    console.error('Error generating PDF:', error);
+    res.status(500).send('Internal Server Error');
+  }
 });
 
 
-router.get("/edit-searcheddata/:id", async (req, res) => {
-  let edatasheet = await userHelpers.getDatasheetDetails(req.params.id);
+
+router.post('/', (req, res) => {
+  userHelpers.uLogin(req.body).then((response) => {
+    if (response.status) {
+
+      req.session.users = response.user
+      req.session.usernames = response.user.usernames
+
+      req.session.users = true
+      res.redirect('/employeelist');
+
+    } else {
+      res.redirect('/')
+    }
+  })
+})
+router.get('/logout', (req, res) => {
+  req.session.destroy()
+  res.redirect('/')
+})
+
+
+
+
+
+//Time sheet upload
+router.post('/users/employee-list/', async (req, res) => {
+
+   
+    let semployee = await employeHelpers.getEmployeeDetails(req.body.employee_id);
+
+
+
+  var datasheet = req.body
+  var datevalue = req.body.datevalue
+  let datess = getthedate()
+
+  if (datevalue === datess[0].date1) {
+    var dateObj11 = new Date();
+    dateObj11.setDate(dateObj11.getDate() - 1);
+    datasheet.date = dateObj11;
+  } else if (datevalue === datess[0].date2) {
+    var dateObj22 = new Date();
+    dateObj22.setDate(dateObj22.getDate() - 2);
+    datasheet.date = dateObj22;
+  } else {
+    return 0;
+  }
+datasheet.employeeType = semployee.employeeType;
+  const dd = new Date(datasheet.date); 
+  if(dd.getDay() === 5){
+    if(semployee.employeeType === 'Hired Labour (Hourly)'){
+      datasheet.sbasic = '';
+    datasheet.sallowance = '';
+    datasheet.sbonus = ''; 
+    datasheet.srateph = semployee.srateph;
+    datasheet.workinghour = '0';
+    }else{
+    datasheet.sbasic = semployee.sbasic;
+    datasheet.sallowance = semployee.sallowance;
+    datasheet.sbonus = semployee.sbonus;
+    datasheet.srateph = '';
+    datasheet.workinghour = '0';
+    }
+
+  }else{
+
+if(semployee.employeeType === 'Hired Labour (Hourly)'){
+  datasheet.sbasic = '';
+datasheet.sallowance = '';
+datasheet.sbonus = ''; 
+datasheet.srateph = semployee.srateph;
+datasheet.workinghour = '8';
+}else{
+datasheet.sbasic = semployee.sbasic;
+datasheet.sallowance = semployee.sallowance;
+datasheet.sbonus = semployee.sbonus;
+datasheet.srateph = '';
+datasheet.workinghour = '8';
+}
+}
+userHelpers.getDatasheet().then(function (edatasheet) {
+  
+  if (!edatasheet.length) {
+    userHelpers.addDatasheet(datasheet, (result) => {
+
+    })
+  } else {
+    let count = 0;
+    let count1 = 0;
+    let count2 = 0;
+    let count3 = 0;
+    let datec = 0;
+    for (let i = 0; i < edatasheet.length; i++) {
+     
+      if (edatasheet[i].date.getFullYear() === datasheet.date.getFullYear()) {
+        if (edatasheet[i].date.getMonth() === datasheet.date.getMonth()) {
+          if (edatasheet[i].date.getDate() === datasheet.date.getDate()) {
+            datec++;
+            if (edatasheet[i].employee_id === datasheet.employee_id) {
+              
+              break;
+            } else {
+
+              count++;
+            }
+          }
+
+          else {
+            count1++;
+            if (count1 === edatasheet.length) {
+              userHelpers.addDatasheet(datasheet, (result) => {
+
+              })
+              break;
+            }
+          }
+        } else {
+          count2++;
+          if (count2 === edatasheet.length) {
+            userHelpers.addDatasheet(datasheet, (result) => {
+
+            })
+            break;
+          }
+        }
+      } else {
+        count3++;
+        if (count3 === edatasheet.length) {
+          userHelpers.addDatasheet(datasheet, (result) => {
+
+          })
+          break;
+        }
+      }
+    }
+    if (count === datec) {
+      userHelpers.addDatasheet(datasheet, (result) => {
+
+      })
+
+    }
+  }
+})
+
+});
+
+router.get('/employee-data', function (req, res, next) {
+
+  if (req.session.users) {
+    userHelpers.getDatasheet().then(function (employeedatasheet) {
+     
+      let alloweddatasheet1 = []
+      var activeEmployees1 = [];
+      let lastdates = getthedate() 
+
+      employeHelpers.getAllemployee().then(function (employees) {
+        for (let i = 0; i < employees.length; i++) {
+          if (employees[i].Employeeasigned === req.session.usernames) {
+            activeEmployees1.push(employees[i]);
+          }
+        }
+
+        for (let z = 0; z < employeedatasheet.length; z++) {
+           if (employeedatasheet[z].datevalue === lastdates[0].date1) {
+            for(let x=0; x < activeEmployees1.length; x++){
+              if(activeEmployees1[x]._id.toString() === employeedatasheet[z].employee_id){
+                alloweddatasheet1.push(employeedatasheet[z]);
+               
+              } 
+            }
+          }
+        }
+
+   
+        for(let t=0; t<alloweddatasheet1.length; t++){
+          alloweddatasheet1[t].index = t+1
+        }
+
+     
+    
+      alloweddatasheet1.date = DayView.dayview(lastdates[0].date1) ;
+      
+
+        res.render('./users/datasheet' , { user: true,  alloweddatasheet1 });
+      });
+    });
+  }
+});
+
+
+
+router.get('/employee-data2', function (req, res, next) {
+
+  if (req.session.users) {
+    userHelpers.getDatasheet().then(function (employeedatasheet) {
+     
+      let alloweddatasheet2 = []
+      var activeEmployees1 = [];
+      let lastdates = getthedate() 
+
+      employeHelpers.getAllemployee().then(function (employees) {
+        for (let i = 0; i < employees.length; i++) {
+          if (employees[i].Employeeasigned === req.session.usernames) {
+            activeEmployees1.push(employees[i]);
+          }
+        }
+
+        for (let z = 0; z < employeedatasheet.length; z++) {
+           if (employeedatasheet[z].datevalue === lastdates[0].date2) {
+            for(let x=0; x < activeEmployees1.length; x++){
+              if(activeEmployees1[x]._id.toString() === employeedatasheet[z].employee_id){
+                alloweddatasheet2.push(employeedatasheet[z]);
+               
+              } 
+            }
+          }
+        }
+
+   
+        for(let t=0; t<alloweddatasheet2.length; t++){
+          alloweddatasheet2[t].index = t+1
+        }
+
+     
+    
+      alloweddatasheet2.date = DayView.dayview(lastdates[0].date2) ;
+      
+
+        res.render('./users/datasheet2' , { user: true,  alloweddatasheet2 });
+      });
+    });
+  }
+});
+
+router.get('/edit-datasheet/:id', async (req, res) => {
+
+  let edatasheet = await userHelpers.getDatasheetDetails(req.params.id)
   var activeProjects = [];
   projectHelpers.getAllproject().then((projects) => {
     for (let j = 0; j < projects.length; j++) {
-      if (projects[j].projectstatus === "Ongoing") {
+      if (projects[j].projectstatus === 'Ongoing') {
+      
         activeProjects.push(projects[j]);
+        
       }
     }
-  });
-  res.render("./admin/edit-searcheddata", {
-    admin: true,
-    edatasheet,
-    activeProjects,
-  });
-});
-router.post("/edit-searcheddata/:id", (req, res) => {
+  })
+  res.render('./users/edit-datasheet', { user: true, edatasheet, activeProjects })
+})
+router.post('/edit-datasheet/:id', (req, res) => {
+
   userHelpers.updateDatasheet(req.params.id, req.body).then(() => {
-    res.redirect("/admin/employee");
-  });
-});
-
-
-
-
-// ///addd
-// router.get("/add-datasheet/:id", async function (req, res) {
-//   let admin = req.session.user;
-
-//   if (admin) {
-//     let person = await employeHelpers.getEmployeeDetails(req.params.id);
- 
-//       var activeProjects = [];
-//       projectHelpers.getAllproject().then((projects) => {
-//         for (let j = 0; j < projects.length; j++) {
-//           if (projects[j].projectstatus === "Ongoing") {
-//             activeProjects.push(projects[j]);
-//           }
-//         }
-//       });
-
-//       res.render("./admin/add-datasheet", {
-//         admin: true,
-//         person,
-//         activeProjects,
-//       });
-    
-//   }
-// });
-
-// router.post("/add-datasheet", async (req, res) => {
-//   var datasheet = req.body;
-//   let semployee = await employeHelpers.getEmployeeDetails(req.body.employee_id);
-//   datasheet.date = new Date(req.body.datevalue);
-//   datasheet.employeeType = semployee.employeeType;
-//   if(semployee.employeeType === 'Hired Labour'){
-//     datasheet.srateph = semployee.srateph;
-//   }else{
-//   datasheet.sbasic = semployee.sbasic;
-//   datasheet.sallowance = semployee.sallowance;
-//   datasheet.sbonus = semployee.sbonus;
-//   }
-//   userHelpers.getDatasheet().then(function (edatasheet) {
-//     if (!edatasheet.length) {
-//       userHelpers.addDatasheet(datasheet, (result) => {});
-//     } else {
-//       let count = 0;
-//       let count1 = 0;
-//       let count2 = 0;
-//       let count3 = 0;
-//       let datec = 0;
-//       for (let i = 0; i < edatasheet.length; i++) {
-//         if (edatasheet[i].date.getFullYear() === datasheet.date.getFullYear()) {
-//           if (edatasheet[i].date.getMonth() === datasheet.date.getMonth()) {
-//             if (edatasheet[i].date.getDate() === datasheet.date.getDate()) {
-//               datec++;
-//               if (edatasheet[i].passno === datasheet.passno) {
-//                 break;
-//               } else {
-//                 count++;
-//               }
-//             } else {
-//               count1++;
-//               if (count1 === edatasheet.length) {
-//                 userHelpers.addDatasheet(datasheet, (result) => {});
-//                 break;
-//               }
-//             }
-//           } else {
-//             count2++;
-//             if (count2 === edatasheet.length) {
-//               userHelpers.addDatasheet(datasheet, (result) => {});
-//               break;
-//             }
-//           }
-//         } else {
-//           count3++;
-//           if (count3 === edatasheet.length) {
-//             userHelpers.addDatasheet(datasheet, (result) => {});
-//             break;
-//           }
-//         }
-//       }
-//       if (count === datec) {
-//         userHelpers.addDatasheet(datasheet, (result) => {});
-//       }
-//     }
-//   });
-
-//   res.redirect("/admin/employee");
-// });
-
-
-
-
-
-
-router.get("/search-report/", function (req, res) {
-  let admin = req.session.user;
-  if (admin) {
-    var iddd = req.params.id;
-
-    res.render("./admin/report-search", { admin: true, iddd });
-  }
-});
-
-router.post("/search-report", async (req, res) => {
-  try {
-    var employeereport = [];
-    var index = 0
-    const employees = await employeHelpers.getAllemployee();
-    for (let i = 0; i < employees.length; i++) {
-    if(employees[i].employeeType === 'Own Labour' || employees[i].employeeType === 'Hired Labour (Monthly)' || employees[i].employeeType === 'Own Staff (Projects)' || employees[i].employeeType === 'Hired Staff (Projects)' || employees[i].employeeType === 'Hired Salaried'){
-      const timesheet = await userHelpers.getDatabByMonthAndEmployee(req.body.searchdate, employees[i]._id.toString());
-      const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
-      const thedata = await allsalaryreport.salaryreportlabour(searcheddata);
-      thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
-      index++;
-      thedata.index = index;
-      employeereport.push(thedata);
-    }else if(employees[i].employeeType === 'Hired Labour (Hourly)'){
-      const timesheet = await userHelpers.getDatabByMonthAndEmployee(req.body.searchdate, employees[i]._id.toString());
-      const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
-      const thedata = await allsalaryreport.salaryreportlabourhourly(searcheddata);
-      thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
-      index++;
-      thedata.index = index;
-      employeereport.push(thedata);
-    }else if(employees[i].employeeType ==='Own Staff (Operations)' || employees[i].employeeType ==='Hired Staff (Operations)'){
-      const timesheet = await userHelpers.getDatabByMonthAndEmployee(req.body.searchdate, employees[i]._id.toString());
-      const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
-      const thedata = await allsalaryreport.salaryreportoperations(searcheddata);
-      thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
-      index++;
-      thedata.index = index;
-      employeereport.push(thedata);
-    }
-  }
-
-    res.render("./admin/report-view", { admin: true, employeereport });
-  } catch (error) {
-    console.error(error);
-    res.status(500).send("Internal Server Error");
-  }
-});
-
-// project report
-router.get("/project-search/",  (req, res) => {
-
-  let admin = req.session.user;
-  if (admin) {
-    res.render("./admin/project-search", { admin: true });
-  }
-});
-
-router.post("/project-search",async (req, res) => {
-  let projectimesheet = await userHelpers.getDatabByproject1(req.body.searchdate, 'kATARA' , 'Own Labour');
-projectimesheet.push(...await userHelpers.getDatabByproject2(req.body.searchdate, 'kATARA' , 'Own Labour'))
-projectimesheet.push(...await userHelpers.getDatabByproject3(req.body.searchdate, 'kATARA' , 'Own Labour'))
-projectimesheet.push(...await userHelpers.getDatabByproject4(req.body.searchdate, 'kATARA' , 'Own Labour'))
-projectimesheet.push(...await userHelpers.getDatabByproject5(req.body.searchdate, 'kATARA' , 'Own Labour'))
-  
-     allprojectreport.projectreportlabour(projectimesheet, 'kATARA')
-      res.render("./admin/project-report", { admin: true });
-    
-});
-
-router.get("/edit-salary/:id", async function (req, res) {
-  let admin = req.session.user;
-  if (admin) {
-  let semployee = await employeHelpers.getEmployeeDetails(req.params.id);
- 
-    res.render("./admin/edit-salary", { admin: true , semployee});
-  }
+    res.redirect('/employee-data')
+  })
 })
-router.post("/edit-salary/:id", (req, res) => {
-  const todaydate = new Date(Date.UTC(new Date().getFullYear(), new Date().getMonth(), new Date().getDate()));
-  const reqdate = new Date(req.body.datevalue);
- if(todaydate === reqdate){
-
- }
-
-  if(reqdate === todaydate){
-      employeHelpers.updateSalary(req.params.id, req.body).then(() => {
-      res.redirect("/admin/employee");
-    })
-  }else{
-   userHelpers.getdatabdate(reqdate, todaydate).then(function (databdate) {
-    let targetdata = databdate.filter((data) => data.employee_id === req.params.id);
-   
-    if(targetdata.length === 0){
-      employeHelpers.updateSalary(req.params.id, req.body).then(() => {
-        res.redirect("/admin/employee");
-      })
-    }else{
-      for(i=0; i<targetdata.length; i++){ 
-      
-       userHelpers.deleteTimesheet(targetdata[i]._id.toString()).then((response) => {
-        
-        
-    });
-    if(targetdata[i].employeeType === 'Hired Labour (Hourly)' && req.body.employeeType === 'Hired Labour (Hourly)'){
-      targetdata[i].srateph = req.body.srateph
-    }else if(req.body.employeeType === 'Hired Labour (Hourly)' ){
-      targetdata[i].employeeType = req.body.employeeType 
-      targetdata[i].srateph = req.body.srateph
-      delete targetdata[i].sbasic
-      delete targetdata[i].sallowance
-      delete targetdata[i].sbonus
-    }else{
-       targetdata[i].employeeType = req.body.employeeType 
-       targetdata[i].sbasic = req.body.sbasic
-       targetdata[i].sallowance = req.body.sallowance
-       targetdata[i].sbonus = req.body.sbonus
-       delete targetdata[i].srateph
-    }
-   
-    userHelpers.addDatasheet(targetdata[i], (result) => {
-              
-    })
-    
-    }
-
-    employeHelpers.updateSalary(req.params.id, req.body).then(() => {
-      res.redirect("/admin/employee");
-    })
-  }
-  
-  });
-  }
-  
-});
-router.get("/addtemp", async function (req, res) {
-const elementToAdd = '8';
-
-userHelpers.updateElementInAllDatasheets(elementToAdd, (success) => {
-    if (success) {
-        console.log('Element added to all datasheets successfully.');
-    } else {
-        console.log('Failed to add element to datasheets.');
-    }
-});
-})
-
-
-
-// router.get("/edit-delete/:id", async function (req, res) {
-//   let admin = req.session.user;
-//   if (admin) {
-//     userHelpers.deleteTimesheet(req.params.id).then((response) => {
-        
-        
-//     });
- 
-  
-//   }
-// })
-
-
-
 
 module.exports = router;
+
 
