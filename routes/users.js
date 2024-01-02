@@ -288,6 +288,24 @@ router.post('/users/employee-list/', async (req, res) => {
     return 0;
   }
 datasheet.employeeType = semployee.employeeType;
+  const dd = new Date(datasheet.date); 
+  if(dd.getDay() === 5){
+    if(semployee.employeeType === 'Hired Labour (Hourly)'){
+      datasheet.sbasic = '';
+    datasheet.sallowance = '';
+    datasheet.sbonus = ''; 
+    datasheet.srateph = semployee.srateph;
+    datasheet.workinghour = '0';
+    }else{
+    datasheet.sbasic = semployee.sbasic;
+    datasheet.sallowance = semployee.sallowance;
+    datasheet.sbonus = semployee.sbonus;
+    datasheet.srateph = '';
+    datasheet.workinghour = '0';
+    }
+
+  }else{
+
 if(semployee.employeeType === 'Hired Labour (Hourly)'){
   datasheet.sbasic = '';
 datasheet.sallowance = '';
@@ -301,7 +319,7 @@ datasheet.sbonus = semployee.sbonus;
 datasheet.srateph = '';
 datasheet.workinghour = '8';
 }
-
+}
 userHelpers.getDatasheet().then(function (edatasheet) {
   
   if (!edatasheet.length) {
@@ -479,3 +497,4 @@ router.post('/edit-datasheet/:id', (req, res) => {
 })
 
 module.exports = router;
+
