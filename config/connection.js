@@ -16,7 +16,7 @@ const connect = async (subdomain, cb) => {
         ifx: {
             host: "127.0.0.1",
             port: 27017,
-            dbName: "IfxDatabase",
+            dbName: "demo",
         },
         // Add more configurations as needed
     };
