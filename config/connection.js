@@ -1,43 +1,59 @@
 const { MongoClient } = require("mongodb");
 
 const state = {
-  db: null,
+    db: null,
 };
 
-// mongodb connection string
-const url = "mongodb://127.0.0.1:27017";
-// database name
-const dbName = "Jtcqatars";
+// Function to establish MongoDB connection
+const connect = async (subdomain, cb) => {
+    // Define your database configurations based on subdomains
+    const databaseConfigs = {
+        jtcqatar: {
+            host: "127.0.0.1",
+            port: 27017,
+            dbName: "Jtcqatars",
+        },
+        ifx: {
+            host: "127.0.0.1",
+            port: 27017,
+            dbName: "IfxDatabase",
+        },
+        // Add more configurations as needed
+    };
 
-// create a new mongodb client object
-const client = new MongoClient(url);
+    // Get the database configuration based on the subdomain
+    const dbConfig = databaseConfigs[subdomain];
 
+    // If no matching configuration found, throw an error
+    if (!dbConfig) {
+        const error = new Error(`No database configuration found for subdomain: ${subdomain}`);
+        return cb(error);
+    }
 
-// function to establish mongodb connection
-const connect = async (cb) => {
-  try {
-    // connecting to mongodb
-    await client.connect();
-    // setting up database name to the connected client
-    const db = client.db(dbName);
-    // setting up database name to the state
-    state.db = db;
-    // callback after connected
-    return cb();
-  } catch (err) {
-    // callback when an error occurs
-    return cb(err);
-  }
+    // Create a new MongoDB client object
+    const client = new MongoClient(`mongodb://${dbConfig.host}:${dbConfig.port}`, { useNewUrlParser: true });
+
+    try {
+        // Connecting to MongoDB
+        await client.connect();
+        // Setting up database name to the connected client
+        const db = client.db(dbConfig.dbName);
+        // Setting up database name to the state
+        state.db = db;
+        // Callback after connected
+        return cb();
+    } catch (err) {
+        // Callback when an error occurs
+        return cb(err);
+    }
 };
 
-// function to get the database instance
+// Function to get the database instance
 const get = () => state.db;
 
-// exporting functions
+// Exporting functions
 module.exports = {
-  connect,
-  get,
+    connect,
+    get,
 };
-
-
 
