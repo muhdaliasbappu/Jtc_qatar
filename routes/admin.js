@@ -10,7 +10,7 @@ const { search } = require("./users");
 var DayView = require('../modules/DayView')
 var allsalaryreport = require('../modules/report')
 var allprojectreport = require('../modules/project-report')
-
+const puppeteer = require('puppeteer');
 /* GET home page. */
 
 //admin login
@@ -488,7 +488,7 @@ router.post("/search-report", async (req, res) => {
     var index = 0
     const employees = await employeHelpers.getAllemployee();
     for (let i = 0; i < employees.length; i++) {
-    if(employees[i].employeeType === 'Own Labour' || employees[i].employeeType === 'Hired Labour (Monthly)' || employees[i].employeeType === 'Own Staff (Projects)' || employees[i].employeeType === 'Hired Staff (Projects)' || employees[i].employeeType === 'Hired Salaried'){
+    if(employees[i].employeeType === 'Own Labour' || employees[i].employeeType === 'Hired Labour (Monthly)'){
       const timesheet = await userHelpers.getDatabByMonthAndEmployee(req.body.searchdate, employees[i]._id.toString());
       const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
       const thedata = await allsalaryreport.salaryreportlabour(searcheddata);
@@ -496,27 +496,50 @@ router.post("/search-report", async (req, res) => {
       index++;
       thedata.index = index;
       employeereport.push(thedata);
-    }else if(employees[i].employeeType === 'Hired Labour (Hourly)'){
-      const timesheet = await userHelpers.getDatabByMonthAndEmployee(req.body.searchdate, employees[i]._id.toString());
-      const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
-      const thedata = await allsalaryreport.salaryreportlabourhourly(searcheddata);
-      thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
-      index++;
-      thedata.index = index;
-      employeereport.push(thedata);
-    }else if(employees[i].employeeType ==='Own Staff (Operations)' || employees[i].employeeType ==='Hired Staff (Operations)'){
-      const timesheet = await userHelpers.getDatabByMonthAndEmployee(req.body.searchdate, employees[i]._id.toString());
-      const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
-      const thedata = await allsalaryreport.salaryreportoperations(searcheddata);
-      thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
-      index++;
-      thedata.index = index;
-      employeereport.push(thedata);
-    }
+     }//else if(employees[i].employeeType === 'Hired Labour (Hourly)'){
+    //   const timesheet = await userHelpers.getDatabByMonthAndEmployee(req.body.searchdate, employees[i]._id.toString());
+    //   const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
+    //   const thedata = await allsalaryreport.salaryreportlabourhourly(searcheddata);
+    //   thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
+    //   index++;
+    //   thedata.index = index;
+    //   employeereport.push(thedata);
+    // }else if(employees[i].employeeType ==='Own Staff (Operations)' || employees[i].employeeType ==='Hired Staff (Operations)'){
+    //   const timesheet = await userHelpers.getDatabByMonthAndEmployee(req.body.searchdate, employees[i]._id.toString());
+    //   const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
+    //   const thedata = await allsalaryreport.salaryreportoperations(searcheddata);
+    //   thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
+    //   index++;
+    //   thedata.index = index;
+    //   employeereport.push(thedata);
+    // }
   }
 
     res.render("./admin/report-view", { admin: true, employeereport });
-  } catch (error) {
+    res.render('reporttemplate', { employeereport }, (err, html) => {
+      if (err) {
+        return res.status(500).send(err);
+      }
+
+      (async () => {
+        const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox'] });
+        const page = await browser.newPage();
+        await page.setContent(html);
+
+        const pdfBuffer = await page.pdf({ format: 'Letter' });
+
+        res.setHeader('Content-Type', 'application/pdf');
+        const formattedDate = '12/12/12';
+        res.setHeader('Content-Disposition', `attachment; filename="${formattedDate}_Report.pdf"`);
+        res.send(pdfBuffer);
+
+        await browser.close();
+      })();
+    });
+  }
+
+
+   catch (error) {
     console.error(error);
     res.status(500).send("Internal Server Error");
   }
@@ -625,9 +648,70 @@ router.post("/edit-salary/:id", (req, res) => {
 // })
 
 
+router.get('/printreport', async (req, res) => {
+  try {
+    var employeereport = [];
+    var index = 0
+    const employees = await employeHelpers.getAllemployee();
+    for (let i = 0; i < employees.length; i++) {
+    if(employees[i].employeeType === 'Own Labour' || employees[i].employeeType === 'Hired Labour (Monthly)' || employees[i].employeeType === 'Own Staff (Projects)' || employees[i].employeeType === 'Hired Staff (Projects)' || employees[i].employeeType === 'Hired Salaried'){
+      const timesheet = await userHelpers.getDatabByMonthAndEmployee(req.body.searchdate, employees[i]._id.toString());
+      const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
+      const thedata = await allsalaryreport.salaryreportlabour(searcheddata);
+      thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
+      index++;
+      thedata.index = index;
+      employeereport.push(thedata);
+    }else if(employees[i].employeeType === 'Hired Labour (Hourly)'){
+      const timesheet = await userHelpers.getDatabByMonthAndEmployee(req.body.searchdate, employees[i]._id.toString());
+      const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
+      const thedata = await allsalaryreport.salaryreportlabourhourly(searcheddata);
+      thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
+      index++;
+      thedata.index = index;
+      employeereport.push(thedata);
+    }else if(employees[i].employeeType ==='Own Staff (Operations)' || employees[i].employeeType ==='Hired Staff (Operations)'){
+      const timesheet = await userHelpers.getDatabByMonthAndEmployee(req.body.searchdate, employees[i]._id.toString());
+      const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
+      const thedata = await allsalaryreport.salaryreportoperations(searcheddata);
+      thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
+      index++;
+      thedata.index = index;
+      employeereport.push(thedata);
+    }
+  }
+    
 
+   
+
+    res.render('reporttemplate', { employeereport }, (err, html) => {
+      if (err) {
+        return res.status(500).send(err);
+      }
+
+      (async () => {
+        const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox'] });
+        const page = await browser.newPage();
+        await page.setContent(html);
+
+        const pdfBuffer = await page.pdf({ format: 'Letter' });
+
+        res.setHeader('Content-Type', 'application/pdf');
+        const formattedDate = '12/12/12';
+        res.setHeader('Content-Disposition', `attachment; filename="${formattedDate}_Report.pdf"`);
+        res.send(pdfBuffer);
+
+        await browser.close();
+      })();
+    });
+  } catch (error) {
+    console.error('Error generating PDF:', error);
+    res.status(500).send('Internal Server Error');
+  }
+});
 
 module.exports = router;
+
 
 
 
