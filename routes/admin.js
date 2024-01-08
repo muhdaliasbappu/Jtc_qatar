@@ -516,26 +516,7 @@ router.post("/search-report", async (req, res) => {
   }
 
     res.render("./admin/report-view", { admin: true, employeereport });
-    res.render('reporttemplate', { employeereport }, (err, html) => {
-      if (err) {
-        return res.status(500).send(err);
-      }
 
-      (async () => {
-        const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox'] });
-        const page = await browser.newPage();
-        await page.setContent(html);
-
-        const pdfBuffer = await page.pdf({ format: 'Letter' });
-
-        res.setHeader('Content-Type', 'application/pdf');
-        const formattedDate = '12/12/12';
-        res.setHeader('Content-Disposition', `attachment; filename="${formattedDate}_Report.pdf"`);
-        res.send(pdfBuffer);
-
-        await browser.close();
-      })();
-    });
   }
 
 
@@ -711,7 +692,3 @@ router.get('/printreport', async (req, res) => {
 });
 
 module.exports = router;
-
-
-
-
