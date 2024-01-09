@@ -505,7 +505,7 @@ router.post("/search-report", async (req, res) => {
       index++;
       thedata.index = index;
       employeereport.push(thedata);
-      }else if(employees[i].employeeType ==='Own Staff (Operations)' || employees[i].employeeType === 'Hired Staff (Operations)'  || employees[i].employeeType === 'Own Staff (Projects)'  || employees[i].employeeType === 'Own Staff (Operations)'){
+      }else if(employees[i].employeeType ==='Own Staff (Operations)' || employees[i].employeeType === 'Hired Staff (Operations)'  || employees[i].employeeType === 'Own Staff (Projects)'  || employees[i].employeeType === 'Hired Staff (Projects)'){
       const timesheet = await userHelpers.getDatabByMonthAndEmployee(req.body.searchdate, employees[i]._id.toString());
       const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
       const thedata = await allsalaryreport.salaryreportoperations(searcheddata);
