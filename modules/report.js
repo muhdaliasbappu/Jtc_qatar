@@ -5,7 +5,7 @@ module.exports = {
 
 salaryreportlabour: (timesheet)=>{
     return new Promise((resolve, reject) => {
-var workday = 0
+let workday = 0
 let othours = 0
 let report = {}
 let otsalary = 0
