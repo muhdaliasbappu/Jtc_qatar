@@ -63,7 +63,7 @@ cronfridaynotyou:  async(date2) => {
          tempobj1.projectname5 = ''
          tempobj1.workhour5 = ''
          tempobj1.date= dateObj2
-         tempobj1.workinghour = '0'
+         tempobj1.workinghour = '8'
          tempobj1.employeeType = employee[i].employeeType
          if(employee[i].employeeType === 'Hired Labour (Hourly)'){
           tempobj1.srateph = employee[i].srateph
@@ -99,7 +99,7 @@ cronfridaynotyou:  async(date2) => {
             tempobj2.projectname5 = ''
             tempobj2.workhour5 = ''
             tempobj2.date= dateObj2
-            tempobj2.workinghour = '0'
+            tempobj2.workinghour = '8'
             tempobj2.employeeType = employee[i].employeeType
             if(employee[i].employeeType === 'Hired Labour (Hourly)'){
             tempobj2.srateph = employee[i].srateph
@@ -426,8 +426,5 @@ cronfridaynotyou:  async(date2) => {
           }
           },
          
-    
-
-
 
 }
