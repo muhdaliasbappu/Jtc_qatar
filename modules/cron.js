@@ -64,7 +64,7 @@ cronfriday:  async() => {
          tempobj1.workhour4 = ''
          tempobj1.projectname5 = ''
          tempobj1.workhour5 = ''
-         tempobj1.workinghour = '8'
+         tempobj1.workinghour = '0'
 
          tempobj1.date= dateObj2
          tempobj1.employeeType = employee[i].employeeType
@@ -101,7 +101,7 @@ cronfriday:  async() => {
             tempobj2.workhour4 = ''
             tempobj2.projectname5 = ''
             tempobj2.workhour5 = ''
-            tempobj2.workinghour = '8'
+            tempobj2.workinghour = '0'
             tempobj2.date= dateObj2
             tempobj2.employeeType = employee[i].employeeType
             if(employee[i].employeeType === 'Hired Labour (Hourly)'){
