@@ -18,7 +18,7 @@ module.exports = {
 
 cronfriday:  async() => {
 
-console.log('iam running')
+
 
   var dateObj2 = new Date();
   dateObj2.setDate(dateObj2.getDate() - 2);
@@ -64,6 +64,8 @@ console.log('iam running')
          tempobj1.workhour4 = ''
          tempobj1.projectname5 = ''
          tempobj1.workhour5 = ''
+         tempobj1.workinghour = '0'
+
          tempobj1.date= dateObj2
          tempobj1.employeeType = employee[i].employeeType
          if(employee[i].employeeType === 'Hired Labour (Hourly)'){
@@ -99,6 +101,7 @@ console.log('iam running')
             tempobj2.workhour4 = ''
             tempobj2.projectname5 = ''
             tempobj2.workhour5 = ''
+            tempobj2.workinghour = '0'
             tempobj2.date= dateObj2
             tempobj2.employeeType = employee[i].employeeType
             if(employee[i].employeeType === 'Hired Labour (Hourly)'){
@@ -120,6 +123,7 @@ console.log('iam running')
     }
     
     }else{
+      let workinghour = expiredata[0].workinghour
       for(let i = 0; i<employee.length; i++){
         let check = 0;
         for(let j = 0; j<expiredata.length; j++){
@@ -154,6 +158,7 @@ console.log('iam running')
                tempobj1.projectname5 = ''
                tempobj1.workhour5 = ''
                tempobj1.date= dateObj2
+               tempobj1.workinghour = workinghour
                tempobj1.employeeType = employee[i].employeeType
                if(employee[i].employeeType === 'Hired Labour (Hourly)'){
                 tempobj1.srateph = employee[i].srateph
@@ -189,6 +194,7 @@ console.log('iam running')
                   tempobj2.projectname5 = ''
                   tempobj2.workhour5 = ''
                   tempobj2.date= dateObj2
+                  tempobj2.workinghour = workinghour
                   tempobj2.employeeType = employee[i].employeeType
                   if(employee[i].employeeType === 'Hired Labour (Hourly)'){
                   tempobj2.srateph = employee[i].srateph
@@ -265,6 +271,7 @@ console.log('iam running')
                tempobj1.projectname5 = ''
                tempobj1.workhour5 = ''
                tempobj1.date= dateObj2
+               tempobj1.workinghour = '8'
                tempobj1.employeeType = employee[i].employeeType
                if(employee[i].employeeType === 'Hired Labour (Hourly)'){
                 tempobj1.srateph = employee[i].srateph
@@ -300,6 +307,7 @@ console.log('iam running')
                   tempobj2.projectname5 = ''
                   tempobj2.workhour5 = ''
                   tempobj2.date= dateObj2
+                  tempobj2.workinghour = '8'
                   tempobj2.employeeType = employee[i].employeeType
                   if(employee[i].employeeType === 'Hired Labour (Hourly)'){
                   tempobj2.srateph = employee[i].srateph
@@ -320,7 +328,7 @@ console.log('iam running')
           }
           
           }else{
-           
+           let workinghour = expiredata[0].workinghour
             for(let i = 0; i<employee.length; i++){
               
               let check = 0;
@@ -356,6 +364,7 @@ console.log('iam running')
                      tempobj1.projectname5 = ''
                      tempobj1.workhour5 = ''
                      tempobj1.date= dateObj2
+                     tempobj1.workinghour = workinghour
                      tempobj1.employeeType = employee[i].employeeType
                      if(employee[i].employeeType === 'Hired Labour (Hourly)'){
                       tempobj1.srateph = employee[i].srateph
@@ -391,6 +400,7 @@ console.log('iam running')
                         tempobj2.projectname5 = ''
                         tempobj2.workhour5 = ''
                         tempobj2.date= dateObj2
+                        tempobj2.workinghour = workinghour
                         tempobj2.employeeType = employee[i].employeeType
                         if(employee[i].employeeType === 'Hired Labour (Hourly)'){
                         tempobj2.srateph = employee[i].srateph
