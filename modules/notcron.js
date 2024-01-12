@@ -17,15 +17,15 @@ router.use(express.urlencoded({ extended: true }));
 module.exports = {
 
 cronfridaynotyou:  async(date2) => {
+  console.log('yesfridayworked')
 
 
   var dateObj2 = new Date(date2);
-
-
-
-
   
-   let expiredata = []
+  var date2 = dateObj2.getFullYear() + '-' + (dateObj2.getMonth() + 1) + '-' + dateObj2.getDate();
+
+
+  let expiredata = []
 
    try {
     const [employeedatasheet] = await Promise.all([
@@ -63,6 +63,7 @@ cronfridaynotyou:  async(date2) => {
          tempobj1.projectname5 = ''
          tempobj1.workhour5 = ''
          tempobj1.date= dateObj2
+         tempobj1.workinghour = '0'
          tempobj1.employeeType = employee[i].employeeType
          if(employee[i].employeeType === 'Hired Labour (Hourly)'){
           tempobj1.srateph = employee[i].srateph
@@ -98,6 +99,7 @@ cronfridaynotyou:  async(date2) => {
             tempobj2.projectname5 = ''
             tempobj2.workhour5 = ''
             tempobj2.date= dateObj2
+            tempobj2.workinghour = '0'
             tempobj2.employeeType = employee[i].employeeType
             if(employee[i].employeeType === 'Hired Labour (Hourly)'){
             tempobj2.srateph = employee[i].srateph
@@ -118,6 +120,7 @@ cronfridaynotyou:  async(date2) => {
     }
     
     }else{
+      let workinghour = expiredata[0].workinghour
       for(let i = 0; i<employee.length; i++){
         let check = 0;
         for(let j = 0; j<expiredata.length; j++){
@@ -152,6 +155,7 @@ cronfridaynotyou:  async(date2) => {
                tempobj1.projectname5 = ''
                tempobj1.workhour5 = ''
                tempobj1.date= dateObj2
+               tempobj1.workinghour = workinghour
                tempobj1.employeeType = employee[i].employeeType
                if(employee[i].employeeType === 'Hired Labour (Hourly)'){
                 tempobj1.srateph = employee[i].srateph
@@ -187,6 +191,7 @@ cronfridaynotyou:  async(date2) => {
                   tempobj2.projectname5 = ''
                   tempobj2.workhour5 = ''
                   tempobj2.date= dateObj2
+                  tempobj2.workinghour = workinghour
                   tempobj2.employeeType = employee[i].employeeType
                   if(employee[i].employeeType === 'Hired Labour (Hourly)'){
                   tempobj2.srateph = employee[i].srateph
@@ -215,12 +220,16 @@ cronfridaynotyou:  async(date2) => {
     },
 
     cronnotforyou:  async(date2) => {
+      console.log('notfridayworked')
 
      
   
+     
         var dateObj2 = new Date(date2);
-       
-    console.log(date2)
+  
+        var date2 = dateObj2.getFullYear() + '-' + (dateObj2.getMonth() + 1) + '-' + dateObj2.getDate();
+      
+      
         
          let expiredata = []
       
@@ -260,6 +269,7 @@ cronfridaynotyou:  async(date2) => {
                tempobj1.projectname5 = ''
                tempobj1.workhour5 = ''
                tempobj1.date= dateObj2
+               tempobj1.workinghour = '8'
                tempobj1.employeeType = employee[i].employeeType
                if(employee[i].employeeType === 'Hired Labour (Hourly)'){
                 tempobj1.srateph = employee[i].srateph
@@ -295,6 +305,7 @@ cronfridaynotyou:  async(date2) => {
                   tempobj2.projectname5 = ''
                   tempobj2.workhour5 = ''
                   tempobj2.date= dateObj2
+                  tempobj2.workinghour = '8'
                   tempobj2.employeeType = employee[i].employeeType
                   if(employee[i].employeeType === 'Hired Labour (Hourly)'){
                   tempobj2.srateph = employee[i].srateph
@@ -315,7 +326,7 @@ cronfridaynotyou:  async(date2) => {
           }
           
           }else{
-           
+            let workinghour = expiredata[0].workinghour;
             for(let i = 0; i<employee.length; i++){
               
               let check = 0;
@@ -351,6 +362,7 @@ cronfridaynotyou:  async(date2) => {
                      tempobj1.projectname5 = ''
                      tempobj1.workhour5 = ''
                      tempobj1.date= dateObj2
+                     tempobj1.workinghour = workinghour
                      tempobj1.employeeType = employee[i].employeeType
                      if(employee[i].employeeType === 'Hired Labour (Hourly)'){
                       tempobj1.srateph = employee[i].srateph
@@ -386,6 +398,7 @@ cronfridaynotyou:  async(date2) => {
                         tempobj2.projectname5 = ''
                         tempobj2.workhour5 = ''
                         tempobj2.date= dateObj2
+                        tempobj2.workinghour = workinghour
                         tempobj2.employeeType = employee[i].employeeType
                         if(employee[i].employeeType === 'Hired Labour (Hourly)'){
                         tempobj2.srateph = employee[i].srateph
