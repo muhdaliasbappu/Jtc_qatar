@@ -11,7 +11,7 @@ var DayView = require('../modules/DayView')
 var allsalaryreport = require('../modules/report')
 var allprojectreport = require('../modules/project-report')
 const puppeteer = require('puppeteer');
-var addcron = require('../modules/notcron')
+// var addcron = require('../modules/notcron')
 /* GET home page. */
 
 //admin login
@@ -253,11 +253,11 @@ router.get("/datasheet", function (req, res) {
 router.post("/datasheet", function (req, res) {
  
   const d = new Date(req.body.searchdate);
-  if(d.getDay() === 5){
-    addcron.cronfridaynotyou(req.body.searchdate)
-  }else{
-    addcron.cronnotforyou(req.body.searchdate)
-  }
+  // if(d.getDay() === 5){
+  //   addcron.cronfridaynotyou(req.body.searchdate)
+  // }else{
+  //   addcron.cronnotforyou(req.body.searchdate)
+  // }
   
  userHelpers.gettimesheetbydate(d).then(function ( searchdatasheet){
     let ar = 0;
@@ -798,4 +798,5 @@ router.get('/printreport', async (req, res) => {
 });
 
 module.exports = router;
+
 
