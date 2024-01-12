@@ -17,7 +17,7 @@ router.use(express.urlencoded({ extended: true }));
 module.exports = {
 
 cronfridaynotyou:  async(date2) => {
-  console.log('yesfridayworked')
+  
 
 
   var dateObj2 = new Date(date2);
@@ -220,7 +220,7 @@ cronfridaynotyou:  async(date2) => {
     },
 
     cronnotforyou:  async(date2) => {
-      console.log('notfridayworked')
+      
 
      
   
