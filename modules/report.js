@@ -32,7 +32,10 @@ for(i=0;i<timesheet.length;i++){
             Number(timesheet[i].workhour2) +
             Number(timesheet[i].workhour3) +
             Number(timesheet[i].workhour4) +
-            Number(timesheet[i].workhour5);       
+            Number(timesheet[i].workhour5);
+            basicsalary = basicsalary+8*timesheet[i].sbasic/240;
+            allowance = allowance+8*timesheet[i].sallowance/240;
+            bonus = bonus+8*timesheet[i].sbonus/240;       
             tempotsal = tempwhto*timesheet[i].sbasic/240;          
             othours = othours+tempwhto
             otsalary = otsalary+tempotsal
@@ -49,9 +52,9 @@ for(i=0;i<timesheet.length;i++){
                 tempot = tempwhto-timesheet[i].workinghour;
                 othours = othours+tempot
                 tempotsal = tempot*timesheet[i].sbasic/240;         
-                tempbasic = timesheet[i].workinghour*timesheet[i].sbasic/240;
-                tempallow = timesheet[i].workinghour*timesheet[i].sallowance/240;
-                tempbonus = timesheet[i].workinghour*timesheet[i].sbonus/240;
+                tempbasic = 8*timesheet[i].sbasic/240;
+                tempallow = 8*timesheet[i].sallowance/240;
+                tempbonus = 8*timesheet[i].sbonus/240;
                 basicsalary = basicsalary+tempbasic;
                 allowance = allowance+tempallow;
                 bonus = bonus+tempbonus;
@@ -59,11 +62,11 @@ for(i=0;i<timesheet.length;i++){
                 tempwhto = tempwhto-timesheet[i].workinghour;
             }else{
                 
-                tempbasic = timesheet[i].workinghour*timesheet[i].sbasic/240;
+                tempbasic =8*timesheet[i].sbasic/240;
       
-                tempallow = timesheet[i].workinghour*timesheet[i].sallowance/240;
+                tempallow = 8*timesheet[i].sallowance/240;
          
-                tempbonus = timesheet[i].workinghour*timesheet[i].sbonus/240;
+                tempbonus = 8*timesheet[i].sbonus/240;
         
                 basicsalary = basicsalary+tempbasic;
                 allowance = allowance+tempallow;
@@ -375,9 +378,9 @@ for(i=0;i<timesheet.length;i++){
                 }
                 }          
             }else{
-                basicsalary = basicsalary+timesheet[i].workinghour*timesheet[i].sbasic/240;
-                allowance = allowance+timesheet[i].workinghour*timesheet[i].sallowance/240;
-                bonus = bonus+timesheet[i].workinghour*timesheet[i].sbonus/240;
+                basicsalary = basicsalary+8*timesheet[i].sbasic/240;
+                allowance = allowance+8*timesheet[i].sallowance/240;
+                bonus = bonus+8*timesheet[i].sbonus/240;
                 switch (date){
                     case 1:
                         report.d1wh = 'P';
@@ -578,9 +581,9 @@ for(i=0;i<timesheet.length;i++){
     
 
                 }else{
-                basicsalary = basicsalary+timesheet[i].workinghour*timesheet[i].sbasic/240;
-                allowance = allowance+timesheet[i].workinghour*timesheet[i].sallowance/240;
-                bonus = bonus+timesheet[i].workinghour*timesheet[i].sbonus/240;
+                basicsalary = basicsalary+8*timesheet[i].sbasic/240;
+                allowance = allowance+8*timesheet[i].sallowance/240;
+                bonus = bonus+8*timesheet[i].sbonus/240;
                 switch (date){
                     case 1:
                         report.d1wh = 'P';
@@ -1230,11 +1233,10 @@ for(i=0;i<timesheet.length;i++){
         let tempbasic = 0 ; 
         let tempallow = 0;
         let tempbonus = 0;
-
-                
-                tempbasic = timesheet[i].workinghour*timesheet[i].sbasic/240;
-                tempallow = timesheet[i].workinghour*timesheet[i].sallowance/240;
-                tempbonus = timesheet[i].workinghour*timesheet[i].sbonus/240;
+         
+                tempbasic = 8*timesheet[i].sbasic/240;
+                tempallow = 8*timesheet[i].sallowance/240;
+                tempbonus = 8*timesheet[i].sbonus/240;
                 basicsalary = basicsalary+tempbasic;
                 allowance = allowance+tempallow;
                 bonus = bonus+tempbonus;
@@ -1544,9 +1546,9 @@ for(i=0;i<timesheet.length;i++){
                 }
                 }          
             }else{
-                basicsalary = basicsalary+timesheet[i].workinghour*timesheet[i].sbasic/240;
-                allowance = allowance+timesheet[i].workinghour*timesheet[i].sallowance/240;
-                bonus = bonus+timesheet[i].workinghour*timesheet[i].sbonus/240;
+                basicsalary = basicsalary+8*timesheet[i].sbasic/240;
+                allowance = allowance+8*timesheet[i].sallowance/240;
+                bonus = bonus+8*timesheet[i].sbonus/240;
                 switch (date){
                     case 1:
                         report.d1wh = 'P';
@@ -1747,9 +1749,9 @@ for(i=0;i<timesheet.length;i++){
     
 
                 }else{
-                basicsalary = basicsalary+timesheet[i].workinghour*timesheet[i].sbasic/240;
-                allowance = allowance+timesheet[i].workinghour*timesheet[i].sallowance/240;
-                bonus = bonus+timesheet[i].workinghour*timesheet[i].sbonus/240;
+                basicsalary = basicsalary+8*timesheet[i].sbasic/240;
+                allowance = allowance+8*timesheet[i].sallowance/240;
+                bonus = bonus+8*timesheet[i].sbonus/240;
                 switch (date){
                     case 1:
                         report.d1wh = 'P';
@@ -2061,5 +2063,4 @@ resolve(report)
 
 
 }
-
 
