@@ -533,7 +533,7 @@ router.post("/search-report", async (req, res) => {
       if(req.body.employeeType === 'All'){
         var timesheet = await userHelpers.getDatabByMonthAndEmployee(req.body.searchdate, employees[i]._id.toString());   
         const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
-      const thedata = await allsalaryreport.salaryreportlabour(searcheddata);
+      const thedata = await allsalaryreport.salaryreportlabourhourly(searcheddata);
       thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
       index++;
       thedata.index = index;
@@ -550,9 +550,9 @@ router.post("/search-report", async (req, res) => {
       
      }else if(employees[i].employeeType ==='Own Staff (Operations)'){
       if(req.body.employeeType === 'All'){
-        var timesheet = await userHelpers.getDatabByMonthAndEmployee(req.body.searchdate, employees[i]._id.toString());
-        const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
-      const thedata = await allsalaryreport.salaryreportlabourhourly(searcheddata);
+      var timesheet = await userHelpers.getDatabByMonthAndEmployee(req.body.searchdate, employees[i]._id.toString());
+      const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
+      const thedata = await allsalaryreport.salaryreportoperations(searcheddata);
       thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
       index++;
       thedata.index = index;
@@ -572,7 +572,7 @@ router.post("/search-report", async (req, res) => {
       if(req.body.employeeType === 'All'){
         var timesheet = await userHelpers.getDatabByMonthAndEmployee(req.body.searchdate, employees[i]._id.toString());
         const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
-      const thedata = await allsalaryreport.salaryreportlabourhourly(searcheddata);
+      const thedata = await allsalaryreport.salaryreportoperations(searcheddata);
       thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
       index++;
       thedata.index = index;
@@ -591,7 +591,7 @@ router.post("/search-report", async (req, res) => {
       if(req.body.employeeType === 'All'){
         var timesheet = await userHelpers.getDatabByMonthAndEmployee(req.body.searchdate, employees[i]._id.toString());
         const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
-      const thedata = await allsalaryreport.salaryreportlabourhourly(searcheddata);
+      const thedata = await allsalaryreport.salaryreportoperations(searcheddata);
       thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
       index++;
       thedata.index = index;
@@ -611,7 +611,7 @@ router.post("/search-report", async (req, res) => {
       if(req.body.employeeType === 'All'){
         var timesheet = await userHelpers.getDatabByMonthAndEmployee(req.body.searchdate, employees[i]._id.toString());
         const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
-      const thedata = await allsalaryreport.salaryreportlabourhourly(searcheddata);
+      const thedata = await allsalaryreport.salaryreportoperations(searcheddata);
       thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
       index++;
       thedata.index = index;
@@ -791,4 +791,3 @@ router.get('/printreport', async (req, res) => {
 });
 
 module.exports = router;
-
