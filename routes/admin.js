@@ -635,8 +635,15 @@ router.post("/search-report", async (req, res) => {
       
     }
    }
+   const month = parseInt(req.body.searchdate.split('-')[1]);
 
-    res.render("./admin/report-view", { admin: true, employeereport });
+   const monthsWith31Days = [1, 3, 5, 7, 8, 10, 12];
+   if (monthsWith31Days.includes(month)) {
+       res.render("./admin/report-view", { admin: true, employeereport });
+   } else {
+       res.render("./admin/report-view2", { admin: true, employeereport });
+   }
+   
 
   }
 
@@ -798,5 +805,6 @@ router.get('/printreport', async (req, res) => {
 });
 
 module.exports = router;
+
 
 
