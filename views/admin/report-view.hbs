@@ -31,6 +31,16 @@
       <div class="row">
                             <div class="col-12">
                                 <div class="page-title-box">
+                                  <div class="page-title-right">
+                                    <form action="/admin/printreport" method="POST" >
+                                <div class="input-group">
+                                    <input type="hidden" name="searchdate" value="{{searchdata.searchdate}}">
+                                    <input type="hidden" name="employeeType" value="{{searchdata.employeeType}}">         
+                                    <button class="input-group-text btn btn-primary" type="submit">Download</button>
+                                </div>
+                                   </form>
+                                    
+                                    </div>
                                  
                                     <h4 class="page-title">Employee Report</h4>
                                 </div>
@@ -81,9 +91,8 @@
       <th>28</th>
       <th>29</th>
       <th>30</th>
-      
       <th>31</th>
-       
+        
       <th>WD</th>
       <th>OT</th>
       <th style="width: 5%;">Basic</th>
@@ -131,7 +140,7 @@
       <td>{{this.d30wh}}</td>
       
        <td>{{this.d31wh}}</td>
- 
+       
       <td>{{this.workdays}}</td>
       <td>{{this.othours}}</td>
       <td>{{this.basic}}</td>
