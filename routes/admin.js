@@ -916,7 +916,7 @@ router.post('/printreport', async (req, res) => {
   
           const pdfBuffer = await page.pdf({
             format: 'A4',            
-            width: '1000px',          
+            width: '1200px',          
             height: '595px',          
             landscape: true,      
             // margin: { top: 20, right: 20, bottom: 20, left: 20 },
@@ -949,7 +949,7 @@ router.post('/printreport', async (req, res) => {
 
         const pdfBuffer = await page.pdf({
           format: 'A4',
-          width: '1000px',
+          width: '1200px',
           height: '595px',
           landscape: true,
         });
@@ -976,4 +976,3 @@ router.post('/printreport', async (req, res) => {
 });
 
 module.exports = router;
-
