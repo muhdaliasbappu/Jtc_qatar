@@ -914,14 +914,15 @@ router.post('/printreport', async (req, res) => {
           const page = await browser.newPage();
           await page.setContent(html);
   
-          const pdfBuffer = await page.pdf({
-            format: 'A4',            
-            width: '1600px',          
-            height: '595px',          
-            landscape: true,      
-            // margin: { top: 20, right: 20, bottom: 20, left: 20 },
-          });
-          
+         const widthInPixels = 1600;
+           const widthInPoints = widthInPixels / 96;
+
+   const pdfBuffer = await page.pdf({
+    format: 'A4',
+    width: `${widthInPoints}px`, // Use the width in points
+    height: '595px',
+    landscape: true,
+  });
   
           res.setHeader('Content-Type', 'application/pdf');
           
