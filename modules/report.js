@@ -881,12 +881,11 @@ report.basic = Math.round(basicsalary)
 report.allowance =  Math.round(allowance)
 report.bonus = Math.round(bonus)
 report.otsalary =  Math.round(otsalary)
-if( workday ==='31'){
+if( workday > 30 ){
     report.workdays = 30
 }else{
     report.workdays = workday
 }
-
 report.othours = othours
 report.totalsalary =  Math.round(basicsalary+allowance+bonus+otsalary)
 resolve(report)
@@ -2054,7 +2053,7 @@ report.basic = Math.round(basicsalary)
 report.allowance =  Math.round(allowance)
 report.bonus = Math.round(bonus)
 report.otsalary =  Math.round(otsalary)
-if( workday ==='31'){
+if( workday > 30 ){
     report.workdays = 30
 }else{
     report.workdays = workday
