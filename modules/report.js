@@ -42,7 +42,7 @@ for(i=0;i<timesheet.length;i++){
          
         }else {
             tempwhto =
-            Number(timesheet[i].workhour1) 
+            Number(timesheet[i].workhour1)+
             Number(timesheet[i].workhour2) +
             Number(timesheet[i].workhour3) +
             Number(timesheet[i].workhour4) +
@@ -172,6 +172,7 @@ for(i=0;i<timesheet.length;i++){
         }
     }
     else if(timesheet[i].todaystatus === 'Paid Leave'){
+        workday++;
         if(timesheet.length === 31){
             if(day === 5){
                 if(monlen === 4){
@@ -1338,6 +1339,7 @@ for(i=0;i<timesheet.length;i++){
                 
         }
     }else if(timesheet[i].todaystatus === 'Paid Leave'){
+        workday++;
         if(timesheet.length === 31){
             if(day === 5){
                 if(monlen === 4){
