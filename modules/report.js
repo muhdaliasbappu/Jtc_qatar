@@ -41,7 +41,7 @@ for(i=0;i<timesheet.length;i++){
             otsalary = otsalary+tempotsal         
         }else {
             tempwhto =
-            Number(timesheet[i].workhour1)+
+            Number(timesheet[i].workhour1) +
             Number(timesheet[i].workhour2) +
             Number(timesheet[i].workhour3) +
             Number(timesheet[i].workhour4) +
@@ -375,7 +375,7 @@ for(i=0;i<timesheet.length;i++){
                         
                 }
                 }          
-            }else{
+            }else{               
                 basicsalary = basicsalary+8*timesheet[i].sbasic/240;
                 allowance = allowance+8*timesheet[i].sallowance/240;
                 bonus = bonus+8*timesheet[i].sbonus/240;
@@ -579,9 +579,9 @@ for(i=0;i<timesheet.length;i++){
     
 
                 }else{
-                basicsalary = basicsalary+8*timesheet[i].sbasic/240;
-                allowance = allowance+8*timesheet[i].sallowance/240;
-                bonus = bonus+8*timesheet[i].sbonus/240;
+                // basicsalary = basicsalary+8*timesheet[i].sbasic/240;
+                // allowance = allowance+8*timesheet[i].sallowance/240;
+                // bonus = bonus+8*timesheet[i].sbonus/240;
                 switch (date){
                     case 1:
                         report.d1wh = 'P';
@@ -2069,3 +2069,4 @@ resolve(report)
 
 
 }
+
