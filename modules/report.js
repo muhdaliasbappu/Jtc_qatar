@@ -33,9 +33,7 @@ for(i=0;i<timesheet.length;i++){
             Number(timesheet[i].workhour3) +
             Number(timesheet[i].workhour4) +
             Number(timesheet[i].workhour5);
-            basicsalary = basicsalary+8*timesheet[i].sbasic/240;
-            allowance = allowance+8*timesheet[i].sallowance/240;
-            bonus = bonus+8*timesheet[i].sbonus/240;       
+                   
             tempotsal = tempwhto*timesheet[i].sbasic/240;          
             othours = othours+tempwhto
             otsalary = otsalary+tempotsal
