@@ -1750,9 +1750,7 @@ for(i=0;i<timesheet.length;i++){
     
 
                 }else{
-                basicsalary = basicsalary+8*timesheet[i].sbasic/240;
-                allowance = allowance+8*timesheet[i].sallowance/240;
-                bonus = bonus+8*timesheet[i].sbonus/240;
+                
                 switch (date){
                     case 1:
                         report.d1wh = 'P';
@@ -2069,4 +2067,5 @@ resolve(report)
 
 
 }
+
 
