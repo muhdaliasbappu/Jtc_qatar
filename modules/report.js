@@ -14,6 +14,7 @@ let allowance = 0
 let bonus = 0
 let monlen = 0
 for(i=0;i<timesheet.length;i++){
+    console.log(timesheet.length)
     const dd = new Date(timesheet[i].datevalue);
     let date = dd.getDate();
     let day = dd.getDay();
