@@ -176,6 +176,7 @@ for(i=0;i<timesheet.length;i++){
         if(timesheet.length === 31){
             if(day === 5){
                 if(monlen === 4){
+                    console.log(timesheet[i].surname)
                     monlen++;
                     
                 switch (date){
