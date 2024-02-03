@@ -505,78 +505,102 @@ router.post("/search-report", async (req, res) => {
     if(employees[i].employeeType === 'Own Labour'){
       if(req.body.employeeType === 'All'){
         var timesheet = await userHelpers.getDatabByMonthAndEmployee(req.body.searchdate, employees[i]._id.toString());    
+        if (timesheet.length > 0) {
+          const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
+        
+          const thedata = await allsalaryreport.salaryreportoperations(searcheddata);
+          thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
+          index++;
+          thedata.index = index;
+          employeereport.push(thedata);
+          }
+     }else if (req.body.employeeType === 'Own Labour'){
+      var timesheet = await userHelpers.getDatabByMonthAndEmployeewithType(req.body.searchdate, employees[i]._id.toString(),req.body.employeeType );
+      if (timesheet.length > 0) {
         const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
-        const thedata = await allsalaryreport.salaryreportlabour(searcheddata);
+      
+        const thedata = await allsalaryreport.salaryreportoperations(searcheddata);
         thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
         index++;
         thedata.index = index;
         employeereport.push(thedata);
-     }else if (req.body.employeeType === 'Own Labour'){
-      var timesheet = await userHelpers.getDatabByMonthAndEmployeewithType(req.body.searchdate, employees[i]._id.toString(),req.body.employeeType );
-      const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
-      const thedata = await allsalaryreport.salaryreportlabour(searcheddata);
-      thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
-      index++;
-      thedata.index = index;
-      employeereport.push(thedata);
+        }
      }     
 
      }else if(employees[i].employeeType === 'Hired Labour (Monthly)'){
       if(req.body.employeeType === 'All'){
         var timesheet = await userHelpers.getDatabByMonthAndEmployee(req.body.searchdate, employees[i]._id.toString());    
+        if (timesheet.length > 0) {
+          const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
+        
+          const thedata = await allsalaryreport.salaryreportoperations(searcheddata);
+          thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
+          index++;
+          thedata.index = index;
+          employeereport.push(thedata);
+          }
+     }else if (req.body.employeeType === 'Hired Labour (Monthly)'){
+      var timesheet = await userHelpers.getDatabByMonthAndEmployeewithType(req.body.searchdate, employees[i]._id.toString(),req.body.employeeType );
+      if (timesheet.length > 0) {
         const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
-        const thedata = await allsalaryreport.salaryreportlabour(searcheddata);
+      
+        const thedata = await allsalaryreport.salaryreportoperations(searcheddata);
         thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
         index++;
         thedata.index = index;
         employeereport.push(thedata);
-     }else if (req.body.employeeType === 'Hired Labour (Monthly)'){
-      var timesheet = await userHelpers.getDatabByMonthAndEmployeewithType(req.body.searchdate, employees[i]._id.toString(),req.body.employeeType );
-      const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
-      const thedata = await allsalaryreport.salaryreportlabour(searcheddata);
-      thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
-      index++;
-      thedata.index = index;
-      employeereport.push(thedata);
+        }
      }     
 
      }
      else if(employees[i].employeeType === 'Hired Labour (Hourly)'){
       if(req.body.employeeType === 'All'){
         var timesheet = await userHelpers.getDatabByMonthAndEmployee(req.body.searchdate, employees[i]._id.toString());   
-        const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
-      const thedata = await allsalaryreport.salaryreportlabourhourly(searcheddata);
-      thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
-      index++;
-      thedata.index = index;
-      employeereport.push(thedata); 
+        if (timesheet.length > 0) {
+          const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
+        
+          const thedata = await allsalaryreport.salaryreportoperations(searcheddata);
+          thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
+          index++;
+          thedata.index = index;
+          employeereport.push(thedata);
+          }
      }else if (req.body.employeeType === 'Hired Labour (Hourly)'){
       var timesheet = await userHelpers.getDatabByMonthAndEmployeewithType(req.body.searchdate, employees[i]._id.toString(),req.body.employeeType );
-      const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
-      const thedata = await allsalaryreport.salaryreportlabourhourly(searcheddata);
-      thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
-      index++;
-      thedata.index = index;
-      employeereport.push(thedata);
+      if (timesheet.length > 0) {
+        const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
+      
+        const thedata = await allsalaryreport.salaryreportoperations(searcheddata);
+        thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
+        index++;
+        thedata.index = index;
+        employeereport.push(thedata);
+        }
      }     
       
      }else if(employees[i].employeeType ==='Own Staff (Operations)'){
       if(req.body.employeeType === 'All'){
       var timesheet = await userHelpers.getDatabByMonthAndEmployee(req.body.searchdate, employees[i]._id.toString());
-      const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
-      const thedata = await allsalaryreport.salaryreportoperations(searcheddata);
-      thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
-      index++;
-      thedata.index = index;
-      employeereport.push(thedata);    
+      if (timesheet.length > 0) {
+        const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
+      
+        const thedata = await allsalaryreport.salaryreportoperations(searcheddata);
+        thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
+        index++;
+        thedata.index = index;
+        employeereport.push(thedata);
+        } 
      }else if (req.body.employeeType === 'Own Staff (Operations)'){
       var timesheet = await userHelpers.getDatabByMonthAndEmployeewithType(req.body.searchdate, employees[i]._id.toString(),req.body.employeeType );
-      const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
-      const thedata = await allsalaryreport.salaryreportoperations(searcheddata);
-      thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
-      index++;
-      thedata.index = index;
-      employeereport.push(thedata);
+      if (timesheet.length > 0) {
+        const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
+      
+        const thedata = await allsalaryreport.salaryreportoperations(searcheddata);
+        thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
+        index++;
+        thedata.index = index;
+        employeereport.push(thedata);
+        }
      }     
       
     }
@@ -591,23 +615,29 @@ router.post("/search-report", async (req, res) => {
       employeereport.push(thedata);    
      }else if (req.body.employeeType === 'Hired Staff (Operations)'){
       var timesheet = await userHelpers.getDatabByMonthAndEmployeewithType(req.body.searchdate, employees[i]._id.toString(),req.body.employeeType );
-      const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
-      const thedata = await allsalaryreport.salaryreportoperations(searcheddata);
-      thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
-      index++;
-      thedata.index = index;
-      employeereport.push(thedata);
+      if (timesheet.length > 0) {
+        const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
+      
+        const thedata = await allsalaryreport.salaryreportoperations(searcheddata);
+        thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
+        index++;
+        thedata.index = index;
+        employeereport.push(thedata);
+        }
      }     
       
     }else if(employees[i].employeeType === 'Own Staff (Projects)' ){
       if(req.body.employeeType === 'All'){
         var timesheet = await userHelpers.getDatabByMonthAndEmployee(req.body.searchdate, employees[i]._id.toString());
-        const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
-      const thedata = await allsalaryreport.salaryreportoperations(searcheddata);
-      thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
-      index++;
-      thedata.index = index;
-      employeereport.push(thedata);    
+        if (timesheet.length > 0) {
+          const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
+        
+          const thedata = await allsalaryreport.salaryreportoperations(searcheddata);
+          thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
+          index++;
+          thedata.index = index;
+          employeereport.push(thedata);
+          }
      }else if (req.body.employeeType === 'Own Staff (Projects)'){ 
       var timesheet = await userHelpers.getDatabByMonthAndEmployeewithType(req.body.searchdate, employees[i]._id.toString(),req.body.employeeType );
       if (timesheet.length > 0) {
@@ -625,23 +655,26 @@ router.post("/search-report", async (req, res) => {
     else if(employees[i].employeeType === 'Hired Staff (Projects)'){
       if(req.body.employeeType === 'All'){
         var timesheet = await userHelpers.getDatabByMonthAndEmployee(req.body.searchdate, employees[i]._id.toString());
-        const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
-      const thedata = await allsalaryreport.salaryreportoperations(searcheddata);
-      thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
-      index++;
-      thedata.index = index;
-      employeereport.push(thedata);    
+        if (timesheet.length > 0) {
+          const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
+        
+          const thedata = await allsalaryreport.salaryreportoperations(searcheddata);
+          thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
+          index++;
+          thedata.index = index;
+          employeereport.push(thedata);
+          }
      }else if (req.body.employeeType === 'Hired Staff (Projects)'){
       var timesheet = await userHelpers.getDatabByMonthAndEmployeewithType(req.body.searchdate, employees[i]._id.toString(),req.body.employeeType );
-       if (timesheet.length > 0) {
-      const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
-    
-      const thedata = await allsalaryreport.salaryreportoperations(searcheddata);
-      thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
-      index++;
-      thedata.index = index;
-      employeereport.push(thedata);
-      }
+      if (timesheet.length > 0) {
+        const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
+      
+        const thedata = await allsalaryreport.salaryreportoperations(searcheddata);
+        thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
+        index++;
+        thedata.index = index;
+        employeereport.push(thedata);
+        }
      }     
       
     }
@@ -769,137 +802,179 @@ router.post('/printreport', async (req, res) => {
     if(employees[i].employeeType === 'Own Labour'){
       if(req.body.employeeType === 'All'){
         var timesheet = await userHelpers.getDatabByMonthAndEmployee(req.body.searchdate, employees[i]._id.toString());    
+        if (timesheet.length > 0) {
+          const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
+        
+          const thedata = await allsalaryreport.salaryreportoperations(searcheddata);
+          thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
+          index++;
+          thedata.index = index;
+          employeereport.push(thedata);
+          }
+     }else if (req.body.employeeType === 'Own Labour'){
+      var timesheet = await userHelpers.getDatabByMonthAndEmployeewithType(req.body.searchdate, employees[i]._id.toString(),req.body.employeeType );
+      if (timesheet.length > 0) {
         const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
-        const thedata = await allsalaryreport.salaryreportlabour(searcheddata);
+      
+        const thedata = await allsalaryreport.salaryreportoperations(searcheddata);
         thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
         index++;
         thedata.index = index;
         employeereport.push(thedata);
-     }else if (req.body.employeeType === 'Own Labour'){
-      var timesheet = await userHelpers.getDatabByMonthAndEmployeewithType(req.body.searchdate, employees[i]._id.toString(),req.body.employeeType );
-      const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
-      const thedata = await allsalaryreport.salaryreportlabour(searcheddata);
-      thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
-      index++;
-      thedata.index = index;
-      employeereport.push(thedata);
+        }
      }     
 
      }else if(employees[i].employeeType === 'Hired Labour (Monthly)'){
       if(req.body.employeeType === 'All'){
         var timesheet = await userHelpers.getDatabByMonthAndEmployee(req.body.searchdate, employees[i]._id.toString());    
+        if (timesheet.length > 0) {
+          const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
+        
+          const thedata = await allsalaryreport.salaryreportoperations(searcheddata);
+          thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
+          index++;
+          thedata.index = index;
+          employeereport.push(thedata);
+          }
+     }else if (req.body.employeeType === 'Hired Labour (Monthly)'){
+      var timesheet = await userHelpers.getDatabByMonthAndEmployeewithType(req.body.searchdate, employees[i]._id.toString(),req.body.employeeType );
+      if (timesheet.length > 0) {
         const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
-        const thedata = await allsalaryreport.salaryreportlabour(searcheddata);
+      
+        const thedata = await allsalaryreport.salaryreportoperations(searcheddata);
         thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
         index++;
         thedata.index = index;
         employeereport.push(thedata);
-     }else if (req.body.employeeType === 'Hired Labour (Monthly)'){
-      var timesheet = await userHelpers.getDatabByMonthAndEmployeewithType(req.body.searchdate, employees[i]._id.toString(),req.body.employeeType );
-      const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
-      const thedata = await allsalaryreport.salaryreportlabour(searcheddata);
-      thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
-      index++;
-      thedata.index = index;
-      employeereport.push(thedata);
+        }
      }     
 
      }
      else if(employees[i].employeeType === 'Hired Labour (Hourly)'){
       if(req.body.employeeType === 'All'){
         var timesheet = await userHelpers.getDatabByMonthAndEmployee(req.body.searchdate, employees[i]._id.toString());   
-        const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
-      const thedata = await allsalaryreport.salaryreportlabourhourly(searcheddata);
-      thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
-      index++;
-      thedata.index = index;
-      employeereport.push(thedata); 
+        if (timesheet.length > 0) {
+          const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
+        
+          const thedata = await allsalaryreport.salaryreportoperations(searcheddata);
+          thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
+          index++;
+          thedata.index = index;
+          employeereport.push(thedata);
+          }
      }else if (req.body.employeeType === 'Hired Labour (Hourly)'){
       var timesheet = await userHelpers.getDatabByMonthAndEmployeewithType(req.body.searchdate, employees[i]._id.toString(),req.body.employeeType );
-      const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
-      const thedata = await allsalaryreport.salaryreportlabourhourly(searcheddata);
-      thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
-      index++;
-      thedata.index = index;
-      employeereport.push(thedata);
+      if (timesheet.length > 0) {
+        const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
+      
+        const thedata = await allsalaryreport.salaryreportoperations(searcheddata);
+        thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
+        index++;
+        thedata.index = index;
+        employeereport.push(thedata);
+        }
      }     
       
      }else if(employees[i].employeeType ==='Own Staff (Operations)'){
       if(req.body.employeeType === 'All'){
       var timesheet = await userHelpers.getDatabByMonthAndEmployee(req.body.searchdate, employees[i]._id.toString());
-      const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
-      const thedata = await allsalaryreport.salaryreportoperations(searcheddata);
-      thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
-      index++;
-      thedata.index = index;
-      employeereport.push(thedata);    
+      if (timesheet.length > 0) {
+        const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
+      
+        const thedata = await allsalaryreport.salaryreportoperations(searcheddata);
+        thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
+        index++;
+        thedata.index = index;
+        employeereport.push(thedata);
+        }    
      }else if (req.body.employeeType === 'Own Staff (Operations)'){
       var timesheet = await userHelpers.getDatabByMonthAndEmployeewithType(req.body.searchdate, employees[i]._id.toString(),req.body.employeeType );
-      const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
-      const thedata = await allsalaryreport.salaryreportoperations(searcheddata);
-      thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
-      index++;
-      thedata.index = index;
-      employeereport.push(thedata);
+      if (timesheet.length > 0) {
+        const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
+      
+        const thedata = await allsalaryreport.salaryreportoperations(searcheddata);
+        thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
+        index++;
+        thedata.index = index;
+        employeereport.push(thedata);
+        }
      }     
       
     }
     else if(employees[i].employeeType === 'Hired Staff (Operations)'  ){
       if(req.body.employeeType === 'All'){
         var timesheet = await userHelpers.getDatabByMonthAndEmployee(req.body.searchdate, employees[i]._id.toString());
-        const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
-      const thedata = await allsalaryreport.salaryreportoperations(searcheddata);
-      thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
-      index++;
-      thedata.index = index;
-      employeereport.push(thedata);    
+        if (timesheet.length > 0) {
+          const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
+        
+          const thedata = await allsalaryreport.salaryreportoperations(searcheddata);
+          thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
+          index++;
+          thedata.index = index;
+          employeereport.push(thedata);
+          }
      }else if (req.body.employeeType === 'Hired Staff (Operations)'){
       var timesheet = await userHelpers.getDatabByMonthAndEmployeewithType(req.body.searchdate, employees[i]._id.toString(),req.body.employeeType );
-      const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
-      const thedata = await allsalaryreport.salaryreportoperations(searcheddata);
-      thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
-      index++;
-      thedata.index = index;
-      employeereport.push(thedata);
+      if (timesheet.length > 0) {
+        const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
+      
+        const thedata = await allsalaryreport.salaryreportoperations(searcheddata);
+        thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
+        index++;
+        thedata.index = index;
+        employeereport.push(thedata);
+        }
      }     
       
     }else if(employees[i].employeeType === 'Own Staff (Projects)' ){
       if(req.body.employeeType === 'All'){
         var timesheet = await userHelpers.getDatabByMonthAndEmployee(req.body.searchdate, employees[i]._id.toString());
-        const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
-      const thedata = await allsalaryreport.salaryreportoperations(searcheddata);
-      thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
-      index++;
-      thedata.index = index;
-      employeereport.push(thedata);    
+        if (timesheet.length > 0) {
+          const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
+        
+          const thedata = await allsalaryreport.salaryreportoperations(searcheddata);
+          thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
+          index++;
+          thedata.index = index;
+          employeereport.push(thedata);
+          }
      }else if (req.body.employeeType === 'Own Staff (Projects)'){ 
       var timesheet = await userHelpers.getDatabByMonthAndEmployeewithType(req.body.searchdate, employees[i]._id.toString(),req.body.employeeType );
-      const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
-      const thedata = await allsalaryreport.salaryreportoperations(searcheddata);
-      thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
-      index++;
-      thedata.index = index;
-      employeereport.push(thedata);
+      if (timesheet.length > 0) {
+        const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
+      
+        const thedata = await allsalaryreport.salaryreportoperations(searcheddata);
+        thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
+        index++;
+        thedata.index = index;
+        employeereport.push(thedata);
+        }
      }     
       
     }
     else if(employees[i].employeeType === 'Hired Staff (Projects)'){
       if(req.body.employeeType === 'All'){
         var timesheet = await userHelpers.getDatabByMonthAndEmployee(req.body.searchdate, employees[i]._id.toString());
-        const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
-      const thedata = await allsalaryreport.salaryreportoperations(searcheddata);
-      thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
-      index++;
-      thedata.index = index;
-      employeereport.push(thedata);    
+        if (timesheet.length > 0) {
+          const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
+        
+          const thedata = await allsalaryreport.salaryreportoperations(searcheddata);
+          thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
+          index++;
+          thedata.index = index;
+          employeereport.push(thedata);
+          }
      }else if (req.body.employeeType === 'Hired Staff (Projects)'){
       var timesheet = await userHelpers.getDatabByMonthAndEmployeewithType(req.body.searchdate, employees[i]._id.toString(),req.body.employeeType );
-      const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
-      const thedata = await allsalaryreport.salaryreportoperations(searcheddata);
-      thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
-      index++;
-      thedata.index = index;
-      employeereport.push(thedata);
+      if (timesheet.length > 0) {
+        const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
+      
+        const thedata = await allsalaryreport.salaryreportoperations(searcheddata);
+        thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
+        index++;
+        thedata.index = index;
+        employeereport.push(thedata);
+        }
      }     
       
     }
