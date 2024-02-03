@@ -13,6 +13,7 @@ let basicsalary =0
 let allowance = 0
 let bonus = 0
 let monlen = 0
+        console.log(timesheet.length)
 for(i=0;i<timesheet.length;i++){
     
     const dd = new Date(timesheet[i].datevalue);
