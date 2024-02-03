@@ -13,12 +13,15 @@ let basicsalary =0
 let allowance = 0
 let bonus = 0
 let monlen = 0
-        console.log(timesheet.length)
+console.log(timesheet.length)
 for(i=0;i<timesheet.length;i++){
     
     const dd = new Date(timesheet[i].datevalue);
     let date = dd.getDate();
     let day = dd.getDay();
+    if(day === 5){
+        monlen++
+    }
     if(timesheet[i].todaystatus === 'Working'){
         workday++;
         let tempot = 0;
@@ -178,7 +181,7 @@ for(i=0;i<timesheet.length;i++){
             if(day === 5){
                 if(monlen === 4){
                     console.log(timesheet[i].surname)
-                    monlen++;
+                    
                     
                 switch (date){
                     case 1:
@@ -277,7 +280,7 @@ for(i=0;i<timesheet.length;i++){
                         
                 }
                 }else{
-                    monlen++;
+                  
                     basicsalary = basicsalary+8*timesheet[i].sbasic/240;
                     allowance = allowance+8*timesheet[i].sallowance/240;
                     bonus = bonus+8*timesheet[i].sbonus/240;
@@ -879,7 +882,7 @@ for(i=0;i<timesheet.length;i++){
     }
     
 }
-        console.log(monlen)
+console.log(monlen)
 report.basic = Math.round(basicsalary)
 report.allowance =  Math.round(allowance)
 report.bonus = Math.round(bonus)
@@ -2071,5 +2074,6 @@ resolve(report)
 
 
 }
+
 
 
