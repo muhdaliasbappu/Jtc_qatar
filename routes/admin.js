@@ -610,12 +610,15 @@ router.post("/search-report", async (req, res) => {
       employeereport.push(thedata);    
      }else if (req.body.employeeType === 'Own Staff (Projects)'){ 
       var timesheet = await userHelpers.getDatabByMonthAndEmployeewithType(req.body.searchdate, employees[i]._id.toString(),req.body.employeeType );
+      if (timesheet.length > 0) {
       const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
+    
       const thedata = await allsalaryreport.salaryreportoperations(searcheddata);
       thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
       index++;
       thedata.index = index;
       employeereport.push(thedata);
+      }
      }     
       
     }
@@ -979,3 +982,4 @@ router.post('/printreport', async (req, res) => {
 });
 
 module.exports = router;
+
