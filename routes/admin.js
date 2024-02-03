@@ -508,7 +508,7 @@ router.post("/search-report", async (req, res) => {
         if (timesheet.length > 0) {
           const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
         
-          const thedata = await allsalaryreport.salaryreportoperations(searcheddata);
+          const thedata = await allsalaryreport.salaryreportlabour(searcheddata);
           thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
           index++;
           thedata.index = index;
@@ -519,7 +519,7 @@ router.post("/search-report", async (req, res) => {
       if (timesheet.length > 0) {
         const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
       
-        const thedata = await allsalaryreport.salaryreportoperations(searcheddata);
+        const thedata = await allsalaryreport.salaryreportlabour(searcheddata);
         thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
         index++;
         thedata.index = index;
@@ -533,7 +533,7 @@ router.post("/search-report", async (req, res) => {
         if (timesheet.length > 0) {
           const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
         
-          const thedata = await allsalaryreport.salaryreportoperations(searcheddata);
+          const thedata = await allsalaryreport.salaryreportlabour(searcheddata);
           thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
           index++;
           thedata.index = index;
@@ -544,7 +544,7 @@ router.post("/search-report", async (req, res) => {
       if (timesheet.length > 0) {
         const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
       
-        const thedata = await allsalaryreport.salaryreportoperations(searcheddata);
+        const thedata = await allsalaryreport.salaryreportlabour(searcheddata);
         thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
         index++;
         thedata.index = index;
@@ -559,7 +559,7 @@ router.post("/search-report", async (req, res) => {
         if (timesheet.length > 0) {
           const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
         
-          const thedata = await allsalaryreport.salaryreportoperations(searcheddata);
+          const thedata = await allsalaryreport.salaryreportlabourhourly(searcheddata);
           thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
           index++;
           thedata.index = index;
@@ -570,7 +570,7 @@ router.post("/search-report", async (req, res) => {
       if (timesheet.length > 0) {
         const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
       
-        const thedata = await allsalaryreport.salaryreportoperations(searcheddata);
+        const thedata = await allsalaryreport.salaryreportlabourhourly(searcheddata);
         thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
         index++;
         thedata.index = index;
@@ -805,7 +805,7 @@ router.post('/printreport', async (req, res) => {
         if (timesheet.length > 0) {
           const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
         
-          const thedata = await allsalaryreport.salaryreportoperations(searcheddata);
+          const thedata = await allsalaryreport.salaryreportlabour(searcheddata);
           thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
           index++;
           thedata.index = index;
@@ -816,7 +816,7 @@ router.post('/printreport', async (req, res) => {
       if (timesheet.length > 0) {
         const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
       
-        const thedata = await allsalaryreport.salaryreportoperations(searcheddata);
+        const thedata = await allsalaryreport.salaryreportlabour(searcheddata);
         thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
         index++;
         thedata.index = index;
@@ -830,7 +830,7 @@ router.post('/printreport', async (req, res) => {
         if (timesheet.length > 0) {
           const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
         
-          const thedata = await allsalaryreport.salaryreportoperations(searcheddata);
+          const thedata = await allsalaryreport.salaryreportlabour(searcheddata);
           thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
           index++;
           thedata.index = index;
@@ -841,7 +841,7 @@ router.post('/printreport', async (req, res) => {
       if (timesheet.length > 0) {
         const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
       
-        const thedata = await allsalaryreport.salaryreportoperations(searcheddata);
+        const thedata = await allsalaryreport.salaryreportlabour(searcheddata);
         thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
         index++;
         thedata.index = index;
@@ -856,7 +856,7 @@ router.post('/printreport', async (req, res) => {
         if (timesheet.length > 0) {
           const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
         
-          const thedata = await allsalaryreport.salaryreportoperations(searcheddata);
+          const thedata = await allsalaryreport.salaryreportlabourhourly(searcheddata);
           thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
           index++;
           thedata.index = index;
@@ -1060,4 +1060,5 @@ router.post('/printreport', async (req, res) => {
 });
 
 module.exports = router;
+
 
