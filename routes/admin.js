@@ -500,6 +500,8 @@ router.post("/search-report", async (req, res) => {
     let searchdata = {}
     searchdata.searchdate = req.body.searchdate
     searchdata.employeeType = req.body.employeeType
+    var formattedDate = DayView.getMonthAndYear(req.body.searchdate)
+    searchdata.formattedDate = formattedDate
     const employees = await employeHelpers.getAllemployee();  
     for (let i = 0; i < employees.length; i++) {
     if(employees[i].employeeType === 'Own Labour'){
