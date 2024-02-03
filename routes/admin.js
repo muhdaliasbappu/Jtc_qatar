@@ -253,7 +253,7 @@ router.get("/datasheet", function (req, res) {
 router.post("/datasheet", function (req, res) {
   const currentDate = new Date();
   const twoDaysAgo = new Date(currentDate);
-  twoDaysAgo.setDate(currentDate.getDate() - 2);
+  twoDaysAgo.setDate(currentDate.getDate() - 3);
   const d = new Date(req.body.searchdate);
   if (d < twoDaysAgo) {
   if(d.getDay() === 5){
