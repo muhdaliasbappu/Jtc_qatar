@@ -12,25 +12,19 @@ let otsalary = 0
 let basicsalary =0
 let allowance = 0
 let bonus = 0
-let monlen = 0
+
 
 for(i=0;i<timesheet.length;i++){
     
     const dd = new Date(timesheet[i].datevalue);
     let date = dd.getDate();
     let day = dd.getDay();
-    if(day === 5){
-        monlen++
-    }
     if(timesheet[i].todaystatus === 'Working'){
         workday++;
         let tempot = 0;
         let tempwhto = 0;
-        let tempwh = 0;
         let tempotsal = 0 ;
-        let tempbasic = 0 ; 
-        let tempallow = 0;
-        let tempbonus = 0;
+        
         if(timesheet[i].workinghour === 0){
             tempwhto =
             Number(timesheet[i].workhour1) +
@@ -38,9 +32,6 @@ for(i=0;i<timesheet.length;i++){
             Number(timesheet[i].workhour3) +
             Number(timesheet[i].workhour4) +
             Number(timesheet[i].workhour5);
-            basicsalary = basicsalary+8*timesheet[i].sbasic/240;
-            allowance = allowance+8*timesheet[i].sallowance/240;
-            bonus = bonus+8*timesheet[i].sbonus/240;       
             tempotsal = tempwhto*timesheet[i].sbasic/240;          
             othours = othours+tempwhto
             otsalary = otsalary+tempotsal         
@@ -56,25 +47,10 @@ for(i=0;i<timesheet.length;i++){
                 tempot = tempwhto-timesheet[i].workinghour;
                 othours = othours+tempot
                 tempotsal = tempot*timesheet[i].sbasic/240;         
-                tempbasic = 8*timesheet[i].sbasic/240;
-                tempallow = 8*timesheet[i].sallowance/240;
-                tempbonus = 8*timesheet[i].sbonus/240;
-                basicsalary = basicsalary+tempbasic;
-                allowance = allowance+tempallow;
-                bonus = bonus+tempbonus;
                 otsalary = otsalary+tempotsal
                 tempwhto = tempwhto-timesheet[i].workinghour;
             }else{
-                
-                tempbasic =8*timesheet[i].sbasic/240;
-      
-                tempallow = 8*timesheet[i].sallowance/240;
-         
-                tempbonus = 8*timesheet[i].sbonus/240;
-        
-                basicsalary = basicsalary+tempbasic;
-                allowance = allowance+tempallow;
-                bonus = bonus+tempbonus;
+               
                 tempwhto = tempwhto-tempwhto
             }
         }
@@ -177,10 +153,6 @@ for(i=0;i<timesheet.length;i++){
     }
     else if(timesheet[i].todaystatus === 'Paid Leave'){
         workday++;
-       
-                basicsalary = basicsalary+8*timesheet[i].sbasic/240;
-                allowance = allowance+8*timesheet[i].sallowance/240;
-                bonus = bonus+8*timesheet[i].sbonus/240;
                 if(day === 5){
                     switch (date){
                         case 1:
@@ -578,22 +550,22 @@ for(i=0;i<timesheet.length;i++){
     }
     
 }
-if(timesheet.length === 31){
-    if(monlen > 3){
-        basicsalary = basicsalary-timesheet[0].sbasic/30
-        allowance = allowance-timesheet[0].sallowance/30
-        bonus = bonus-timesheet[0].sbonus/30
-    }
+let tempwd = 0
+if( workday > 30 ){
+    report.workdays = 30
+    tempwd = 30
+}else{
+    report.workdays = workday
+    tempwd = workday
 }
+basicsalary = tempwd*timesheet[0].sbasic/30
+allowance = tempwd*timesheet[0].sallowance/30
+bonus = tempwd*timesheet[0].sbonus/30
 report.basic = Math.round(basicsalary)
 report.allowance =  Math.round(allowance)
 report.bonus = Math.round(bonus)
 report.otsalary =  Math.round(otsalary)
-if( workday > 30 ){
-    report.workdays = 30
-}else{
-    report.workdays = workday
-}
+
 
 report.othours = othours
 report.totalsalary =  Math.round(basicsalary+allowance+bonus+otsalary)
@@ -1487,4 +1459,5 @@ resolve(report)
 
 
 }
+
 
