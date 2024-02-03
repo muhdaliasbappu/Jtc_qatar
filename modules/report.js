@@ -879,6 +879,7 @@ for(i=0;i<timesheet.length;i++){
     }
     
 }
+        console.log(monlen)
 report.basic = Math.round(basicsalary)
 report.allowance =  Math.round(allowance)
 report.bonus = Math.round(bonus)
