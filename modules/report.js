@@ -912,24 +912,7 @@ for(i=0;i<timesheet.length;i++){
     }
     if(timesheet[i].todaystatus === 'Working'){
         workday++;
-       
-        let tempot = 0;
-        let tempwhto = 0;
-        let tempwh = 0;
-        let tempotsal = 0 ;
-        let tempbasic = 0 ; 
-        let tempallow = 0;
-        let tempbonus = 0;
-         
-                tempbasic = 8*timesheet[i].sbasic/240;
-                tempallow = 8*timesheet[i].sallowance/240;
-                tempbonus = 8*timesheet[i].sbonus/240;
-                basicsalary = basicsalary+tempbasic;
-                allowance = allowance+tempallow;
-                bonus = bonus+tempbonus;
       
-            
-        
         switch (date){
             case 1:
                 report.d1wh = 'W';
@@ -1029,9 +1012,6 @@ for(i=0;i<timesheet.length;i++){
     }else if(timesheet[i].todaystatus === 'Paid Leave'){
         workday++;
        
-                basicsalary = basicsalary+8*timesheet[i].sbasic/240;
-                allowance = allowance+8*timesheet[i].sallowance/240;
-                bonus = bonus+8*timesheet[i].sbonus/240;
                 if(day === 5){
                     switch (date){
                         case 1:
@@ -1431,22 +1411,21 @@ for(i=0;i<timesheet.length;i++){
     }
     
 }
-if(timesheet.length === 31){
-    if(monlen > 3){
-        basicsalary = basicsalary-timesheet[0].sbasic/30
-        allowance = allowance-timesheet[0].sallowance/30
-        bonus = bonus-timesheet[0].sbonus/30
-    }
+let tempwd = 0
+if( workday > 30 ){
+    report.workdays = 30
+    tempwd = 30
+}else{
+    report.workdays = workday
+    tempwd = workday
 }
+basicsalary = tempwd*timesheet[0].sbasic/30
+allowance = tempwd*timesheet[0].sallowance/30
+bonus = tempwd*timesheet[0].sbonus/30
 report.basic = Math.round(basicsalary)
 report.allowance =  Math.round(allowance)
 report.bonus = Math.round(bonus)
 report.otsalary =  Math.round(otsalary)
-if( workday > 30 ){
-    report.workdays = 30
-}else{
-    report.workdays = workday
-}
 
 report.othours = othours
 report.totalsalary =  Math.round(basicsalary+allowance+bonus+otsalary)
@@ -1459,5 +1438,4 @@ resolve(report)
 
 
 }
-
 
