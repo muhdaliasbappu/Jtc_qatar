@@ -254,6 +254,7 @@ router.post("/datasheet", function (req, res) {
   const currentDate = new Date();
   const twoDaysAgo = new Date(currentDate);
   twoDaysAgo.setDate(currentDate.getDate() - 3);
+  console.log(twoDaysAgo,'2daysago')
   const d = new Date(req.body.searchdate);
   if (d < twoDaysAgo) {
   if(d.getDay() === 5){
@@ -389,100 +390,6 @@ router.post("/edit-searcheddata/:id", (req, res) => {
 });
 
 
-
-
-// ///addd
-// router.get("/add-datasheet/:id", async function (req, res) {
-//   let admin = req.session.user;
-
-//   if (admin) {
-//     let person = await employeHelpers.getEmployeeDetails(req.params.id);
- 
-//       var activeProjects = [];
-//       projectHelpers.getAllproject().then((projects) => {
-//         for (let j = 0; j < projects.length; j++) {
-//           if (projects[j].projectstatus === "Ongoing") {
-//             activeProjects.push(projects[j]);
-//           }
-//         }
-//       });
-
-//       res.render("./admin/add-datasheet", {
-//         admin: true,
-//         person,
-//         activeProjects,
-//       });
-    
-//   }
-// });
-
-// router.post("/add-datasheet", async (req, res) => {
-//   var datasheet = req.body;
-//   let semployee = await employeHelpers.getEmployeeDetails(req.body.employee_id);
-//   datasheet.date = new Date(req.body.datevalue);
-//   datasheet.employeeType = semployee.employeeType;
-//   if(semployee.employeeType === 'Hired Labour'){
-//     datasheet.srateph = semployee.srateph;
-//   }else{
-//   datasheet.sbasic = semployee.sbasic;
-//   datasheet.sallowance = semployee.sallowance;
-//   datasheet.sbonus = semployee.sbonus;
-//   }
-//   userHelpers.getDatasheet().then(function (edatasheet) {
-//     if (!edatasheet.length) {
-//       userHelpers.addDatasheet(datasheet, (result) => {});
-//     } else {
-//       let count = 0;
-//       let count1 = 0;
-//       let count2 = 0;
-//       let count3 = 0;
-//       let datec = 0;
-//       for (let i = 0; i < edatasheet.length; i++) {
-//         if (edatasheet[i].date.getFullYear() === datasheet.date.getFullYear()) {
-//           if (edatasheet[i].date.getMonth() === datasheet.date.getMonth()) {
-//             if (edatasheet[i].date.getDate() === datasheet.date.getDate()) {
-//               datec++;
-//               if (edatasheet[i].passno === datasheet.passno) {
-//                 break;
-//               } else {
-//                 count++;
-//               }
-//             } else {
-//               count1++;
-//               if (count1 === edatasheet.length) {
-//                 userHelpers.addDatasheet(datasheet, (result) => {});
-//                 break;
-//               }
-//             }
-//           } else {
-//             count2++;
-//             if (count2 === edatasheet.length) {
-//               userHelpers.addDatasheet(datasheet, (result) => {});
-//               break;
-//             }
-//           }
-//         } else {
-//           count3++;
-//           if (count3 === edatasheet.length) {
-//             userHelpers.addDatasheet(datasheet, (result) => {});
-//             break;
-//           }
-//         }
-//       }
-//       if (count === datec) {
-//         userHelpers.addDatasheet(datasheet, (result) => {});
-//       }
-//     }
-//   });
-
-//   res.redirect("/admin/employee");
-// });
-
-
-
-
-
-
 router.get("/search-report/", function (req, res) {
   let admin = req.session.user;
   if (admin) {
@@ -500,8 +407,10 @@ router.post("/search-report", async (req, res) => {
     let searchdata = {}
     searchdata.searchdate = req.body.searchdate
     searchdata.employeeType = req.body.employeeType
+    
     var formattedDate = DayView.getMonthAndYear(req.body.searchdate)
     searchdata.formattedDate = formattedDate
+  
     const employees = await employeHelpers.getAllemployee();  
     for (let i = 0; i < employees.length; i++) {
     if(employees[i].employeeType === 'Own Labour'){
@@ -686,7 +595,7 @@ router.post("/search-report", async (req, res) => {
 
    const monthsWith31Days = [1, 3, 5, 7, 8, 10, 12];
    if (monthsWith31Days.includes(month)) {
-       res.render("./admin/report-view", { admin: true, employeereport , searchdata });
+       res.render("./admin/report-view", { admin: true, employeereport , searchdata  });
        
    } else {
        res.render("./admin/report-view2", { admin: true, employeereport , searchdata });
@@ -723,21 +632,25 @@ projectimesheet.push(...await userHelpers.getDatabByproject5(req.body.searchdate
     
 });
 
-router.get("/edit-salary/:id", async function (req, res) {
-  let admin = req.session.user;
-  if (admin) {
-  let semployee = await employeHelpers.getEmployeeDetails(req.params.id);
- 
-    res.render("./admin/edit-salary", { admin: true , semployee});
-  }
-})
+
 router.post("/edit-salary/:id", (req, res) => {
   const todaydate = new Date(Date.UTC(new Date().getFullYear(), new Date().getMonth(), new Date().getDate()));
-  const reqdate = new Date(req.body.datevalue);
- if(todaydate === reqdate){
+  
+  let reqdate;
 
- }
+  if (req.body.month === 'This Month') {
+    reqdate = new Date(Date.UTC(new Date().getFullYear(), new Date().getMonth(), 1));
+  } else if (req.body.month === 'Last Month') {
+    reqdate = new Date(Date.UTC(new Date().getFullYear(), new Date().getMonth() - 1, 1));
+  }
+  if(req.body.employeeType === 'Hired Labour (Hourly)'){
+    req.body.sbasic = ''
+    req.body.sallowance = ''
+    req.body.sbonus = ''
 
+  }else{
+    req.body.srateph = ''
+  }
   if(reqdate === todaydate){
       employeHelpers.updateSalary(req.params.id, req.body).then(() => {
       res.redirect("/admin/employee");
@@ -797,6 +710,7 @@ router.post('/printreport', async (req, res) => {
     var index = 0
     let searchdata = {}
     searchdata.searchdate = req.body.searchdate
+    
    
     searchdata.employeeType = req.body.employeeType
     const employees = await employeHelpers.getAllemployee();  
