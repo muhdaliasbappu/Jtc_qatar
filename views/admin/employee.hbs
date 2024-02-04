@@ -65,11 +65,12 @@
             </td>
             <td>{{this.Employeeasigned}}</td>
             <td>{{this.Employeestatus}}</td>
-            <td><a href="/admin/edit-employee/{{this._id}}" class="btn btn-outline-dark">Edit</a> <br>
+            
+            <td>
+            <a href="/admin/edit-employee/{{this._id}}" class="action-icon"> <i class="mdi mdi-square-edit-outline"></i></a>
+            
+            <a href="/admin/datasearch/{{this._id}}" class="action-icon">  <i class="mdi mdi-clipboard-text-clock"></i></a>
 
-            <a href="/admin/datasearch/{{this._id}}" class="btn btn-outline-dark mt-3">Timesheet</a>
-
-    
             </td>
 
         </tr>
@@ -88,4 +89,4 @@
                         </div> <!-- end row-->
                         </div> 
                         </div> 
-                        </div> 
+                        </div>  
