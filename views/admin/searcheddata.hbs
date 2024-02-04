@@ -1,12 +1,34 @@
-<div class="container">
-     
-    <div class="row mt-4">
-<h3>Employee Name: {{datadetail.givenName}} </h3>
-        <table class="table table-bordered table-hover">
-            <thead>
-             
-                <tr>
-                    <th scope="col">#</th>
+
+  <div class="content-page">
+                <div class="content">
+
+                    <!-- Start Content-->
+                    <div class="container-fluid">
+
+      <div class="row">
+                            <div class="col-12">
+                                <div class="page-title-box">
+                                 
+                                    <h4 class="page-title">Employee Name: {{datadetail.givenName}}</h4>
+            
+                                </div>
+                            </div>
+                        </div>
+                        <!-- end page title -->
+
+                        <div class="row mb-2">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-body">
+                                
+                                      
+                                        <div class="tab-content">
+                                            <div class="tab-pane show active" id="scroll-horizontal-preview">
+                                                           <div class="board">
+                                                <table class="table mb-0">
+                                                    <thead>
+                                                        <tr>
+                                                    <th scope="col">#</th>
                       <th scope="col">Date</th>
                     <th scope="col">Status</th>
                     <th scope="col">Project1</th>
@@ -20,10 +42,10 @@
                     <th scope="col">Project5</th>
                     <th scope="col"></th>
                     <th scope="col">options</th>
-                </tr>
-            </thead>
-            <tbody>
-                {{#each searcheddata}}
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                        {{#each searcheddata}}
                 <tr>
                     <th scope=" row">{{this.index}}</th>
                     <td>{{this.datevalue}}</td>
@@ -38,14 +60,26 @@
                     <td>{{this.workhour4}}</td>
                     <td>{{this.projectname5}}</td>
                     <td>{{this.workhour5}}</td>
-                    <td><a href="/admin/edit-searcheddata/{{this._id}}" class="btn btn-outline-dark">Edit</a></td>
-                    <td><a href="/admin/edit-delete/{{this._id}}" class="btn btn-outline-dark">delete</a></td>
+                    <td class="table-action text-center">
+                        <a href="/admin/edit-searcheddata/{{this._id}}" class="action-icon"><i class="ri-edit-fill"></i></a></td>
+            
+                    
+                          
                 </tr>
                 {{/each}}
-            </tbody>
-        </table>
-{{!--        
-        <a href="/admin/add-datasheet/{{datadetail._id}}" class="btn btn-outline-dark">Add Datasheet</a> --}}
-        
-    </div>
-</div>
+                                               
+                                                    </tbody>
+                                                </table>            
+                                                </div>                              
+                                            </div> <!-- end preview-->
+                                        
+                                           
+                                        </div> <!-- end tab-content-->
+
+                                    </div> <!-- end card body-->
+                                </div> <!-- end card -->
+                            </div><!-- end col-->
+                        </div> <!-- end row-->
+                        </div> 
+                        </div> 
+                        </div> 
