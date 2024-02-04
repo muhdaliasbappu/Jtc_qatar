@@ -1,51 +1,277 @@
-
-
-<div class="col d-flex justify-content-center mt-5 " >
-    
-    <div class=" card" style="width: 18rem;">
-        <div class="card-header " style="background-color: #3c837b; color: #fff; border-top-left-radius: 10px; border-top-right-radius: 10px; text-align: center; padding: 15px; font-family: 'Helvetica Neue', sans-serif;">
-        <h2 style="margin: 0;">Edit Employee</h2>
-    </div>
-        <ul class="list-group list-group-flush">
-            <li class="list-group-item">Surname: {{semployee.surname}}</li>
-            <li class="list-group-item">GivenName: {{semployee.givenName}}</li>
-            <li class="list-group-item">QID: {{semployee.qid}}</li>
-            <li class="list-group-item">Passport NO:{{semployee.passno}}</li>
-            <li class="list-group-item">Nationality: {{semployee.nation}}</li>
-            <li class="list-group-item">EmployeeType: {{semployee.employeeType}}</li>
-        </ul>
-        <form action="/admin/edit-employee/{{semployee._id}}" method="post">
-      
-       {{!-- <input class="form-control"  value="{{semployee.qid}}"  maxlength="11" minlength="11" name="qid" id="qid" placeholder="QID">
-           
-        <input class="form-control " value="{{semployee.passno}}" name="passno" id="passno" placeholder="Passport No" > --}}
-            <select class="form-select " name="Employeeasigned" aria-label=" Default select example">
-                <option value="{{semployee.Employeeasigned}}">Assign To: {{semployee.Employeeasigned}}</option>
-                {{#each users}}
-                <option value="{{this.usernames}}">{{this.usernames}}</option>
-                {{/each}}
-            </select>
-            <select class="form-select " name="Employeestatus" aria-label=" Default select example">
-                <option value="{{semployee.Employeestatus}}">Employeestatus:{{semployee.Employeestatus}}</option>
-                <option value="Working">Working</option>
-                <option value="On Vacation">On Vacation</option>
-                <option value="Dismissed">Dismissed</option>
-            </select>
-         <div class="card-body">
-             
-                <a href="/admin/edit-salary/{{semployee._id}}" class="btn btn-primary">Edit Salary</a>
-
-
+<div class="content-page">
+    <div class="content">         
+        <div class="container-fluid">
+             <div class="row">
+                 <div class="col-12">
+                    <div class="page-title-box">                                                                       
+                        <h4 class="page-title">Edit Employee</h4>
+                    </div>
+                 </div>
             </div>
+                     <div class="row">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-body">
+                                       
+                                        <div class="tab-content">
+                                            <div class="tab-pane show active" id="daterange-picker-preview">
+                                                <div class="row">
+                                                    <div class="col-lg-6">
+                                                        <!-- Date Range -->
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Surname</label>
+                                                            <input type="text" value="{{semployee.surname}}" class="form-control date"  data-cancel-class="btn-warning" readonly>
+                                                        </div>
+                                                    </div>
+        
+                                                    <div class="col-lg-6">
+                                                        <!-- Date Range Picker With Times -->
+                                                        <div class="mb-3">
+                                                            <label class="form-label">GivenName</label>
+                                                            <input type="text" value="{{semployee.givenName}}" class="form-control date" readonly >
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                 <div class="row">
+                                                    <div class="col-lg-6">
+                                                        <!-- Date Range -->
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Passport NO</label>
+                                                            <input type="text" value="{{semployee.passno}}" class="form-control date"  data-cancel-class="btn-warning" readonly>
+                                                        </div>
+                                                    </div>
+        
+                                                    <div class="col-lg-6">
+                                                        <!-- Date Range Picker With Times -->
+                                                        <div class="mb-3">
+                                                            <label class="form-label">QID</label>
+                                                            <input type="text" value="{{semployee.qid}}" class="form-control date" readonly >
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                 <div class="row">
+                                                    <div class="col-lg-6">
+                                                        <!-- Date Range -->
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Nationality</label>
+                                                            <input type="text" value="{{semployee.nation}}" class="form-control date"  data-cancel-class="btn-warning" readonly>
+                                                        </div>
+                                                    </div>
+        
+                                                    <div class="col-lg-6">
+                                                        <!-- Date Range Picker With Times -->
+                                                        <div class="mb-3">
+                                                            <label class="form-label">EmployeeType</label>
+                                                            <input type="text" value="{{semployee.employeeType}}" class="form-control date" readonly >
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                 <form action="/admin/edit-employee/{{semployee._id}}" method="post">
+                                                <div class="row">
+                                                    <div class="col-lg-6">
+                                                        <!-- Date Range -->
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Assign To</label>
+                                                            {{!-- <input type="text" value="{{semployee.employeeType}}" class="form-control date" readonly > --}}
+                                                            <select class="form-select" name="Employeeasigned" aria-label=" Default select example" data-toggle="select2"> 
+                                                                <option value="{{semployee.Employeeasigned}}">{{semployee.Employeeasigned}}</option>
+                                                                {{#each users}}
+                                                                  <option value="{{this.usernames}}">{{this.usernames}}</option>
+                                                                {{/each}}
+                                                            </select>
+                                        
+                                                        </div>
+                                                    </div>
+        
+                                                    <div class="col-lg-6">
+                                                       
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Employee Status</label>
+                                                            <select class="form-select" name="Employeestatus"  aria-label=" Default select example"> 
+                                                                <option value="{{semployee.Employeestatus}}">{{semployee.Employeestatus}}</option>
+                                                                <option value="Working">Working</option>
+                                                                <option value="On Vacation">On Vacation</option>
+                                                                <option value="Dismissed">Dismissed</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <button type="submit" id="submits" class="btn btn-primary mt-2">Apply</button>
+                                                
+                                               </form>
 
-           
-            <div class="card-body">
-                <button class="btn btn-primary" onclick="history.back()">Go Back</button>
-                <button type="submit" class="btn btn-success">Confirm</button>
-                <a href="/admin/delete-employee/{{semployee._id}}" class="btn btn-danger "
-                    onclick="return confirm('Are you sure you want to delete Employee {{semployee.surname}}')">Delete</a>
+                                                                 
+                                            </div> <!-- end preview-->
+                                        
+                                           
+                                        </div> <!-- end tab-content-->
 
-            </div>
-        </form>
-    </div>
+                                    </div> <!-- end card-body -->
+                                </div> <!-- end card-->
+                            </div> <!-- end col -->
+                        </div>
+                        <!-- end row -->
+                          <div class="row">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h4 class="header-title">Edit Salary</h4>
+                                        
+
+                                        <ul class="nav nav-tabs nav-bordered mb-3">
+                                            <li class="nav-item">
+                                                <a href="#daterange-picker-preview" data-bs-toggle="tab" aria-expanded="false" class="nav-link inactive">
+                                                    
+                                                </a>
+                                            </li>
+                                    
+                                        </ul> <!-- end nav-->
+                                        <div class="tab-content">
+                                            <div class="tab-pane show active" id="daterange-picker-preview">
+                                                <form id="employeeSalary" action="/admin/edit-salary/{{semployee._id}}" method="POST">
+                                                <div class="row">
+                                                   <div class="col-lg-6">
+                                                        
+                                                        <div class="mb-3">
+                                                            <label class="form-label">EmployeeType</label>
+                                                            <select class="form-select" name="employeeType" id="employeeType"> 
+                                                                <option value="{{semployee.employeeType}}">{{semployee.employeeType}}</option>
+                                                                 <option value="Own Labour">Own Labour</option>
+                                                                 <option value="Own Staff (Operations)">Own Staff (Operations)</option>
+                                                                 <option value="Own Staff (Projects)">Own Staff (Projects)</option>
+                                                                  <option value="Hired Labour (Hourly)">Hired Labour (Hourly)</option>
+                                                                  <option value="Hired Labour (Monthly)">Hired Labour (Monthly)</option>
+                                                                 <option value="Hired Staff (Operations)">Hired Staff (Operations)</option>            
+                                                                 <option value="Hired Staff (Projects)">Hired Staff (Projects)</option>      
+                                                            </select>
+                                                        </div>
+                                                    </div>
+        
+                                                    <div class="col-lg-6">
+                                                        <!-- Predefined Date Ranges -->
+                                                        <div>
+                                                            <label class="form-label">Select Month</label>
+                                                             <select class="form-select" name="month" id="month" required> 
+                                                                <option value="">Select</option>
+                                                                 <option value="This Month">This Month</option>
+                                                                 <option value="Last Month">Last Month</option>
+                                                                
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>             
+                                                
+                                                <fieldset id="own" >
+                                                
+                                                <div class="row">
+                                                    <div class="col-lg-4">
+                                                        <!-- Date Range -->
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Basic</label>
+                                                            <input type="text" value="{{semployee.sbasic}}" name="sbasic" class="form-control date"  data-cancel-class="btn-warning">
+                                                        </div>
+                                                    </div>
+        
+                                                    <div class="col-lg-4">
+                                                        <!-- Date Range Picker With Times -->
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Allowance</label>
+                                                            <input type="text" value="{{semployee.sallowance}}" name="sallowance" class="form-control date" >
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-4">
+                                                        <!-- Date Range Picker With Times -->
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Bonus</label>
+                                                            <input type="text" value="{{semployee.sbonus}}" name="sbonus" class="form-control date"  >
+                                                        </div>
+                                                    </div>
+                                                    </fieldset>
+                                                    
+                                                     
+                                                    <fieldset id="hired" >
+                                                     <div class="col-lg-4">
+                                                        <!-- Date Range Picker With Times -->
+                                                        <div class="mb-3">
+                                                            <label class="form-label" >Rate Per Hour</label>
+                                                            <input type="text"  name="srateph"  value="{{semployee.srateph}}" class="form-control date"  >
+                                                        </div>
+                                                    </div>
+                                                    </fieldset>
+                                                    
+                                                </div>
+                                                <button type="submit" id="submits" class="btn btn-primary mt-2">Apply</button>
+                                                </form>
+                                                 
+                                               
+                                            </div> <!-- end preview-->
+                                        
+                                           
+                                        </div> <!-- end tab-content-->
+
+                                    </div> <!-- end card-body -->
+                                </div> <!-- end card-->
+                            </div> <!-- end col -->
+                        </div>
+                        <!-- end row -->
+          
+        </div>
 </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const employeeTypeSelect = document.getElementById("employeeType");
+            const ownFieldset = document.getElementById("own");
+            const hiredFieldset = document.getElementById("hired");
+            const sbasicInput = document.getElementById("sbasic");
+            const sallowanceInput = document.getElementById("sallowance");
+            const sbonusInput = document.getElementById("sbonus");
+            const sratephInput = document.getElementById("srateph");
+
+            function resetValues() {
+                sbasicInput.value = '';
+                sallowanceInput.value = '';
+                sbonusInput.value = '';
+                sratephInput.value = '';
+            }
+
+            function updateFieldsetVisibility() {
+                const selectedValue = employeeTypeSelect.value;
+
+                if (
+                    selectedValue === "Own Labour" ||
+                    selectedValue === "Own Staff (Operations)" ||
+                    selectedValue === "Own Staff (Projects)" ||
+                    selectedValue === "Hired Labour (Monthly)" ||
+                    selectedValue === "Hired Staff (Operations)" ||
+                    selectedValue === "Hired Staff (Projects)"
+                ) {
+                    ownFieldset.style.display = "block";
+                    hiredFieldset.style.display = "none";
+                    resetValues();
+                } else if (selectedValue === "Hired Labour (Hourly)") {
+                    ownFieldset.style.display = "none";
+                    hiredFieldset.style.display = "block";
+                    resetValues();
+                } else {
+                    ownFieldset.style.display = "none";
+                    hiredFieldset.style.display = "none";
+                    resetValues();
+                }
+            }
+
+            // Initial visibility setup based on semployeeType
+            const semployeeType = "{{semployee.employeeType}}";
+            if (semployeeType !== 'Hired Labour') {
+                ownFieldset.style.display = "block";
+                hiredFieldset.style.display = "none";
+            } else {
+                ownFieldset.style.display = "none";
+                hiredFieldset.style.display = "block";
+            }
+
+            // Event listener for dropdown change
+            employeeTypeSelect.addEventListener("change", updateFieldsetVisibility);
+        });
+    </script>
+
