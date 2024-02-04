@@ -254,7 +254,6 @@ router.post("/datasheet", function (req, res) {
   const currentDate = new Date();
   const twoDaysAgo = new Date(currentDate);
   twoDaysAgo.setDate(currentDate.getDate() - 3);
-  console.log(twoDaysAgo,'2daysago')
   const d = new Date(req.body.searchdate);
   if (d < twoDaysAgo) {
   if(d.getDay() === 5){
@@ -342,28 +341,38 @@ router.get("/datasearch/:id", function (req, res) {
   }
 });
 router.post("/datasearch", async (req, res) => {
-  var searcheddatas = [];
-  let datadetail = await employeHelpers.getEmployeeDetails(req.body.employee_id);
-  userHelpers.getdatabdate(req.body.startdate, req.body.enddate).then(function (databdate) {
-   
-    
-      for (i = 0; i < databdate.length; i++) {
-        if (databdate[i].employee_id === req.body.employee_id) {
-          searcheddatas[i] = databdate[i];
-     
-        }
-      }
+  let searcheddatas = [];
 
-      const searcheddata = searcheddatas.sort(
-        (objA, objB) => Number(objA.date) - Number(objB.date)
-      );
-   
-      res.render("./admin/searcheddata", {
-        admin: true,
-        searcheddata,
-        datadetail,
-      });
+  // Fetch employee details using the employee_id from the request body
+  let datadetail = await employeHelpers.getEmployeeDetails(req.body.employee_id);
+
+  // Fetch data between startdate and enddate using userHelpers.getdatabdate
+  userHelpers.getdatabdate(req.body.startdate, req.body.enddate).then(function (databdate) {
+    // Iterate through the fetched data and filter by the given employee_id
+    for (let i = 0; i < databdate.length; i++) {
+      if (databdate[i].employee_id === req.body.employee_id) {
+        searcheddatas.push({}); // Initialize with an empty object
+        searcheddatas[searcheddatas.length - 1] = databdate[i];
+      }
+    }
+
+    // Sort the searched data based on the 'date' property in ascending order
+    const searcheddata = searcheddatas.sort(
+      (objA, objB) => Number(objA.date) - Number(objB.date)
+    );
+
+    // Assign an 'index' property to each element in the searched data
+    for(let j = 0; j < searcheddata.length; j++ ){ 
+      searcheddata[j].index = j + 1;
+    }
+
+    // Render a view with the searched data, employee details, and some additional flags
+    res.render("./admin/searcheddata", {
+      admin: true,
+      searcheddata,
+      datadetail,
     });
+  });
 });
 
 
