@@ -187,8 +187,8 @@ module.exports = {
 }
 let report = {}
 report.employee
-report.totalsalary = total
-report.otsalary = ot
+report.totalsalary = Math.round(total)
+report.otsalary = Math.round(ot)
 return report;
 
   }
