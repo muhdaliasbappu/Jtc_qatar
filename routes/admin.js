@@ -620,26 +620,6 @@ router.post("/search-report", async (req, res) => {
   }
 });
 
-// project report
-router.get("/project-search/",  (req, res) => {
-
-  let admin = req.session.user;
-  if (admin) {
-    res.render("./admin/project-search", { admin: true });
-  }
-});
-
-router.post("/project-search",async (req, res) => {
-  let projectimesheet = await userHelpers.getDatabByproject1(req.body.searchdate, 'kATARA' , 'Own Labour');
-projectimesheet.push(...await userHelpers.getDatabByproject2(req.body.searchdate, 'kATARA' , 'Own Labour'))
-projectimesheet.push(...await userHelpers.getDatabByproject3(req.body.searchdate, 'kATARA' , 'Own Labour'))
-projectimesheet.push(...await userHelpers.getDatabByproject4(req.body.searchdate, 'kATARA' , 'Own Labour'))
-projectimesheet.push(...await userHelpers.getDatabByproject5(req.body.searchdate, 'kATARA' , 'Own Labour'))
-  
-     allprojectreport.projectreportlabour(projectimesheet, 'kATARA')
-      res.render("./admin/project-report", { admin: true });
-    
-});
 
 
 router.post("/edit-salary/:id", (req, res) => {
@@ -984,6 +964,56 @@ router.post('/printreport', async (req, res) => {
   }
 });
 
-module.exports = router;
+// project report
+router.get("/project-search/",  (req, res) => {
+  let admin = req.session.user;
+  if (admin) {
+    res.render("./admin/project-search", { admin: true });
+  }
+});
 
+router.post("/project-search", async (req, res) => {
+  let employeetype = ['Own Labour', 'Hired Labour (Monthly)', 'Hired Labour (Hourly)', 'Own Staff (Projects)', 'Hired Staff (Projects)'];
+  let projectimesheets = [];
+  
+
+  try {
+      let projects = await projectHelpers.getAllproject();
+
+      for (let i = 0; i < projects.length; i++) {
+        let tempobj = {}
+        tempobj.index = i+1
+        tempobj.projectname = projects[i].projectname
+          for (let j = 0; j < employeetype.length; j++) {
+              let projectimesheet = await projectHelpers.projecttimesheet(req.body.searchdate, projects[i].projectname, employeetype[j]);
+              if (projectimesheet.length > 0) {
+                if(employeetype[i] === 'Own Labour' || 'Hired Labour (Monthly)' ){
+                  let report = allprojectreport.projectreportlabour(projectimesheet, projects[i].projectname)
+                  tempobj.ownlaboursalary = report.totalsalary
+                  tempobj.ownlabourot =  report.otsalary
+                }else if (employeetype[i] === 'Hired Labour (Monthly)'){
+                  let report = allprojectreport.projectreportlabour(projectimesheet, projects[i].projectname)
+                  tempobj.hiredlabourmsalary = report.totalsalary
+                  tempobj.hiredlabourmot =  report.otsalary
+                }
+              }
+          }
+          projectimesheets.push(tempobj)
+      }
+
+
+
+
+
+      res.render("./admin/project-report", { admin: true , projectimesheets});
+  } catch (error) {
+      console.error(error);
+      res.status(500).send("Internal Server Error");
+  }
+});
+
+
+
+
+module.exports = router;
 
