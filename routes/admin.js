@@ -985,14 +985,15 @@ router.post("/project-search", async (req, res) => {
         tempobj.index = i+1
         tempobj.projectname = projects[i].projectname
           for (let j = 0; j < employeetype.length; j++) {
+            let report = {}
               let projectimesheet = await projectHelpers.projecttimesheet(req.body.searchdate, projects[i].projectname, employeetype[j]);
               if (projectimesheet.length > 0) {
                 if(employeetype[i] === 'Own Labour' || 'Hired Labour (Monthly)' ){
-                  let report = allprojectreport.projectreportlabour(projectimesheet, projects[i].projectname)
+                  report = allprojectreport.projectreportlabour(projectimesheet, projects[i].projectname)
                   tempobj.ownlaboursalary = report.totalsalary
                   tempobj.ownlabourot =  report.otsalary
                 }else if (employeetype[i] === 'Hired Labour (Monthly)'){
-                  let report = allprojectreport.projectreportlabour(projectimesheet, projects[i].projectname)
+                  report = allprojectreport.projectreportlabour(projectimesheet, projects[i].projectname)
                   tempobj.hiredlabourmsalary = report.totalsalary
                   tempobj.hiredlabourmot =  report.otsalary
                 }
@@ -1000,11 +1001,6 @@ router.post("/project-search", async (req, res) => {
           }
           projectimesheets.push(tempobj)
       }
-
-
-
-
-
       res.render("./admin/project-report", { admin: true , projectimesheets});
   } catch (error) {
       console.error(error);
