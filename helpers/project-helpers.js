@@ -1,4 +1,5 @@
 var db = require('../config/connection')
+var userHelpers = require("../helpers/user-helper");
 var objectId = require('mongodb').ObjectId
 module.exports = {
     addproject: (project, callback) => {
@@ -39,6 +40,16 @@ module.exports = {
                 resolve(response)
             })
         })
+    },
+    projecttimesheet: async(month , project , employeetype) => {
+        let projectimesheet = await userHelpers.getDatabByproject1(month , project , employeetype);
+        projectimesheet.push(...await userHelpers.getDatabByproject2(month , project , employeetype))
+        projectimesheet.push(...await userHelpers.getDatabByproject3(month , project , employeetype))
+        projectimesheet.push(...await userHelpers.getDatabByproject4(month , project , employeetype))
+        projectimesheet.push(...await userHelpers.getDatabByproject5(month , project , employeetype))
+        return projectimesheet;
     }
+    
+    
 
 }
