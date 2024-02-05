@@ -1001,6 +1001,7 @@ router.post("/project-search", async (req, res) => {
           }
           projectimesheets.push(tempobj)
       }
+    console.log('projectimesheets:' ,projectimesheets )
       res.render("./admin/project-report", { admin: true , projectimesheets});
   } catch (error) {
       console.error(error);
