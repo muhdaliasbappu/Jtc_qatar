@@ -987,6 +987,7 @@ router.post("/project-search", async (req, res) => {
           for (let j = 0; j < employeetype.length; j++) {
             let report = {}
               let projectimesheet = await projectHelpers.projecttimesheet(req.body.searchdate, projects[i].projectname, employeetype[j]);
+            console.log(projectimesheet)
               if (projectimesheet.length > 0) {
                 if(employeetype[i] === 'Own Labour' || 'Hired Labour (Monthly)' ){
                   report = allprojectreport.projectreportlabour(projectimesheet, projects[i].projectname)
