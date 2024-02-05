@@ -972,6 +972,7 @@ router.get("/project-search/",  (req, res) => {
   }
 });
 
+
 router.post("/project-search", async (req, res) => {
   let employeetype = ['Own Labour', 'Hired Labour (Monthly)', 'Hired Labour (Hourly)', 'Own Staff (Projects)', 'Hired Staff (Projects)'];
   let projectimesheets = [];
@@ -986,9 +987,10 @@ router.post("/project-search", async (req, res) => {
         tempobj.projectname = projects[i].projectname
           for (let j = 0; j < employeetype.length; j++) {
             let report = {}
-              let projectimesheet = await projectHelpers.projecttimesheet(req.body.searchdate, projects[i].projectname, employeetype[j]);
-            console.log(projectimesheet)
+              let projectimesheet = await projectHelpers.projecttimesheet(req.body.searchdate, projects[i].projectname, employeetype[j]);             
               if (projectimesheet.length > 0) {
+                tempobj.index = i+1
+                 tempobj.projectname = projects[i].projectname
                 if(employeetype[i] === 'Own Labour' || 'Hired Labour (Monthly)' ){
                   report = allprojectreport.projectreportlabour(projectimesheet, projects[i].projectname)
                   tempobj.ownlaboursalary = report.totalsalary
@@ -1002,13 +1004,15 @@ router.post("/project-search", async (req, res) => {
           }
           projectimesheets.push(tempobj)
       }
-    console.log('projectimesheets:' ,projectimesheets )
+      
       res.render("./admin/project-report", { admin: true , projectimesheets});
   } catch (error) {
       console.error(error);
       res.status(500).send("Internal Server Error");
   }
 });
+
+
 
 
 
