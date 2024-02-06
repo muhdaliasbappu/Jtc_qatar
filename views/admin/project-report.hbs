@@ -1,71 +1,67 @@
+ <style>
+    .table th:first-child,
+    .table td:first-child {
+      width: 50px; /* Adjust the width as needed for the first column */
+    }
 
-  <div class="content-page">
-                <div class="content">
+    .consistent-width {
+      width: 100px; /* Set a fixed width for the columns other than the first one */
+    }
+  </style>
 
-                    <!-- Start Content-->
-                    <div class="container-fluid">
-
+<div class="content-page">
+  <div class="content">
+    <!-- Start Content-->
+    <div class="container-fluid">
       <div class="row">
-                            <div class="col-12">
-                                <div class="page-title-box">
-                                 
-                                    <h4 class="page-title">Project Expense</h4>
-            
-                                </div>
-                            </div>
-                        </div>
-                        <!-- end page title -->
+        <div class="col-12">
+          <div class="page-title-box">
+            <h4 class="page-title">Project Expense</h4>
+          </div>
+        </div>
+      </div>
+      <!-- end page title -->
 
-                        <div class="row mb-2">
-                            <div class="col-12">
-                                <div class="card">
-                                    <div class="card-body">
-                                
-                                      
-                                        <div class="tab-content">
-                                            <div class="tab-pane show active" id="scroll-horizontal-preview">
-                                                           <div class="board">
-                                                <table class="table mb-0">
-                                                    <thead>
-                                                        <tr>
-                                                    <th scope="col">#</th>
-                                                    <th scope="col">Projects</th>
-                                                    <th scope="col">Own Labour</th>
-                                                    <th scope="col">Hired Labour (Monthly)</th>
-                                                    <th scope="col">Hired Labour (Hourly)</th>
-                                                    <th scope="col">Own Staff (Projects)</th>
-                                                    <th scope="col">Hired Staff (Projects)</th>
-                    
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                        {{#each projectimesheets}}
-                <tr>
-                    <th scope=" row">{{this.index}}</th>
-                    <td>{{this.projectname}}</td>
-                    <td>{{this.ownlaboursalary}}</td>
-                    <td>{{this.hiredlabourmsalary}}</td>
-                    <td>{{this.hiredstaffhourly}}</td>
-                    <td>{{this.ownstaffsalary}}</td>
-                    <td>{{this.hiredstaffsalary}}</td>
-                    
-                          
-                </tr>
-                {{/each}}
-                                               
-                                                    </tbody>
-                                                </table>            
-                                                </div>                              
-                                            </div> <!-- end preview-->
-                                        
-                                           
-                                        </div> <!-- end tab-content-->
-
-                                    </div> <!-- end card body-->
-                                </div> <!-- end card -->
-                            </div><!-- end col-->
-                        </div> <!-- end row-->
-                        </div> 
-                        </div> 
-                        </div> 
-
+      <div class="row mb-2">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-body">
+              <div class="tab-content">
+                <div class="tab-pane show active" id="scroll-horizontal-preview">
+                  <div class="board">
+                    <table class="table table-bordered table-centered mb-0">
+                      <thead>
+                        <tr>
+                          <th scope="col">#</th>
+                          <th scope="col" class="consistent-width">Projects</th>
+                          <th scope="col" class="consistent-width">Own Labour</th>
+                          <th scope="col" class="consistent-width">Hired Labour (Monthly)</th>
+                          <th scope="col" class="consistent-width">Hired Labour (Hourly)</th>
+                          <th scope="col" class="consistent-width">Own Staff (Projects)</th>
+                          <th scope="col" class="consistent-width">Hired Staff (Projects)</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {{#each projectimesheets}}
+                          <tr>
+                            <th scope="row">{{this.index}}</th>
+                            <td>{{this.projectname}}</td>
+                            <td>{{this.ownlaboursalary}}</td>
+                            <td>{{this.hiredlabourmsalary}}</td>
+                            <td>{{this.hiredstaffhourly}}</td>
+                            <td>{{this.ownstaffsalary}}</td>
+                            <td>{{this.hiredstaffsalary}}</td>
+                          </tr>
+                        {{/each}}
+                      </tbody>
+                    </table>
+                  </div>
+                </div> <!-- end preview-->
+              </div> <!-- end tab-content-->
+            </div> <!-- end card body-->
+          </div> <!-- end card -->
+        </div><!-- end col-->
+      </div> <!-- end row-->
+    </div> 
+  </div> 
+</div>
