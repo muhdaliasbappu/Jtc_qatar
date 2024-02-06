@@ -182,6 +182,7 @@ module.exports = {
             }
             total = total + tempsal
             ot = ot + tempot  
+      
         }
     }
 }
@@ -191,7 +192,111 @@ report.totalsalary = Math.round(total)
 report.otsalary = Math.round(ot)
 return report;
 
+  },
+
+  projectreportstaff: (timesheet,reqproject)=>{
+    let total= 0
+    for(let i=0; i<timesheet.length; i++){
+        if(timesheet[i].workinghour === 0){
+            let tempot = 0
+            if(timesheet[i].projectname1 === reqproject){
+                tempot = timesheet[i].workhour1 * timesheet[i].sbasic/240
+            }else if(timesheet[i].projectname2 === reqproject){
+                tempot = timesheet[i].workhour2 * timesheet[i].sbasic/240
+            }else if(timesheet[i].projectname3 === reqproject){
+                tempot = timesheet[i].workhour3 * timesheet[i].sbasic/240
+            }else if(timesheet[i].projectname4 === reqproject){
+                tempot = timesheet[i].workhour4 * timesheet[i].sbasic/240
+            }else if(timesheet[i].projectname5 === reqproject){
+                tempot = timesheet[i].workhour5 * timesheet[i].sbasic/240
+            }
+            total = total + tempot
+            ot = ot + tempot
+            
+        }else{     
+        let pcount=0
+        if(timesheet[i].projectname1){
+            pcount++
+            if(timesheet[i].projectname2){
+                pcount++
+                if(timesheet[i].projectname3){
+                    pcount++
+                    if(timesheet[i].projectname4){
+                        pcount++
+                        if(timesheet[i].projectname5){
+                            pcount++
+                            
+                        }
+                    }
+                }
+            }
+        }
+        if(pcount === 1){
+            let tempsal = 0                       
+                tempsal = timesheet[i].sbasic/30 + timesheet[i].sallowance/30 + timesheet[i].sbonus/30                                
+            total = total + tempsal
+                  
+        }else if(pcount === 2){
+            let tempsal = 0
+            let workhourtotal = Number(timesheet[i].workhour1)+Number(timesheet[i].workhour2)           
+            if(timesheet[i].projectname1 === reqproject){
+                    tempsal = timesheet[i].workhour1/workhourtotal*timesheet[i].sbasic/30 + timesheet[i].workhour1/workhourtotal*timesheet[i].sallowance/30 + timesheet[i].workhour1/workhourtotal*timesheet[i].sbonus/30
+
+            }else if(timesheet[i].projectname2 === reqproject){                             
+                    tempsal = timesheet[i].workhour2/workhourtotal*timesheet[i].sbasic/30 + timesheet[i].workhour2/workhourtotal*timesheet[i].sallowance/30 + timesheet[i].workhour2/workhourtotal*timesheet[i].sbonus/30              
+            }
+            total = total + tempsal
+
+        }else if(pcount === 3){
+            let tempsal = 0
+            let workhourtotal = Number(timesheet[i].workhour1)+Number(timesheet[i].workhour2)+Number(timesheet[i].workhour3)
+            if(timesheet[i].projectname1 === reqproject){
+                    tempsal = timesheet[i].workhour1/workhourtotal*timesheet[i].sbasic/30 + timesheet[i].workhour1/workhourtotal*timesheet[i].sallowance/30 + timesheet[i].workhour1/workhourtotal*timesheet[i].sbonus/30           
+            }else if(timesheet[i].projectname2 === reqproject){                               
+                    tempsal = timesheet[i].workhour2/workhourtotal*timesheet[i].sbasic/30 + timesheet[i].workhour2/workhourtotal*timesheet[i].sallowance/30 + timesheet[i].workhour2/workhourtotal*timesheet[i].sbonus/30            
+            }else if(timesheet[i].projectname3 === reqproject){
+                    tempsal = timesheet[i].workhour3/workhourtotal*timesheet[i].sbasic/30 + timesheet[i].workhour3/workhourtotal*timesheet[i].sallowance/30 + timesheet[i].workhour3/workhourtotal*timesheet[i].sbonus/30      
+            }
+            total = total + tempsal
+        }else if(pcount === 4){
+            let tempsal = 0
+            let workhourtotal = Number(timesheet[i].workhour1)+Number(timesheet[i].workhour2)+Number(timesheet[i].workhour3)+Number(timesheet[i].workhour4)
+            if(timesheet[i].projectname1 === reqproject){
+                    tempsal = timesheet[i].workhour1/workhourtotal*timesheet[i].sbasic/30 + timesheet[i].workhour1/workhourtotal*timesheet[i].sallowance/30 + timesheet[i].workhour1/workhourtotal*timesheet[i].sbonus/30
+            }else if(timesheet[i].projectname2 === reqproject){                                 
+                    tempsal = timesheet[i].workhour2/workhourtotal*timesheet[i].sbasic/30 + timesheet[i].workhour2/workhourtotal*timesheet[i].sallowance/30 + timesheet[i].workhour2/workhourtotal*timesheet[i].sbonus/30
+            }else if(timesheet[i].projectname3 === reqproject){
+                    tempsal = timesheet[i].workhour3/workhourtotal*timesheet[i].sbasic/30 + timesheet[i].workhour3/workhourtotal*timesheet[i].sallowance/30 + timesheet[i].workhour3/workhourtotal*timesheet[i].sbonus/30
+            }else if(timesheet[i].projectname4 === reqproject){
+                    tempsal = timesheet[i].workhour4/workhourtotal*timesheet[i].sbasic/30 + timesheet[i].workhour4/workhourtotal*timesheet[i].sallowance/30 + timesheet[i].workhour4/workhourtotal*timesheet[i].sbonus/30
+            }
+            total = total + tempsal
+        }else if(pcount === 5){
+            let tempsal = 0
+            let workhourtotal = Number(timesheet[i].workhour1)+Number(timesheet[i].workhour2)+Number(timesheet[i].workhour3)+Number(timesheet[i].workhour4)+Number(timesheet[i].workhour5)
+            if(timesheet[i].projectname1 === reqproject){
+                    tempsal = timesheet[i].workhour1/workhourtotal*timesheet[i].sbasic/30 + timesheet[i].workhour1/workhourtotal*timesheet[i].sallowance/30 + timesheet[i].workhour1/workhourtotal*timesheet[i].sbonus/30
+            }else if(timesheet[i].projectname2 === reqproject){                                 
+                    tempsal = timesheet[i].workhour2/workhourtotal*timesheet[i].sbasic/30 + timesheet[i].workhour2/workhourtotal*timesheet[i].sallowance/30 + timesheet[i].workhour2/workhourtotal*timesheet[i].sbonus/30
+            }else if(timesheet[i].projectname3 === reqproject){
+                    tempsal = timesheet[i].workhour3/workhourtotal*timesheet[i].sbasic/30 + timesheet[i].workhour3/workhourtotal*timesheet[i].sallowance/30 + timesheet[i].workhour3/workhourtotal*timesheet[i].sbonus/30
+            }else if(timesheet[i].projectname4 === reqproject){
+                    tempsal = timesheet[i].workhour4/workhourtotal*timesheet[i].sbasic/30 + timesheet[i].workhour4/workhourtotal*timesheet[i].sallowance/30 + timesheet[i].workhour4/workhourtotal*timesheet[i].sbonus/30
+            }else if(timesheet[i].projectname5 === reqproject){
+                    tempsal = timesheet[i].workhour5/workhourtotal*timesheet[i].sbasic/30 + timesheet[i].workhour5/workhourtotal*timesheet[i].sallowance/30 + timesheet[i].workhour5/workhourtotal*timesheet[i].sbonus/30
+            }
+            total = total + tempsal
+     
+        }
+    }
+}
+let report = {}
+report.employee
+report.totalsalary = Math.round(total)
+return report;
+
   }
+
 
 
 
