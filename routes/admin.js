@@ -984,15 +984,14 @@ router.post("/project-search", async (req, res) => {
 
       for (let i = 0; i < projects.length; i++) {
         let tempobj = {}
-        tempobj.index = i+1
-        tempobj.projectname = projects[i].projectname
+            
           for (let j = 0; j < employeetype.length; j++) {
             let report = {}
             let projectimesheet = []
-               projectimesheet = await projectHelpers.projecttimesheet(req.body.searchdate, projects[i].projectname, employeetype[j]);             
+               projectimesheet = await projectHelpers.projecttimesheet(req.body.searchdate,  projects[i].projectname, employeetype[j]);                           
               if (projectimesheet.length > 0) {
-                 tempobj.index = i+1
-                 tempobj.projectname = projects[i].projectname
+                            
+                tempobj.projectname = projects[i].projectname
                  switch(employeetype[j]){
                   case 'Own Labour':
                     report = await allprojectreport.projectreportlabour(projectimesheet, projects[i].projectname)
@@ -1011,10 +1010,23 @@ router.post("/project-search", async (req, res) => {
                   case  'Hired Staff (Projects)':  
                     report = await allprojectreport.projectreportstaff(projectimesheet, projects[i].projectname)
                     tempobj.hiredstaffsalary = report.totalsalary
+                    break;
+                  case  'Hired Labour (Hourly)':  
+                    report = await allprojectreport.projectreportlabour(projectimesheet, projects[i].projectname)
+                    tempobj.hiredstaffhourly = report.totalsalary
+                    break;  
                  }                
               }
           }
-           projectimesheets.push(tempobj)
+          
+          if (Object.keys(tempobj).length !== 0) {
+            projectimesheets.push(tempobj);
+          }
+          for(g = 0; g < projectimesheets.length; g++){
+            projectimesheets[g].index = g+1    
+
+          }
+
       }
       
       res.render("./admin/project-report", { admin: true , projectimesheets});
