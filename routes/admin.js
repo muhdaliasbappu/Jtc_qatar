@@ -973,6 +973,7 @@ router.get("/project-search/",  (req, res) => {
 });
 
 
+
 router.post("/project-search", async (req, res) => {
   let employeetype = ['Own Labour', 'Hired Labour (Monthly)', 'Hired Labour (Hourly)', 'Own Staff (Projects)', 'Hired Staff (Projects)'];
   let projectimesheets = [];
@@ -1003,12 +1004,18 @@ router.post("/project-search", async (req, res) => {
                     tempobj.hiredlabourmsalary = report.totalsalary
                     tempobj.hiredlabourmot =  report.otsalary
                     break;
+                  case  'Own Staff (Projects)': 
+                    report = await allprojectreport.projectreportstaff(projectimesheet, projects[i].projectname)
+                    tempobj.ownstaffsalary = report.totalsalary
+                    break;
+                  case  'Hired Staff (Projects)':  
+                    report = await allprojectreport.projectreportstaff(projectimesheet, projects[i].projectname)
+                    tempobj.hiredstaffsalary = report.totalsalary
                  }                
               }
           }
            projectimesheets.push(tempobj)
       }
-      console.log(projectimesheets)
       
       res.render("./admin/project-report", { admin: true , projectimesheets});
   } catch (error) {
