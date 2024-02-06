@@ -987,23 +987,28 @@ router.post("/project-search", async (req, res) => {
         tempobj.projectname = projects[i].projectname
           for (let j = 0; j < employeetype.length; j++) {
             let report = {}
-              let projectimesheet = await projectHelpers.projecttimesheet(req.body.searchdate, projects[i].projectname, employeetype[j]);             
+            let projectimesheet = []
+               projectimesheet = await projectHelpers.projecttimesheet(req.body.searchdate, projects[i].projectname, employeetype[j]);             
               if (projectimesheet.length > 0) {
-                tempobj.index = i+1
+                 tempobj.index = i+1
                  tempobj.projectname = projects[i].projectname
-                if(employeetype[i] === 'Own Labour'  ){
-                  report = allprojectreport.projectreportlabour(projectimesheet, projects[i].projectname)
-                  tempobj.ownlaboursalary = report.totalsalary
-                  tempobj.ownlabourot =  report.otsalary
-                }else if (employeetype[i] === 'Hired Labour (Monthly)'){
-                  report = allprojectreport.projectreportlabour(projectimesheet, projects[i].projectname)
-                  tempobj.hiredlabourmsalary = report.totalsalary
-                  tempobj.hiredlabourmot =  report.otsalary
-                }
+                 switch(employeetype[j]){
+                  case 'Own Labour':
+                    report = await allprojectreport.projectreportlabour(projectimesheet, projects[i].projectname)
+                    tempobj.ownlaboursalary = report.totalsalary
+                    tempobj.ownlabourot =  report.otsalary
+                    break;
+                  case 'Hired Labour (Monthly)':  
+                    report = await allprojectreport.projectreportlabour(projectimesheet, projects[i].projectname)
+                    tempobj.hiredlabourmsalary = report.totalsalary
+                    tempobj.hiredlabourmot =  report.otsalary
+                    break;
+                 }                
               }
           }
-          projectimesheets.push(tempobj)
+           projectimesheets.push(tempobj)
       }
+      console.log(projectimesheets)
       
       res.render("./admin/project-report", { admin: true , projectimesheets});
   } catch (error) {
@@ -1011,6 +1016,7 @@ router.post("/project-search", async (req, res) => {
       res.status(500).send("Internal Server Error");
   }
 });
+
 
 
 
