@@ -991,7 +991,7 @@ router.post("/project-search", async (req, res) => {
               if (projectimesheet.length > 0) {
                 tempobj.index = i+1
                  tempobj.projectname = projects[i].projectname
-                if(employeetype[i] === 'Own Labour' || 'Hired Labour (Monthly)' ){
+                if(employeetype[i] === 'Own Labour'  ){
                   report = allprojectreport.projectreportlabour(projectimesheet, projects[i].projectname)
                   tempobj.ownlaboursalary = report.totalsalary
                   tempobj.ownlabourot =  report.otsalary
