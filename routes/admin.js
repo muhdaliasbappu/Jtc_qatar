@@ -1012,7 +1012,7 @@ router.post("/project-search", async (req, res) => {
                     tempobj.hiredstaffsalary = report.totalsalary
                     break;
                   case  'Hired Labour (Hourly)':  
-                    report = await allprojectreport.projectreportlabour(projectimesheet, projects[i].projectname)
+                    report = await allprojectreport.projectreporthourly(projectimesheet, projects[i].projectname)
                     tempobj.hiredstaffhourly = report.totalsalary
                     break;  
                  }                
