@@ -123,7 +123,7 @@ module.exports = {
           thedata.index = index;
           employeereport.push(thedata);    
          }else if (employeeType === 'Hired Staff (Operations)'){
-          var timesheet = await userHelpers.getDatabByMonthAndEmployeewithType(req.body.searchdate, employees[i]._id.toString(),employeeType );
+          var timesheet = await userHelpers.getDatabByMonthAndEmployeewithType(searchdate, employees[i]._id.toString(),employeeType );
           if (timesheet.length > 0) {
             const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
           
