@@ -1,3 +1,4 @@
+var salarycalc = require('../modules/salarycalc')
 module.exports = {
     dayview: (date1) => {
       const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -27,6 +28,19 @@ module.exports = {
     
     return "Invalid date format";
   }
+},
+operationsum: async(date)=>{
+  let total = 0
+  let employeereport = await salarycalc.salarycalculate(date , 'Own Staff (Operations)')
+  let employeereport2 = await salarycalc.salarycalculate(date , 'Hired Staff (Operations)')
+for(let j = 0; j < employeereport.length; j++){
+  total = total + employeereport[j].totalsalary
 }
+for(let i = 0; i < employeereport2.length; i++){
+  total = total + employeereport2[i].totalsalary
+}
+return total;
+},
+
   };
   
