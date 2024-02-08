@@ -1,7 +1,7 @@
  <style>
     .table th:first-child,
     .table td:first-child {
-      width: 50px; /* Adjust the width as needed for the first column */
+      width: 80px; /* Adjust the width as needed for the first column */
     }
 
     .consistent-width {
@@ -39,6 +39,8 @@
                           <th scope="col" class="consistent-width">Hired Labour (Hourly)</th>
                           <th scope="col" class="consistent-width">Own Staff (Projects)</th>
                           <th scope="col" class="consistent-width">Hired Staff (Projects)</th>
+                          <th scope="col" class="consistent-width">Operations</th>
+                          <th scope="col" class="consistent-width">Staff Overhead</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -51,10 +53,27 @@
                             <td>{{this.hiredstaffhourly}}</td>
                             <td>{{this.ownstaffsalary}}</td>
                             <td>{{this.hiredstaffsalary}}</td>
+                            <td>{{this.operationcost}}</td>
+                            <td></td>
                           </tr>
                         {{/each}}
                       </tbody>
+                      <tbody>
+                        
+                          <tr>
+                            <th scope="row" colspan="2">Total</th>
+                            <td></td>
+                            <td>{{this.hiredlabourmsalary}}</td>
+                            <td>{{this.hiredstaffhourly}}</td>
+                            <td>{{this.ownstaffsalary}}</td>
+                            <td>{{this.hiredstaffsalary}}</td>
+                            <td></td>
+                            <td></td>
+                          </tr>
+                        
+                      </tbody>
                     </table>
+                
                   </div>
                 </div> <!-- end preview-->
               </div> <!-- end tab-content-->
