@@ -1,4 +1,6 @@
+var operationsum = require('../modules/DayView')
 module.exports = {
+
 
   projectreportlabour: (timesheet,reqproject)=>{
     let total= 0
@@ -298,6 +300,7 @@ return report;
     let total= 0
     for(let i=0; i<timesheet.length; i++){       
             let tempot = 0
+
             if(timesheet[i].projectname1 === reqproject){
                 tempot = timesheet[i].workhour1 * timesheet[i].srateph
             }else if(timesheet[i].projectname2 === reqproject){
@@ -309,12 +312,49 @@ return report;
             }else if(timesheet[i].projectname5 === reqproject){
                 tempot = timesheet[i].workhour5 * timesheet[i].srateph
             }
+
             total = total + tempot
-        } 
+        }
+
         let report = {}
         report.totalsalary = Math.round(total)
     return report;
     },
+    projectoperations: async (projectimesheets , date) => {
+        let temptotalcosts = [];
+        let totalsum = 0
+        let operationssum = await operationsum.operationsum(date)
+    
+        for (let i = 0; i < projectimesheets.length; i++) {
+            let temptotalcost = 0;
+            temptotalcost += projectimesheets[i].ownlaboursalary || 0;
+            temptotalcost += projectimesheets[i].hiredlabourmsalary || 0;
+            temptotalcost += projectimesheets[i].ownstaffsalary || 0;
+            temptotalcost += projectimesheets[i].hiredstaffsalary || 0;
+            temptotalcost += projectimesheets[i].hiredstaffhourly || 0;
+            totalsum = totalsum + temptotalcost
+        }
+        for (let j = 0; j < projectimesheets.length; j++) {
+            tempobj = {}
+            let tempcost = 0
+            let temptotalcost = 0;
+            temptotalcost += projectimesheets[j].ownlaboursalary || 0;
+            temptotalcost += projectimesheets[j].hiredlabourmsalary || 0;
+            temptotalcost += projectimesheets[j].ownstaffsalary || 0;
+            temptotalcost += projectimesheets[j].hiredstaffsalary || 0;
+            temptotalcost += projectimesheets[j].hiredstaffhourly || 0;
+            tempcost = temptotalcost/totalsum*operationssum 
+            tempobj.operationcost = Math.round(tempcost)
+           
+            temptotalcosts.push(tempobj)
+        }
+        
+        return temptotalcosts
+
+    
+        
+    },
+    
 
 
 
