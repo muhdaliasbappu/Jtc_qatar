@@ -604,13 +604,7 @@ router.post("/project-search", async (req, res) => {
 
       for (let i = 0; i < projects.length; i++) {
         let tempobj = {}
-        tempobj.ownlaboursalary =  0;
-        tempobj.hiredlabourmsalary = 0
-        tempobj.ownstaffsalary =  0 
-        tempobj.hiredstaffsalary =  0   
-        tempobj.hiredstaffhourly =  0
-        tempobj.operationcost =  0
-        tempobj.overheadcost =  0
+        
           for (let j = 0; j < employeetype.length; j++) {
             let report = {}
             let projectimesheet = []
@@ -618,6 +612,13 @@ router.post("/project-search", async (req, res) => {
               if (projectimesheet.length > 0) {
                             
                 tempobj.projectname = projects[i].projectname
+                tempobj.ownlaboursalary =  0;
+                tempobj.hiredlabourmsalary = 0
+                tempobj.ownstaffsalary =  0 
+                tempobj.hiredstaffsalary =  0   
+                tempobj.hiredstaffhourly =  0
+                tempobj.operationcost =  0
+                tempobj.overheadcost =  0
                  switch(employeetype[j]){
                   case 'Own Labour':
                     report = await allprojectreport.projectreportlabour(projectimesheet, projects[i].projectname)
@@ -670,7 +671,6 @@ router.post("/project-search", async (req, res) => {
       res.status(500).send("Internal Server Error");
   }
 });
-
 
 
 
