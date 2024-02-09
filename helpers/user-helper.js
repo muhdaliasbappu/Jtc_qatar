@@ -403,6 +403,28 @@ module.exports = {
                 }
             }
         );
+    }, getDatabByMonthofPaidLeave: ( month) => {
+        
+        return new Promise((resolve, reject) => {
+            const [year, monthNumber] = month.split('-');
+            const firstDayOfMonth = new Date(year, monthNumber - 1, 1);
+            const lastDayOfMonth = new Date(year, monthNumber, 0, 23, 59, 59, 999); // Set to the end of the last day of the month
+            db.get().collection('datasheet').find({
+                $and: [
+                    { date: { $gte: firstDayOfMonth } },
+                    { date: { $lte: lastDayOfMonth } },
+                    { todaystatus: 'Paid Leave' } 
+                    
+                ]
+            }).toArray()
+            .then((response) => {
+                resolve(response);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                reject(error);
+            });
+        });
     },
     
     
