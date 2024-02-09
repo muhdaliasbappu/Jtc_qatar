@@ -616,25 +616,25 @@ router.post("/project-search", async (req, res) => {
                  switch(employeetype[j]){
                   case 'Own Labour':
                     report = await allprojectreport.projectreportlabour(projectimesheet, projects[i].projectname)
-                    tempobj.ownlaboursalary = report.totalsalary
-                    tempobj.ownlabourot =  report.otsalary
+                    tempobj.ownlaboursalary = report.totalsalary || 0;
+                    tempobj.ownlabourot = report.otsalary;
                     break;
                   case 'Hired Labour (Monthly)':  
                     report = await allprojectreport.projectreportlabour(projectimesheet, projects[i].projectname)
-                    tempobj.hiredlabourmsalary = report.totalsalary
+                    tempobj.hiredlabourmsalary = report.totalsalary || 0
                     tempobj.hiredlabourmot =  report.otsalary
                     break;
                   case  'Own Staff (Projects)': 
                     report = await allprojectreport.projectreportstaff(projectimesheet, projects[i].projectname)
-                    tempobj.ownstaffsalary = report.totalsalary
+                    tempobj.ownstaffsalary = report.totalsalary || 0
                     break;
                   case  'Hired Staff (Projects)':  
                     report = await allprojectreport.projectreportstaff(projectimesheet, projects[i].projectname)
-                    tempobj.hiredstaffsalary = report.totalsalary
+                    tempobj.hiredstaffsalary = report.totalsalary || 0
                     break;
                   case  'Hired Labour (Hourly)':  
                     report = await allprojectreport.projectreporthourly(projectimesheet, projects[i].projectname)
-                    tempobj.hiredstaffhourly = report.totalsalary
+                    tempobj.hiredstaffhourly = report.totalsalary || 0
                     break;  
                  }                
               }
@@ -647,20 +647,21 @@ router.post("/project-search", async (req, res) => {
           
       }
       let operationcost = await allprojectreport.projectoperations(projectimesheets , req.body.searchdate )
-          
+      
           for(g = 0; g < projectimesheets.length; g++){
             projectimesheets[g].index = g+1 
             projectimesheets[g].operationcost = operationcost[g].operationcost   
             projectimesheets[g].overheadcost = operationcost[g].overheadcost  
           }
+      let  sumemployeetype = await allprojectreport.sumemployeetype(projectimesheets) 
+       
       
-      res.render("./admin/project-report", { admin: true , projectimesheets});
+      res.render("./admin/project-report", { admin: true , projectimesheets , sumemployeetype});
   } catch (error) {
       console.error(error);
       res.status(500).send("Internal Server Error");
   }
 });
-
 
 
 
