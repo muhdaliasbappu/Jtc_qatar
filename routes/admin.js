@@ -651,6 +651,7 @@ router.post("/project-search", async (req, res) => {
           for(g = 0; g < projectimesheets.length; g++){
             projectimesheets[g].index = g+1 
             projectimesheets[g].operationcost = operationcost[g].operationcost   
+            projectimesheets[g].overheadcost = operationcost[g].overheadcost  
           }
       
       res.render("./admin/project-report", { admin: true , projectimesheets});
