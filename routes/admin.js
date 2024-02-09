@@ -652,7 +652,10 @@ router.post("/project-search", async (req, res) => {
             projectimesheets[g].index = g+1 
             projectimesheets[g].operationcost = operationcost[g].operationcost   
             projectimesheets[g].overheadcost = operationcost[g].overheadcost  
+            projectimesheets[g].total = operationcost[g].total  
+            projectimesheets[g].percentage = operationcost[g].percentage 
           }
+          
       let  sumemployeetype = await allprojectreport.sumemployeetype(projectimesheets) 
        
       
@@ -662,7 +665,6 @@ router.post("/project-search", async (req, res) => {
       res.status(500).send("Internal Server Error");
   }
 });
-
 
 
 
