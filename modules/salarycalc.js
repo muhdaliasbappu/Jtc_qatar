@@ -192,6 +192,17 @@ module.exports = {
        return employeereport;
 
     },
+    paidleavecost: async (date)=>{
+      let total = 0 
+      let paidleavedata = await userHelpers.getDatabByMonthofPaidLeave(date)
+
+      for( let i = 0; i < paidleavedata.length; i++){
+        total = total+paidleavedata[i].sbasic/30;
+        total = total+paidleavedata[i].sallowance/30;
+        total = total+paidleavedata[i].sbonus/30;
+      }
+      return total
+    }
 
 
     
