@@ -340,7 +340,8 @@ return report;
         for (let j = 0; j < projectimesheets.length; j++) {
             tempobj = {}
             let tempcost = 0
-            temppaid = 0
+            let temppaid = 0
+            let tempperc = 0 
             let temptotalcost = 0;
             temptotalcost += projectimesheets[j].ownlaboursalary || 0;
             temptotalcost += projectimesheets[j].hiredlabourmsalary || 0;
@@ -349,9 +350,11 @@ return report;
             temptotalcost += projectimesheets[j].hiredstaffhourly || 0;
             tempcost = temptotalcost/totalsum*operationssum 
             temppaid = temptotalcost/totalsum*paidleavecost 
+            tempperc = temptotalcost/totalsum*100
+            tempobj.total = Math.round(temptotalcost + tempcost + temppaid ) 
+            tempobj.percentage =  Math.round((tempperc + Number.EPSILON) * 100) / 100
             tempobj.overheadcost = Math.round(temppaid)
-            tempobj.operationcost = Math.round(tempcost)
-           
+            tempobj.operationcost = Math.round(tempcost)          
             temptotalcosts.push(tempobj)
         }
         
@@ -389,14 +392,19 @@ return report;
             sumemployeetype.totaloverheadcost += Number(projectimesheets[i].overheadcost);
 
         }
+        sumemployeetype.total = 
+        sumemployeetype.totalownlaboursalary +
+        sumemployeetype.totalhiredlabourmsalary +
+        sumemployeetype.totalhiredstaffhourly +
+        sumemployeetype.totalownstaffsalary +
+        sumemployeetype.totalhiredstaffsalary +  
+        sumemployeetype.totaloperationcost +
+        sumemployeetype.totaloverheadcost 
         return sumemployeetype
     
         
     }
     
-
-    
-
 
 
 
