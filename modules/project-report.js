@@ -1,4 +1,5 @@
 var operationsum = require('../modules/DayView')
+var salarycalc = require('../modules/salarycalc')
 module.exports = {
 
 
@@ -324,6 +325,8 @@ return report;
         let temptotalcosts = [];
         let totalsum = 0
         let operationssum = await operationsum.operationsum(date)
+        let paidleavecost = await salarycalc.paidleavecost(date)
+        
     
         for (let i = 0; i < projectimesheets.length; i++) {
             let temptotalcost = 0;
@@ -337,6 +340,7 @@ return report;
         for (let j = 0; j < projectimesheets.length; j++) {
             tempobj = {}
             let tempcost = 0
+            temppaid = 0
             let temptotalcost = 0;
             temptotalcost += projectimesheets[j].ownlaboursalary || 0;
             temptotalcost += projectimesheets[j].hiredlabourmsalary || 0;
@@ -344,6 +348,8 @@ return report;
             temptotalcost += projectimesheets[j].hiredstaffsalary || 0;
             temptotalcost += projectimesheets[j].hiredstaffhourly || 0;
             tempcost = temptotalcost/totalsum*operationssum 
+            temppaid = temptotalcost/totalsum*paidleavecost 
+            tempobj.overheadcost = Math.round(temppaid)
             tempobj.operationcost = Math.round(tempcost)
            
             temptotalcosts.push(tempobj)
