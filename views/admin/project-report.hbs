@@ -41,6 +41,8 @@
                           <th scope="col" class="consistent-width">Hired Staff (Projects)</th>
                           <th scope="col" class="consistent-width">Operations</th>
                           <th scope="col" class="consistent-width">Staff Overhead</th>
+                          <th scope="col" class="consistent-width">Total</th>
+                          <th scope="col" class="consistent-width">Expense %</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -55,6 +57,8 @@
                             <td>{{this.hiredstaffsalary}}</td>
                             <td>{{this.operationcost}}</td>
                             <td>{{this.overheadcost}}</td>
+                            <td>{{this.total}}</td>
+                            <td>{{this.percentage}}%</td>
                           </tr>
                         {{/each}}
                       </tbody>
@@ -70,6 +74,7 @@
                             <td>{{sumemployeetype.totalhiredstaffsalary}}</td>
                             <td>{{sumemployeetype.totaloperationcost}}</td>
                             <td>{{sumemployeetype.totaloverheadcost}}</td>
+                            <th scope="row" colspan="2">QAR {{sumemployeetype.total}}</th>
                           </tr>
                         
                       </tbody>
