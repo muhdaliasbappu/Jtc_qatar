@@ -360,6 +360,41 @@ return report;
     
         
     },
+    sumemployeetype: (projectimesheets) => {
+        let sumemployeetype = {};
+        sumemployeetype.totalownlaboursalary = 0
+        sumemployeetype.totalhiredlabourmsalary = 0
+        sumemployeetype.totalhiredstaffhourly = 0
+        sumemployeetype.totalownstaffsalary = 0
+        sumemployeetype.totalhiredstaffsalary = 0
+        sumemployeetype.totaloperationcost = 0
+        sumemployeetype.totaloverheadcost = 0
+    
+        
+        for (let i = 0; i < projectimesheets.length; i++) {
+            
+            if(projectimesheets[i].ownlaboursalary)
+            sumemployeetype.totalownlaboursalary += Number(projectimesheets[i].ownlaboursalary);
+            if(projectimesheets[i].hiredlabourmsalary)
+            sumemployeetype.totalhiredlabourmsalary += Number(projectimesheets[i].hiredlabourmsalary);
+            if(projectimesheets[i].ownstaffsalary)
+            sumemployeetype.totalownstaffsalary += Number(projectimesheets[i].ownstaffsalary);
+            if(projectimesheets[i].hiredstaffsalary)
+            sumemployeetype.totalhiredstaffsalary += Number(projectimesheets[i].hiredstaffsalary);
+            if(projectimesheets[i].hiredstaffhourly)
+            sumemployeetype.totalhiredstaffhourly += Number(projectimesheets[i].hiredstaffhourly);
+            if(projectimesheets[i].operationcost)
+            sumemployeetype.totaloperationcost += Number(projectimesheets[i].operationcost);
+            if(projectimesheets[i].operationcost)
+            sumemployeetype.totaloverheadcost += Number(projectimesheets[i].overheadcost);
+
+        }
+        return sumemployeetype
+    
+        
+    }
+    
+
     
 
 
