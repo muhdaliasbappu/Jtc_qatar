@@ -414,7 +414,7 @@ module.exports = {
                     { date: { $gte: firstDayOfMonth } },
                     { date: { $lte: lastDayOfMonth } },
                     { todaystatus: 'Paid Leave' } ,
-                    { employeeType: 'Own Labour' } 
+                    { employeeType: 'Hired Labour (Monthly)' } 
                     
                 ]
             }).toArray()
