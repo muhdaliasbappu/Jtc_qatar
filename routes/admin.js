@@ -507,7 +507,9 @@ router.post('/printreport', async (req, res) => {
     var index = 0
     let searchdata = {}
     searchdata.searchdate = req.body.searchdate
-    let employeereport = await salarycalc.salarycalculate(req.body.searchdate , req.body.employeeType)
+    const result = await salarycalc.salarycalculate(req.body.searchdate , req.body.employeeType)
+   let employeereport = result.employeereport
+
   
    
    const month = parseInt(req.body.searchdate.split('-')[1]);
