@@ -42,7 +42,7 @@
                                     
                                     </div>
                                  
-                                   <h4 class="page-title">Salary Statement {{searchdata.formattedDate}}</h4>
+                                    <h4 class="page-title">Salary Statement {{searchdata.formattedDate}}</h4>
                                 </div>
                             </div>
                         </div>
@@ -151,6 +151,11 @@
 
     </tr>
     {{/each}}
+  </tbody>
+    <tbody>
+    <tr>
+     <th scope="row" >Total: {{totalsum.sum}}</th>
+    </tr>
   </tbody>
 </table>
                                     
