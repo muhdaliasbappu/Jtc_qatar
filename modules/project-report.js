@@ -388,7 +388,7 @@ return report;
             sumemployeetype.totalhiredstaffhourly += Number(projectimesheets[i].hiredstaffhourly);
             if(projectimesheets[i].operationcost)
             sumemployeetype.totaloperationcost += Number(projectimesheets[i].operationcost);
-            if(projectimesheets[i].operationcost)
+            if(projectimesheets[i].overheadcost)
             sumemployeetype.totaloverheadcost += Number(projectimesheets[i].overheadcost);
 
         }
