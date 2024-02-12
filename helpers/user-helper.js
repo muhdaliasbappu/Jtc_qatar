@@ -399,13 +399,7 @@ module.exports = {
                 if (err) {
                     console.error('Error updating datasheets:', err);
                     callback(false);
-                } else {
-                    // Log the update result for debugging
-                    console.log('Update Result:', result);
-    
-                    console.log('Working hour and todaystatus updated for matching date:', result.modifiedCount);
-                    callback(true);
-                }
+                } 
             }
         );
     }, getDatabByMonthofPaidLeave: ( month) => {
@@ -419,8 +413,7 @@ module.exports = {
                     { date: { $gte: firstDayOfMonth } },
                     { date: { $lte: lastDayOfMonth } },
                     { todaystatus: 'Paid Leave' } ,
-                     { employeeType: 'Own Staff (Projects)' } ,
-                   
+                    { employeeType: 'Hired Staff (Projects)' } 
 
                 ]
             }).toArray()
