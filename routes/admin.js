@@ -603,6 +603,7 @@ router.get("/project-search/",  (req, res) => {
 
 router.post("/project-search", async (req, res) => {
   let employeetype = ['Own Labour', 'Hired Labour (Monthly)', 'Hired Labour (Hourly)', 'Own Staff (Projects)', 'Hired Staff (Projects)'];
+  
   let projectimesheets = [];
   
 
@@ -652,7 +653,7 @@ router.post("/project-search", async (req, res) => {
       }
       let operationcost = await allprojectreport.projectoperations(projectimesheets , req.body.searchdate )
       
-          for(let g = 0; g < projectimesheets.length; g++){
+          for( g = 0; g < projectimesheets.length; g++){
             projectimesheets[g].index = g+1 
             projectimesheets[g].operationcost = operationcost[g].operationcost   
             projectimesheets[g].overheadcost = operationcost[g].overheadcost  
@@ -670,82 +671,6 @@ router.post("/project-search", async (req, res) => {
   }
 });
 
-// router.post("/project-search", async (req, res) => {
-//   let employeetype = ['Own Labour', 'Hired Labour (Monthly)', 'Hired Labour (Hourly)', 'Own Staff (Projects)', 'Hired Staff (Projects)'];
-//   let projectimesheets = [];
-  
-
-//   try {
-//       let projects = await projectHelpers.getAllproject();
-
-//       for (let i = 0; i < projects.length; i++) {
-//         let tempobj = {}
-        
-//           for (let j = 0; j < employeetype.length; j++) {
-//             let report = {}
-//             let projectimesheet = []
-//                projectimesheet = await projectHelpers.projecttimesheet(req.body.searchdate,  projects[i].projectname, employeetype[j]);                           
-//               if (projectimesheet.length > 0) {
-//                 tempobj.projectname = projects[i].projectname
-//                 tempobj.ownlaboursalary =  0;
-//                 tempobj.hiredlabourmsalary = 0
-//                 tempobj.ownstaffsalary =  0 
-//                 tempobj.hiredstaffsalary =  0   
-//                 tempobj.hiredstaffhourly =  0
-//                 tempobj.operationcost =  0
-//                 tempobj.overheadcost =  0
-//                  switch(employeetype[j]){
-//                   case 'Own Labour':
-//                     report = await allprojectreport.projectreportlabour(projectimesheet, projects[i].projectname)
-//                     tempobj.ownlaboursalary = tempobj.ownlaboursalary + report.totalsalary || 0;
-//                     tempobj.ownlabourot = report.otsalary;
-//                     break;
-//                   case 'Hired Labour (Monthly)':  
-//                     report = await allprojectreport.projectreportlabour(projectimesheet, projects[i].projectname)
-//                     tempobj.hiredlabourmsalary = tempobj.hiredlabourmsalary + report.totalsalary || 0
-//                     tempobj.hiredlabourmot =  report.otsalary
-//                     break;
-//                   case  'Own Staff (Projects)': 
-//                     report = await allprojectreport.projectreportstaff(projectimesheet, projects[i].projectname)
-//                     tempobj.ownstaffsalary = tempobj.ownstaffsalary + report.totalsalary || 0
-//                     break;
-//                   case  'Hired Staff (Projects)':  
-//                     report = await allprojectreport.projectreportstaff(projectimesheet, projects[i].projectname)
-//                     tempobj.hiredstaffsalary = tempobj.hiredstaffsalary + report.totalsalary || 0
-//                     break;
-//                   case  'Hired Labour (Hourly)':  
-//                     report = await allprojectreport.projectreporthourly(projectimesheet, projects[i].projectname)
-//                     tempobj.hiredstaffhourly =tempobj.hiredstaffhourly + report.totalsalary || 0
-//                     break;  
-//                  }                
-//               }
-//           }
-          
-//           if (Object.keys(tempobj).length !== 0) {
-//             projectimesheets.push(tempobj);
-//           }
-          
-          
-//       }
-//       let operationcost = await allprojectreport.projectoperations(projectimesheets , req.body.searchdate )
-      
-//           for(g = 0; g < projectimesheets.length; g++){
-//             projectimesheets[g].index = g+1 
-//             projectimesheets[g].operationcost = projectimesheets[g].operationcost + operationcost[g].operationcost   
-//             projectimesheets[g].overheadcost = projectimesheets[g].overheadcost + operationcost[g].overheadcost  
-//             projectimesheets[g].total = operationcost[g].total  
-//             projectimesheets[g].percentage = operationcost[g].percentage 
-//           }
-          
-//       let  sumemployeetype = await allprojectreport.sumemployeetype(projectimesheets) 
-       
-      
-//       res.render("./admin/project-report", { admin: true , projectimesheets , sumemployeetype});
-//   } catch (error) {
-//       console.error(error);
-//       res.status(500).send("Internal Server Error");
-//   }
-// });
 
 
 
