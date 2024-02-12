@@ -653,7 +653,7 @@ router.post("/project-search", async (req, res) => {
       }
       let operationcost = await allprojectreport.projectoperations(projectimesheets , req.body.searchdate )
       
-          for( g = 0; g < projectimesheets.length; g++){
+          for(let g = 0; g < projectimesheets.length; g++){
             projectimesheets[g].index = g+1 
             projectimesheets[g].operationcost = operationcost[g].operationcost   
             projectimesheets[g].overheadcost = operationcost[g].overheadcost  
