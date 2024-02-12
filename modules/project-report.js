@@ -214,7 +214,7 @@ return report;
                 tempot = timesheet[i].workhour5 * timesheet[i].sbasic/240
             }
             total = total + tempot
-            5
+            
             
         }else{     
         let pcount=0
