@@ -365,14 +365,14 @@ return report;
     
         
     },
-    sumemployeetype: async(projectimesheets) => {
+    sumemployeetype: (projectimesheets) => {
         let sumemployeetype = {};
         sumemployeetype.totalownlaboursalary = 0
         sumemployeetype.totalhiredlabourmsalary = 0
         sumemployeetype.totalhiredstaffhourly = 0
         sumemployeetype.totalownstaffsalary = 0
         sumemployeetype.totalhiredstaffsalary = 0
-        sumemployeetype.totaloperationcost =  await operationsum.operationsum(date)
+        sumemployeetype.totaloperationcost = 0
         sumemployeetype.totaloverheadcost = 0
     
         
@@ -388,7 +388,8 @@ return report;
             sumemployeetype.totalhiredstaffsalary += Number(projectimesheets[i].hiredstaffsalary);
             if(projectimesheets[i].hiredstaffhourly)
             sumemployeetype.totalhiredstaffhourly += Number(projectimesheets[i].hiredstaffhourly);
-           
+            if(projectimesheets[i].operationcost)
+            sumemployeetype.totaloperationcost += Number(projectimesheets[i].operationcost);
             if(projectimesheets[i].overheadcost)
             sumemployeetype.totaloverheadcost += Number(projectimesheets[i].overheadcost);
      }
