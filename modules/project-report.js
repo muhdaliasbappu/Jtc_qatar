@@ -327,6 +327,7 @@ return report;
         let totalsum = 0
         let operationssum = await operationsum.operationsum(date)
         let paidleavecost = await salarycalc.paidleavecost(date)
+       
         
     
         for (let i = 0; i < projectimesheets.length; i++) {
@@ -364,14 +365,14 @@ return report;
     
         
     },
-    sumemployeetype: (projectimesheets) => {
+    sumemployeetype: async(projectimesheets) => {
         let sumemployeetype = {};
         sumemployeetype.totalownlaboursalary = 0
         sumemployeetype.totalhiredlabourmsalary = 0
         sumemployeetype.totalhiredstaffhourly = 0
         sumemployeetype.totalownstaffsalary = 0
         sumemployeetype.totalhiredstaffsalary = 0
-        sumemployeetype.totaloperationcost = 0
+        sumemployeetype.totaloperationcost =  await operationsum.operationsum(date)
         sumemployeetype.totaloverheadcost = 0
     
         
@@ -387,8 +388,7 @@ return report;
             sumemployeetype.totalhiredstaffsalary += Number(projectimesheets[i].hiredstaffsalary);
             if(projectimesheets[i].hiredstaffhourly)
             sumemployeetype.totalhiredstaffhourly += Number(projectimesheets[i].hiredstaffhourly);
-            if(projectimesheets[i].operationcost)
-            sumemployeetype.totaloperationcost += Number(projectimesheets[i].operationcost);
+           
             if(projectimesheets[i].overheadcost)
             sumemployeetype.totaloverheadcost += Number(projectimesheets[i].overheadcost);
      }
