@@ -31,16 +31,12 @@ module.exports = {
 },
 operationsum: async(date)=>{
   let total = 0
-  let employeereport = await salarycalc.salarycalculate(date , 'Own Staff (Operations)')
+  let employeereport =  await salarycalc.salarycalculate(date , 'Own Staff (Operations)')
   let employeereport2 = await salarycalc.salarycalculate(date , 'Hired Staff (Operations)')
-for(let j = 0; j < employeereport.length; j++){
-  total = total + employeereport[j].totalsalary
-}
-for(let i = 0; i < employeereport2.length; i++){
-  total = total + employeereport2[i].totalsalary
-}
+total = employeereport.sum+employeereport2.sum
 return total;
 },
 
   };
+  
   
