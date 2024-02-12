@@ -237,6 +237,7 @@ module.exports = {
                     { date: { $lte: lastDayOfMonth } },
                     { projectname1: projectname } ,
                     { employeeType: employeeType } ,
+                    { todaystatus: 'Working'},
                     // Adjust the field name based on your actual schema
                 ]
                 
@@ -263,6 +264,7 @@ module.exports = {
                     { date: { $lte: lastDayOfMonth } },
                     { projectname2: projectname } ,
                     { employeeType: employeeType } ,
+                    { todaystatus: 'Working'},
                     // Adjust the field name based on your actual schema
                 ]
                 
@@ -288,6 +290,7 @@ module.exports = {
                     { date: { $lte: lastDayOfMonth } },
                     { projectname3: projectname } ,
                     { employeeType: employeeType } ,
+                    { todaystatus: 'Working'},
                     // Adjust the field name based on your actual schema
                 ]
                 
@@ -313,6 +316,7 @@ module.exports = {
                     { date: { $lte: lastDayOfMonth } },
                     { projectname4: projectname } ,
                     { employeeType: employeeType } ,
+                    { todaystatus: 'Working'},
                     // Adjust the field name based on your actual schema
                 ]
                 
@@ -338,6 +342,7 @@ module.exports = {
                     { date: { $lte: lastDayOfMonth } },
                     { projectname5: projectname } ,
                     { employeeType: employeeType } ,
+                    { todaystatus: 'Working'},
                     // Adjust the field name based on your actual schema
                 ]
                 
@@ -413,7 +418,9 @@ module.exports = {
                 $and: [
                     { date: { $gte: firstDayOfMonth } },
                     { date: { $lte: lastDayOfMonth } },
-                    { todaystatus: 'Paid Leave' } ,               
+                    { todaystatus: 'Paid Leave' } ,
+                   
+
                 ]
             }).toArray()
             .then((response) => {
@@ -433,5 +440,4 @@ module.exports = {
 
     
 }
-
 
