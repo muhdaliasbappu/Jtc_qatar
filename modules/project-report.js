@@ -7,7 +7,7 @@ module.exports = {
     let total= 0
     let ot = 0 
     for(let i=0; i<timesheet.length; i++){
-        if(timesheet[i].workinghour === 0){
+        if(timesheet[i].workinghour === '0'){
             let tempot = 0
             if(timesheet[i].projectname1 === reqproject){
                 tempot = timesheet[i].workhour1 * timesheet[i].sbasic/240
@@ -189,6 +189,7 @@ module.exports = {
         }
     }
 }
+
 let report = {}
 report.totalsalary = Math.round(total)
 report.otsalary = Math.round(ot)
@@ -199,7 +200,7 @@ return report;
   projectreportstaff: (timesheet,reqproject)=>{
     let total= 0
     for(let i=0; i<timesheet.length; i++){
-        if(timesheet[i].workinghour === 0){
+        if(timesheet[i].workinghour === '0'){
             let tempot = 0
             if(timesheet[i].projectname1 === reqproject){
                 tempot = timesheet[i].workhour1 * timesheet[i].sbasic/240
@@ -213,7 +214,7 @@ return report;
                 tempot = timesheet[i].workhour5 * timesheet[i].sbasic/240
             }
             total = total + tempot
-            ot = ot + tempot
+            5
             
         }else{     
         let pcount=0
@@ -390,8 +391,8 @@ return report;
             sumemployeetype.totaloperationcost += Number(projectimesheets[i].operationcost);
             if(projectimesheets[i].overheadcost)
             sumemployeetype.totaloverheadcost += Number(projectimesheets[i].overheadcost);
-
-        }
+     }
+       
         sumemployeetype.total = 
         sumemployeetype.totalownlaboursalary +
         sumemployeetype.totalhiredlabourmsalary +
