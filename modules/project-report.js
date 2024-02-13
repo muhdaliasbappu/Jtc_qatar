@@ -310,14 +310,13 @@ return report;
     },
     projectoperations: async (projectimesheets , date) => {
         let mdetails= DayView.countFridaysInMonth(date)
-    
         let temptotalcosts = [];
         let totalsum = 0
-        let operationssum = await operationsum.operationsum(date)
-        let paidleavecost = await salarycalc.paidleavecost(date, mdetails )
-       
         
-    
+        let paidleavecostoperations = await salarycalc.operationpaidleavecost(date, mdetails )
+        let paidleavecost = await salarycalc.paidleavecost(date, mdetails )
+        let operationssum = await operationsum.operationsum(date) - paidleavecostoperations
+
         for (let i = 0; i < projectimesheets.length; i++) {
             let temptotalcost = 0;
             temptotalcost += projectimesheets[i].ownlaboursalary || 0;
