@@ -444,7 +444,7 @@ module.exports = {
                                 { date: { $lte: lastDayOfMonth } },
                                 { employee_id: id },
                                 { todaystatus: 'Paid Leave' },
-                                { employeeType: 'Hired Staff (Projects)' }
+                                { employeeType: 'Own Labour' }
                                 
                             ]
                         },
@@ -455,7 +455,7 @@ module.exports = {
                                 { employee_id: id },
                                 { workinghour: '0' },
                                 { todaystatus: 'Working' },
-                                { employeeType: 'Hired Staff (Projects)' }
+                                { employeeType: 'Own Labour' }
                                 
                             ]
                         }
