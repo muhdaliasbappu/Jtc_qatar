@@ -207,24 +207,65 @@ module.exports = {
           let fri = 1
           let paidleavedata = []
           paidleavedata = await userHelpers.getDatabByMonthofPaidLeave(date , employees[i]._id.toString())
-          
+          let count = await userHelpers.getLeaveAndVacationCount(date , employees[i]._id.toString())     
           if(paidleavedata.length != 0){
           for( let j = 0; j < paidleavedata.length; j++){
             const dd = new Date(paidleavedata[j].datevalue);
             let day = dd.getDay();
             if(day === 5){
-              if(mdetails.has31Days === true){
-     
-                if( fri != mdetails.fridayCount){
+              if(mdetails.has31Days === true && count === 0){
+                
+                if( fri != mdetails.fridayCount ){
                   fri++
                   total = total+paidleavedata[j].sbasic/30;
-              total = total+paidleavedata[j].sallowance/30;
-              total = total+paidleavedata[j].sbonus/30;
+                  total = total+paidleavedata[j].sallowance/30;
+                  total = total+paidleavedata[j].sbonus/30;
                 }
               }else{
-                total = total+paidleavedata[j].sbasic/30;
+                  total = total+paidleavedata[j].sbasic/30;
+                  total = total+paidleavedata[j].sallowance/30;
+                  total = total+paidleavedata[j].sbonus/30;
+              }
+            }else{
+              total = total+paidleavedata[j].sbasic/30;
               total = total+paidleavedata[j].sallowance/30;
               total = total+paidleavedata[j].sbonus/30;
+            }
+            
+          
+          
+          }
+        }
+        }
+
+      return total
+    },
+    operationpaidleavecost: async (date , mdetails)=>{
+
+      let total = 0 
+      const employees = await employeHelpers.getAllemployee();  
+        for (let i = 0; i < employees.length; i++) { 
+          let fri = 1
+          let paidleavedata = []
+          paidleavedata = await userHelpers.getDatabByMonthofPaidLeaveoperation(date , employees[i]._id.toString())
+          let count = await userHelpers.getLeaveAndVacationCount(date , employees[i]._id.toString())     
+          if(paidleavedata.length != 0){
+          for( let j = 0; j < paidleavedata.length; j++){
+            const dd = new Date(paidleavedata[j].datevalue);
+            let day = dd.getDay();
+            if(day === 5){
+              if(mdetails.has31Days === true && count === 0){
+                
+                if( fri != mdetails.fridayCount ){
+                  fri++
+                  total = total+paidleavedata[j].sbasic/30;
+                  total = total+paidleavedata[j].sallowance/30;
+                  total = total+paidleavedata[j].sbonus/30;
+                }
+              }else{
+                  total = total+paidleavedata[j].sbasic/30;
+                  total = total+paidleavedata[j].sallowance/30;
+                  total = total+paidleavedata[j].sbonus/30;
               }
             }else{
               total = total+paidleavedata[j].sbasic/30;
