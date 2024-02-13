@@ -453,7 +453,79 @@ module.exports = {
                                 { date: { $lte: lastDayOfMonth } },
                                 { employee_id: id },
                                 { workinghour: '0' },
+                                { todaystatus: 'Working' },
                                 
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }).toArray()
+            .then((response) => {
+                resolve(response);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                reject(error);
+            });
+    });
+},
+getLeaveAndVacationCount: (month, employeeId) => {
+    return new Promise((resolve, reject) => {
+        const [year, monthNumber] = month.split('-');
+        const firstDayOfMonth = new Date(year, monthNumber - 1, 1);
+        const lastDayOfMonth = new Date(year, monthNumber, 0, 23, 59, 59, 999); // Set to the end of the last day of the month
+
+        db.get().collection('datasheet').find({
+            $and: [
+                { date: { $gte: firstDayOfMonth } },
+                { date: { $lte: lastDayOfMonth } },
+                { employee_id: employeeId },
+                { $or: [
+                    { todaystatus: 'Unpaid Leave' },
+                    { todaystatus: 'On Vacation' }
+                ] }
+            ]
+        }).toArray()
+        .then((response) => {
+            const leaveCount = response.filter(entry => entry.todaystatus === 'Unpaid Leave').length;
+            const vacationCount = response.filter(entry => entry.todaystatus === 'On Vacation').length;
+            const totalCount = leaveCount + vacationCount;
+            resolve(totalCount);
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+            reject(error);
+        });
+    });
+},
+getDatabByMonthofPaidLeaveoperation: (month, id) => {
+    return new Promise((resolve, reject) => {
+        const [year, monthNumber] = month.split('-');
+        const firstDayOfMonth = new Date(year, monthNumber - 1, 1);
+        const lastDayOfMonth = new Date(year, monthNumber, 0, 23, 59, 59, 999);
+
+        db.get().collection('datasheet').find({
+            $and: [
+                {
+                    $or: [
+                        { 
+                            $and: [
+                                { date: { $gte: firstDayOfMonth } },
+                                { date: { $lte: lastDayOfMonth } },
+                                { employee_id: id },
+                                { todaystatus: 'Paid Leave' },
+                                { employeeType: 'Own Staff (Operations)' }
+                            ]
+                        },
+                        { 
+                            $and: [
+                                { date: { $gte: firstDayOfMonth } },
+                                { date: { $lte: lastDayOfMonth } },
+                                { employee_id: id },
+                                { workinghour: '0' },
+                                { todaystatus: 'Working' },
+                                { employeeType: 'Own Staff (Operations)' }
                             ]
                         }
                     ]
