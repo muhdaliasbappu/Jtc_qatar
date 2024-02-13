@@ -200,7 +200,6 @@ module.exports = {
 
     },
     paidleavecost: async (date , mdetails)=>{
-console.log(mdetails)
 
       let total = 0 
       const employees = await employeHelpers.getAllemployee();  
@@ -208,9 +207,9 @@ console.log(mdetails)
           let fri = 1
           let paidleavedata = []
           paidleavedata = await userHelpers.getDatabByMonthofPaidLeave(date , employees[i]._id.toString())
-console.log(paidleavedata)
+
           let count = await userHelpers.getLeaveAndVacationCount(date , employees[i]._id.toString())   
-console.log(count  )            
+       
           if(paidleavedata.length != 0){
           for( let j = 0; j < paidleavedata.length; j++){
             const dd = new Date(paidleavedata[j].datevalue);
