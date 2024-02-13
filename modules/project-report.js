@@ -1,5 +1,6 @@
 var operationsum = require('../modules/DayView')
 var salarycalc = require('../modules/salarycalc')
+var DayView =  require('./DayView')
 module.exports = {
 
 
@@ -200,23 +201,7 @@ return report;
   projectreportstaff: (timesheet,reqproject)=>{
     let total= 0
     for(let i=0; i<timesheet.length; i++){
-        if(timesheet[i].workinghour === '0'){
-            let tempot = 0
-            if(timesheet[i].projectname1 === reqproject){
-                tempot = timesheet[i].workhour1 * timesheet[i].sbasic/240
-            }else if(timesheet[i].projectname2 === reqproject){
-                tempot = timesheet[i].workhour2 * timesheet[i].sbasic/240
-            }else if(timesheet[i].projectname3 === reqproject){
-                tempot = timesheet[i].workhour3 * timesheet[i].sbasic/240
-            }else if(timesheet[i].projectname4 === reqproject){
-                tempot = timesheet[i].workhour4 * timesheet[i].sbasic/240
-            }else if(timesheet[i].projectname5 === reqproject){
-                tempot = timesheet[i].workhour5 * timesheet[i].sbasic/240
-            }
-            total = total + tempot
-            
-            
-        }else{     
+           
         let pcount=0
         if(timesheet[i].projectname1){
             pcount++
@@ -235,8 +220,9 @@ return report;
             }
         }
         if(pcount === 1){
+            
             let tempsal = 0                       
-                tempsal = timesheet[i].sbasic/30 + timesheet[i].sallowance/30 + timesheet[i].sbonus/30                                
+                tempsal = timesheet[i].sbasic/30 + timesheet[i].sallowance/30 + timesheet[i].sbonus/30                           
             total = total + tempsal
                   
         }else if(pcount === 2){
@@ -291,7 +277,7 @@ return report;
             total = total + tempsal
      
         }
-    }
+    
 }
 let report = {}
 report.totalsalary = Math.round(total)
@@ -323,10 +309,12 @@ return report;
     return report;
     },
     projectoperations: async (projectimesheets , date) => {
+        let mdetails= DayView.countFridaysInMonth(date)
+    
         let temptotalcosts = [];
         let totalsum = 0
         let operationssum = await operationsum.operationsum(date)
-        let paidleavecost = await salarycalc.paidleavecost(date)
+        let paidleavecost = await salarycalc.paidleavecost(date, mdetails )
        
         
     
