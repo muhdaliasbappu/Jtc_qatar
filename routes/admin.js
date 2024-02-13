@@ -45,7 +45,7 @@ router.get("/logout", (req, res) => {
 
 router.get("/dashboard", function (req, res, next) {
   let admin = req.session.user;
-
+  
       res.render("./admin/dashboard", { admin: true});
     
   
@@ -677,4 +677,3 @@ router.post("/project-search", async (req, res) => {
 
 
 module.exports = router;
-
