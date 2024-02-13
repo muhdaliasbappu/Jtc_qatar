@@ -315,7 +315,8 @@ return report;
         
         let paidleavecostoperations = await salarycalc.operationpaidleavecost(date, mdetails )
         let paidleavecost = await salarycalc.paidleavecost(date, mdetails )
-        let operationssum = await operationsum.operationsum(date) 
+        
+        let operationssum = await operationsum.operationsum(date) - paidleavecostoperations
   
 
         for (let i = 0; i < projectimesheets.length; i++) {
