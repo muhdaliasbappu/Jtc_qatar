@@ -78,4 +78,3 @@ countFridaysInMonth: (date) => {
 
 
   };
-  
