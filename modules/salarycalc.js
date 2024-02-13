@@ -3,7 +3,6 @@ var userHelpers = require("../helpers/user-helper");
 var allsalaryreport = require('../modules/report')
 
 
-
 module.exports = {
 
     salarycalculate: async(searchdate , employeeType)=>{
@@ -200,16 +199,45 @@ module.exports = {
        return { employeereport, sum };
 
     },
-    paidleavecost: async (date)=>{
-      let total = 0 
-      let paidleavedata = await userHelpers.getDatabByMonthofPaidLeave(date)
-      
+    paidleavecost: async (date , mdetails)=>{
 
-      for( let i = 0; i < paidleavedata.length; i++){
-        total = total+paidleavedata[i].sbasic/30;
-        total = total+paidleavedata[i].sallowance/30;
-        total = total+paidleavedata[i].sbonus/30;
-      }
+      let total = 0 
+      const employees = await employeHelpers.getAllemployee();  
+        for (let i = 0; i < employees.length; i++) { 
+          let fri = 1
+          let paidleavedata = []
+          paidleavedata = await userHelpers.getDatabByMonthofPaidLeave(date , employees[i]._id.toString())
+          
+          if(paidleavedata.length != 0){
+          for( let j = 0; j < paidleavedata.length; j++){
+            const dd = new Date(paidleavedata[j].datevalue);
+            let day = dd.getDay();
+            if(day === 5){
+              if(mdetails.has31Days === true){
+     
+                if( fri != mdetails.fridayCount){
+                  fri++
+                  total = total+paidleavedata[j].sbasic/30;
+              total = total+paidleavedata[j].sallowance/30;
+              total = total+paidleavedata[j].sbonus/30;
+                }
+              }else{
+                total = total+paidleavedata[j].sbasic/30;
+              total = total+paidleavedata[j].sallowance/30;
+              total = total+paidleavedata[j].sbonus/30;
+              }
+            }else{
+              total = total+paidleavedata[j].sbasic/30;
+              total = total+paidleavedata[j].sallowance/30;
+              total = total+paidleavedata[j].sbonus/30;
+            }
+            
+          
+          
+          }
+        }
+        }
+
       return total
     },
 
