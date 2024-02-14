@@ -199,14 +199,14 @@ module.exports = {
        return { employeereport, sum };
 
     },
-    paidleavecost: async (date , mdetails)=>{
+    paidleavecost: async (date , mdetails , employeetype)=>{
 
       let total = 0 
       const employees = await employeHelpers.getAllemployee();  
         for (let i = 0; i < employees.length; i++) { 
           let fri = 1
           let paidleavedata = []
-          paidleavedata = await userHelpers.getDatabByMonthofPaidLeave(date , employees[i]._id.toString() ,  'Hired Labour (Monthly)' )
+          paidleavedata = await userHelpers.getDatabByMonthofPaidLeave(date , employees[i]._id.toString() , employeetype )
           let count = await userHelpers.getLeaveAndVacationCount(date , employees[i]._id.toString())     
           if(paidleavedata.length != 0){
           for( let j = 0; j < paidleavedata.length; j++){
