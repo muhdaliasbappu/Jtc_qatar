@@ -632,10 +632,7 @@ router.post("/project-search", async (req, res) => {
                     tempobj.hiredlabourmot =  report.otsalary
                     break;
                   case  'Own Staff (Projects)': 
-                     
-                console.log(projectimesheet.length , 'length here')
-                    report = await allprojectreport.projectreportstaff(projectimesheet, projects[i].projectname)
-                     
+                    report = await allprojectreport.projectreportstaff(projectimesheet, projects[i].projectname)          
                     tempobj.ownstaffsalary = report.totalsalary || 0
                     break;
                   case  'Hired Staff (Projects)':  
