@@ -632,7 +632,7 @@ router.post("/project-search", async (req, res) => {
                     tempobj.hiredlabourmot =  report.otsalary
                     break;
                   case  'Own Staff (Projects)': 
-                    report = await allprojectreport.projectreportstaff(projectimesheet, projects[i].projectname)          
+                    report = await allprojectreport.projectreportstaff(projectimesheet, projects[i].projectname)                  
                     tempobj.ownstaffsalary = report.totalsalary || 0
                     break;
                   case  'Hired Staff (Projects)':  
@@ -662,7 +662,7 @@ router.post("/project-search", async (req, res) => {
           }
           
       let  sumemployeetype = await allprojectreport.sumemployeetype(projectimesheets) 
-       
+       sumemployeetype.reqdate = req.body.searchdate;
       
       res.render("./admin/project-report", { admin: true , projectimesheets , sumemployeetype});
   } catch (error) {
@@ -670,6 +670,111 @@ router.post("/project-search", async (req, res) => {
       res.status(500).send("Internal Server Error");
   }
 });
+
+
+router.post('/printprojectreport', async (req, res) => {
+ 
+  try {
+    let employeetype = ['Own Labour', 'Hired Labour (Monthly)', 'Hired Labour (Hourly)', 'Own Staff (Projects)', 'Hired Staff (Projects)'];
+  
+    let projectimesheets = [];
+    
+    let projects = await projectHelpers.getAllproject();
+
+    for (let i = 0; i < projects.length; i++) {
+      let tempobj = {}
+          
+        for (let j = 0; j < employeetype.length; j++) {
+          let report = {}
+          let projectimesheet = []
+             projectimesheet = await projectHelpers.projecttimesheet(req.body.searchdate,  projects[i].projectname, employeetype[j]);                           
+            if (projectimesheet.length > 0) {
+                          
+              tempobj.projectname = projects[i].projectname
+               switch(employeetype[j]){
+                case 'Own Labour':
+                  report = await allprojectreport.projectreportlabour(projectimesheet, projects[i].projectname)
+                  tempobj.ownlaboursalary = report.totalsalary || 0;
+                  tempobj.ownlabourot = report.otsalary;
+                  break;
+                case 'Hired Labour (Monthly)':  
+                  report = await allprojectreport.projectreportlabour(projectimesheet, projects[i].projectname)
+                  tempobj.hiredlabourmsalary = report.totalsalary || 0
+                  tempobj.hiredlabourmot =  report.otsalary
+                  break;
+                case  'Own Staff (Projects)': 
+                  report = await allprojectreport.projectreportstaff(projectimesheet, projects[i].projectname)                  
+                  tempobj.ownstaffsalary = report.totalsalary || 0
+                  break;
+                case  'Hired Staff (Projects)':  
+                  report = await allprojectreport.projectreportstaff(projectimesheet, projects[i].projectname)
+                  tempobj.hiredstaffsalary = report.totalsalary || 0
+                  break;
+                case  'Hired Labour (Hourly)':  
+                  report = await allprojectreport.projectreporthourly(projectimesheet, projects[i].projectname)
+                  tempobj.hiredstaffhourly = report.totalsalary || 0
+                  break;  
+               }                
+            }
+        }
+        
+        if (Object.keys(tempobj).length !== 0) {
+          projectimesheets.push(tempobj);
+        }         
+    }
+    let operationcost = await allprojectreport.projectoperations(projectimesheets , req.body.searchdate )
+    
+        for(let g = 0; g < projectimesheets.length; g++){
+          projectimesheets[g].index = g+1 
+          projectimesheets[g].operationcost = operationcost[g].operationcost   
+          projectimesheets[g].overheadcost = operationcost[g].overheadcost  
+          projectimesheets[g].total = operationcost[g].total  
+          projectimesheets[g].percentage = operationcost[g].percentage 
+        }
+        
+    let  sumemployeetype = await allprojectreport.sumemployeetype(projectimesheets) 
+    
+     sumemployeetype.reqdate = DayView.getMonthAndYear(req.body.searchdate)
+     sumemployeetype.currentDate = DayView.getCurrentDate()
+
+      res.render('projecttemplate', { projectimesheets , sumemployeetype }, async (err, html) => {
+        if (err) {
+          return res.status(500).send(err);
+        }
+  
+        try {
+          const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox'] });
+          const page = await browser.newPage();
+          await page.setContent(html);
+  
+          const pdfBuffer = await page.pdf({
+            format: 'A4',            
+            width: '842px',          
+            height: '595px',          
+            landscape: true,      
+            // margin: { top: 20, right: 20, bottom: 20, left: 20 },
+          });
+          
+  
+          res.setHeader('Content-Type', 'application/pdf');
+          
+          res.setHeader('Content-Disposition', `attachment; filename="Project Statement ${sumemployeetype.reqdate}.pdf"`);
+          res.send(pdfBuffer);
+  
+          await browser.close();
+        } catch (error) {
+          console.error('Error generating PDF:', error);
+          res.status(500).send('Internal Server Error');
+        }
+      });
+      
+       
+   }  catch (error) {
+        console.error('Error generating PDF:', error);
+        res.status(500).send('Internal Server Error');
+      }
+    });
+   
 
 
 
