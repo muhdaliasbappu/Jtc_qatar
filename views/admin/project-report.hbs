@@ -16,9 +16,21 @@
       <div class="row">
         <div class="col-12">
           <div class="page-title-box">
+            <div class="page-title-right">
+                                    <form action="/admin/printprojectreport" method="POST" >
+                                <div class="input-group">
+                                    <input type="hidden" name="searchdate" value="{{sumemployeetype.reqdate}}">
+             
+                                    <button class="input-group-text btn btn-primary" type="submit">Download</button>
+                                </div>
+                                   </form>
+                                    
+                                    </div>
             <h4 class="page-title">Project Expense</h4>
           </div>
+          
         </div>
+
       </div>
       <!-- end page title -->
 
