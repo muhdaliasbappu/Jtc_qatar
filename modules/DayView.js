@@ -7,6 +7,22 @@ module.exports = {
       const formattedDate = `${dateObj.getDate()}-${dateObj.getMonth() + 1}-${dateObj.getFullYear()} ${daysOfWeek[dayIndex]}`;
       return formattedDate;
     },
+     getCurrentDate: ()=> {
+      const months = [
+        "January", "February", "March", "April",
+        "May", "June", "July", "August",
+        "September", "October", "November", "December"
+      ];
+    
+      const currentDate = new Date();
+      const day = currentDate.getDate();
+      const month = months[currentDate.getMonth()];
+      const year = currentDate.getFullYear();
+    
+      const formattedDate = `${month} ${day}, ${year}`;
+      return formattedDate;
+    },
+
  getMonthAndYear: (dateString)=> {
 
   const [year, month] = dateString.split("-");
@@ -78,3 +94,4 @@ countFridaysInMonth: (date) => {
 
 
   };
+  
