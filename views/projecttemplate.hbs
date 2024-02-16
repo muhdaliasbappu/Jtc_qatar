@@ -1,0 +1,116 @@
+ <style>
+    body{
+        font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    th, td {
+      padding: 8px;
+      text-align: left;
+      border: 1px solid #ddd;
+      font-size: 12px;
+    }
+
+    th {
+      background-color: #f2f2f2;
+      font-weight: bold;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    .table-heading {
+      text-align: center;
+      font-size: 18px;
+      font-weight: bold;
+      padding: 10px 0;
+      border-bottom: 2px solid #000;
+      margin-bottom: 20px; /* Added margin for separation from the date */
+    }
+
+    .total-row {
+      background-color: #e6e6e6;
+      font-weight: bold;
+    }
+
+    .table-container {
+      margin-top: 20px;
+    }
+
+    .heading {
+      
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 10px;
+      text-align: center; /* Center align the heading */
+    }
+
+    .date {
+      font-size: 13px;
+      margin-bottom: 20px;
+      text-align: left; /* Center align the date */
+    }
+  </style>
+  <div class="table-container">
+  <div class="heading">Project Wise Monthly HR Expense</div>
+  <div class="date">Month: {{sumemployeetype.reqdate}}<br>
+  Genarated On: {{sumemployeetype.currentDate}}
+  </div>
+ 
+
+                    <table class="table table-bordered table-centered mb-0">
+                      <thead>
+                        <tr>
+                          <th scope="col">#</th>
+                          <th scope="col" class="consistent-width">Projects</th>
+                          <th scope="col" class="consistent-width">Own Labour</th>
+                          <th scope="col" class="consistent-width">Hired Labour (Monthly)</th>
+                          <th scope="col" class="consistent-width">Hired Labour (Hourly)</th>
+                          <th scope="col" class="consistent-width">Own Staff (Projects)</th>
+                          <th scope="col" class="consistent-width">Hired Staff (Projects)</th>
+                          <th scope="col" class="consistent-width">Operations</th>
+                          <th scope="col" class="consistent-width">Staff Overhead</th>
+                          <th scope="col" class="consistent-width">Total</th>
+                          <th scope="col" class="consistent-width">Expense %</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {{#each projectimesheets}}
+                          <tr>
+                            <th scope="row">{{this.index}}</th>
+                            <td>{{this.projectname}}</td>
+                            <td>{{this.ownlaboursalary}}</td>
+                            <td>{{this.hiredlabourmsalary}}</td>
+                            <td>{{this.hiredstaffhourly}}</td>
+                            <td>{{this.ownstaffsalary}}</td>
+                            <td>{{this.hiredstaffsalary}}</td>
+                            <td>{{this.operationcost}}</td>
+                            <td>{{this.overheadcost}}</td>
+                            <td>{{this.total}}</td>
+                            <td>{{this.percentage}}%</td>
+                          </tr>
+                        {{/each}}
+                      </tbody>
+                      <tbody>
+                        
+                          <tr>
+                            <th scope="row" colspan="2">Total</th>
+                          
+                            <td>{{sumemployeetype.totalownlaboursalary}}</td>
+                            <td>{{sumemployeetype.totalhiredlabourmsalary}}</td>
+                            <td>{{sumemployeetype.totalhiredstaffhourly}}</td>
+                            <td>{{sumemployeetype.totalownstaffsalary}}</td>
+                            <td>{{sumemployeetype.totalhiredstaffsalary}}</td>
+                            <td>{{sumemployeetype.totaloperationcost}}</td>
+                            <td>{{sumemployeetype.totaloverheadcost}}</td>
+                            <th scope="row" colspan="2">QAR {{sumemployeetype.total}}</th>
+                          </tr>
+                        
+                      </tbody>
+                    </table>
+               </div>
