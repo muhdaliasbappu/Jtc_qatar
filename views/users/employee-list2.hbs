@@ -343,44 +343,7 @@ var employeetype;
         }
     }
 
-    $('#submits').click(function () {
-        var userData = {
-            employee_id: $("#employee_id").val(),
-            surname: $("#hiddensurname").val(),
-            givenName: $("#hiddenemployeeName").val(),
-            datevalue: $("#datevalue").val(),
-            todaystatus: $("#todaystatus").val(),
-            projectname1: $("#projectname1").val(),
-            workhour1: $("#workhour1").val(),
-            projectname2: $("#projectname2").val(),
-            workhour2: $("#workhour2").val(),
-            projectname3: $("#projectname3").val(),
-            workhour3: $("#workhour3").val(),
-            projectname4: $("#projectname4").val(),
-            workhour4: $("#workhour4").val(),
-            projectname5: $("#projectname5").val(),
-            workhour5: $("#workhour5").val(),
-        }
 
-        $.ajax({
-            url: '/users/employee-list/',
-            type: 'POST',
-            data: userData,
-            dataType: 'JSON',
-            success: function (data) {
-                setTimeout(function () {
-                nextEmployee();
-            }, 1000);
-                window.location.reload();
-                console.log('data')
-                
-            }
-        })
-           
-          var employeeId = $("#employee_id").val();
- 
-    nextEmployee();
-    })
 
     var numpro = 0;
     updateProjectVisibility();
@@ -418,5 +381,113 @@ var employeetype;
             removedProjectFields[i].value = "";
         }
     }
+
+        $('#submits').click(function () {
+        var selectedOption = $("#todaystatus").val();
+        if (!selectedOption) {
+        alert("Please select a working status.");
+        return false; // Prevent form submission
+        }
+        if (selectedOption === 'Working') {
+                    if (employeetype !== "Own Staff (Operations)" && employeetype !== "Hired Staff (Operations)") {
+                        var projectname1 = $("#projectname1").val();
+                        if (!projectname1) {
+                            alert("Please select Project 1");
+                            return false; // Prevent form submission
+                        }
+                        var workhour1 = $("#workhour1").val();
+                        if (!workhour1) {
+                            alert("Please enter Working Hour for Project 1.");
+                            return false; // Prevent form submission
+                        }
+
+                        if (numpro === 1) {
+                            var projectname2 = $("#projectname2").val();
+                            if (!projectname2) {
+                                alert("Please select Project 2");
+                                return false; // Prevent form submission
+                            }
+                            var workhour2 = $("#workhour2").val();
+                            if (!workhour2) {
+                                alert("Please enter Working Hour for Project 2.");
+                                return false; // Prevent form submission
+                            }
+                        }
+                        if (numpro === 2) {
+                            var projectname3 = $("#projectname3").val();
+                            if (!projectname3) {
+                                alert("Please select Project 3");
+                                return false; // Prevent form submission
+                            }
+                            var workhour3 = $("#workhour3").val();
+                            if (!workhour3) {
+                                alert("Please enter Working Hour for Project 3");
+                                return false; // Prevent form submission
+                            }
+                        }
+                        if (numpro === 3) {
+                            var projectname4 = $("#projectname4").val();
+                            if (!projectname4) {
+                                alert("Please select Project 4");
+                                return false; // Prevent form submission
+                            }
+                            var workhour4 = $("#workhour4").val();
+                            if (!workhour4) {
+                                alert("Please enter Working Hour for Project 4");
+                                return false; // Prevent form submission
+                            }
+                        }
+                        if (numpro === 4) {
+                            var projectname5 = $("#projectname5").val();
+                            if (!projectname5) {
+                                alert("Please select Project 5");
+                                return false; // Prevent form submission
+                            }
+                            var workhour5 = $("#workhour5").val();
+                            if (!workhour5) {
+                                alert("Please enter Working Hour for Project 5");
+                                return false; // Prevent form submission
+                            }
+                        }
+                    }
+                }
+        
+        var userData = {
+            employee_id: $("#employee_id").val(),
+            surname: $("#hiddensurname").val(),
+            givenName: $("#hiddenemployeeName").val(),
+            datevalue: $("#datevalue").val(),
+            todaystatus: $("#todaystatus").val(),
+            projectname1: $("#projectname1").val(),
+            workhour1: $("#workhour1").val(),
+            projectname2: $("#projectname2").val(),
+            workhour2: $("#workhour2").val(),
+            projectname3: $("#projectname3").val(),
+            workhour3: $("#workhour3").val(),
+            projectname4: $("#projectname4").val(),
+            workhour4: $("#workhour4").val(),
+            projectname5: $("#projectname5").val(),
+            workhour5: $("#workhour5").val(),
+        }
+
+        $.ajax({
+            url: '/users/employee-list/',
+            type: 'POST',
+            data: userData,
+            dataType: 'JSON',
+            success: function (data) {
+                setTimeout(function () {
+                nextEmployee();
+            }, 1000);
+                window.location.reload();
+                console.log('data')
+                
+            }
+        })
+           
+          var employeeId = $("#employee_id").val();
+ 
+    nextEmployee();
+    })
 
 </script>
