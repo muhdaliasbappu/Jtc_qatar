@@ -69,6 +69,26 @@ module.exports = {
             callback(true)
         })
     },
+    getTimesheet: (date, employeeId) => {
+        return new Promise((resolve, reject) => {
+           
+           
+                  db.get().collection('datasheet').find({
+                $and: [
+                    { datevalue:  date },
+                    { employee_id: employeeId }
+                ]
+            }).toArray()
+            .then((response) => {
+                resolve(response);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                reject(error);
+            });
+        });
+    },
+    
     getDatasheet: () => {
         return new Promise(async (resolve, reject) => {
             let datasheet = await db.get().collection('datasheet').find().toArray()
@@ -202,6 +222,7 @@ module.exports = {
             });
         });
     },
+
     gettimesheetbydate:(date)=>{
         return new Promise((resolve, reject) => {
            
@@ -540,9 +561,5 @@ getDatabByMonthofPaidLeaveoperation: (month, id) => {
 }
 
     
-    
-
-    
-
-    
 }
+
