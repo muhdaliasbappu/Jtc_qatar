@@ -268,9 +268,7 @@ router.get('/logout', (req, res) => {
 router.post('/users/employee-list/', async (req, res) => {
 
    
-    let semployee = await employeHelpers.getEmployeeDetails(req.body.employee_id);
-
-
+ let semployee = await employeHelpers.getEmployeeDetails(req.body.employee_id);
 
   var datasheet = req.body
   var datevalue = req.body.datevalue
@@ -296,6 +294,9 @@ datasheet.employeeType = semployee.employeeType;
     datasheet.sbonus = ''; 
     datasheet.srateph = semployee.srateph;
     datasheet.workinghour = '0';
+    if(datasheet.todaystatus === 'Paid Leave'){
+      datasheet.todaystatus = 'Unpaid Leave'
+    }
     }else{
     datasheet.sbasic = semployee.sbasic;
     datasheet.sallowance = semployee.sallowance;
@@ -312,6 +313,9 @@ datasheet.sallowance = '';
 datasheet.sbonus = ''; 
 datasheet.srateph = semployee.srateph;
 datasheet.workinghour = '8';
+if(datasheet.todaystatus === 'Paid Leave'){
+  datasheet.todaystatus = 'Unpaid Leave'
+}
 }else{
 datasheet.sbasic = semployee.sbasic;
 datasheet.sallowance = semployee.sallowance;
@@ -320,68 +324,12 @@ datasheet.srateph = '';
 datasheet.workinghour = '8';
 }
 }
-userHelpers.getDatasheet().then(function (edatasheet) {
+userHelpers.getTimesheet(datevalue , datasheet.employee_id).then(function (edatasheets) {
+if(edatasheets.length === 0){
+  userHelpers.addDatasheet(datasheet, (result) => {
+ })
   
-  if (!edatasheet.length) {
-    userHelpers.addDatasheet(datasheet, (result) => {
-
-    })
-  } else {
-    let count = 0;
-    let count1 = 0;
-    let count2 = 0;
-    let count3 = 0;
-    let datec = 0;
-    for (let i = 0; i < edatasheet.length; i++) {
-     
-      if (edatasheet[i].date.getFullYear() === datasheet.date.getFullYear()) {
-        if (edatasheet[i].date.getMonth() === datasheet.date.getMonth()) {
-          if (edatasheet[i].date.getDate() === datasheet.date.getDate()) {
-            datec++;
-            if (edatasheet[i].employee_id === datasheet.employee_id) {
-              
-              break;
-            } else {
-
-              count++;
-            }
-          }
-
-          else {
-            count1++;
-            if (count1 === edatasheet.length) {
-              userHelpers.addDatasheet(datasheet, (result) => {
-
-              })
-              break;
-            }
-          }
-        } else {
-          count2++;
-          if (count2 === edatasheet.length) {
-            userHelpers.addDatasheet(datasheet, (result) => {
-
-            })
-            break;
-          }
-        }
-      } else {
-        count3++;
-        if (count3 === edatasheet.length) {
-          userHelpers.addDatasheet(datasheet, (result) => {
-
-          })
-          break;
-        }
-      }
-    }
-    if (count === datec) {
-      userHelpers.addDatasheet(datasheet, (result) => {
-
-      })
-
-    }
-  }
+}
 })
 
 });
