@@ -1,46 +1,48 @@
+
+                         
+
 <style>
-  /* Add the following style to prevent page breaks inside table rows */
-  tr {
+   tr {
     page-break-inside: avoid;
   }
-
   table {
     border-collapse: collapse;
     width: 100%;
+    margin-bottom: 20px;
   }
 
   th, td {
-    padding: 4px; /* Minimal padding */
+    padding: 8px;
     text-align: left;
     border: 1px solid #ddd;
-    font-size: 10px; /* Minimal font size */
+    font-size: 12px;
   }
 
   .table-heading {
     text-align: center;
-    font-size: 18px;
+    font-size: 20px;
     font-weight: bold;
-    padding: 10px 0;
-    border-bottom: 2px solid #000; /* Black line */
+    padding: 15px 0;
+    border-bottom: 2px solid #000;
+  }
+
+  th.total-salary {
+    width: 15%;
   }
 </style>
 
-              
-                                   
-                         
 <div style="padding-top:10px;">
   <div class="table-heading">
     SALARY STATEMENT | MONTH OF {{employeereport.date}}
   </div>
-                            
- <table class="table mb-0 table-bordered table-hover" >
-  <thead>
-    <tr>
-      <th style="width: 1%;">#</th>
-      <th style="width: 20%;">Name</th>
 
-      <th>1</th>
-      <th>2</th>
+  <table class="table mb-0 table-bordered table-hover">
+    <thead>
+      <tr>
+        <th style="width: 1%;">#</th>
+        <th style="width: 20%;">Name</th>
+        <th>1</th>
+        <th>2</th>
       <th>3</th>
       <th>4</th>
       <th>5</th>
@@ -76,16 +78,15 @@
       <th style="width: 5%;">Allowance</th>
       <th style="width: 5%;">Bonus</th>
       <th style="width: 5%;">OT Salary</th>
-      <th style="width: 10%;">Total Salary</th>
-    </tr>
-  </thead>
-  <tbody>
-     {{#each employeereport}}
-    <tr>
-     
-      <th scope="row">{{this.index}}</th>
-      <td>{{this.employeename}}</td>
-      <td>{{this.d1wh}}</td>
+      <th class="total-salary">Total Salary</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each employeereport}}
+        <tr>
+          <th scope="row">{{this.index}}</th>
+          <td>{{this.employeename}}</td>
+          <td>{{this.d1wh}}</td>
       <td>{{this.d2wh}}</td>
       <td>{{this.d3wh}}</td>
       <td>{{this.d4wh}}</td>
@@ -122,14 +123,12 @@
       <td>{{this.allowance}}</td>
       <td>{{this.bonus}}</td>
       <td>{{this.otsalary}}</td>
-      <td >QAR {{this.totalsalary}}</td>
-
-    </tr>
-    {{/each}}
-  </tbody>
-</table>
-                                  
-                        </div>
+          <td >QAR {{this.totalsalary}}</td>
+        </tr>
+      {{/each}}
+    </tbody>
+  </table>
+</div>
 
 
                          
