@@ -19,7 +19,7 @@ for(i=0;i<timesheet.length;i++){
     dd = new Date(timesheet[i].datevalue);
     let date = dd.getDate();
     let day = dd.getDay();
-    let month = dd.getMonth();
+ 
 
     if(timesheet[i].todaystatus === 'Working'){
         workday++;
@@ -553,8 +553,8 @@ for(i=0;i<timesheet.length;i++){
     }
     
 }
-let tempwd = 0
-
+let tempwd = 0 
+let month = dd.getMonth();
 if(month === 1 ){
     report.workdays = workday
     tempwd = workday
