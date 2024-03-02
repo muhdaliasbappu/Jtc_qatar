@@ -12,11 +12,11 @@ let otsalary = 0
 let basicsalary =0
 let allowance = 0
 let bonus = 0
-
+let dd
 
 for(i=0;i<timesheet.length;i++){
     
-    const dd = new Date(timesheet[i].datevalue);
+    dd = new Date(timesheet[i].datevalue);
     let date = dd.getDate();
     let day = dd.getDay();
 
@@ -553,7 +553,7 @@ for(i=0;i<timesheet.length;i++){
     
 }
 let tempwd = 0
-let month = dd.getMonth();
+
 if(month === 1 ){
     report.workdays = workday
     tempwd = workday
@@ -908,8 +908,9 @@ let basicsalary =0
 let allowance = 0
 let bonus = 0
 let monlen = 0
+let dd
 for(i=0;i<timesheet.length;i++){
-    const dd = new Date(timesheet[i].datevalue);
+  dd = new Date(timesheet[i].datevalue);
     let day = dd.getDay();
     let date = dd.getDate();
     if(day === 5){
