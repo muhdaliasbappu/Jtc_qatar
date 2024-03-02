@@ -19,6 +19,7 @@ for(i=0;i<timesheet.length;i++){
     const dd = new Date(timesheet[i].datevalue);
     let date = dd.getDate();
     let day = dd.getDay();
+
     if(timesheet[i].todaystatus === 'Working'){
         workday++;
         let tempot = 0;
@@ -26,6 +27,7 @@ for(i=0;i<timesheet.length;i++){
         let tempotsal = 0 ;
         
         if(timesheet[i].workinghour === 0){
+            
             tempwhto =
             Number(timesheet[i].workhour1) +
             Number(timesheet[i].workhour2) +
@@ -551,7 +553,12 @@ for(i=0;i<timesheet.length;i++){
     
 }
 let tempwd = 0
-if( workday > 30 ){
+let month = dd.getMonth();
+if(month === 1 ){
+    report.workdays = workday
+    tempwd = workday
+}
+else if( workday > 30 ){
     report.workdays = 30
     tempwd = 30
 }else{
@@ -565,8 +572,6 @@ report.basic = Math.round(basicsalary)
 report.allowance =  Math.round(allowance)
 report.bonus = Math.round(bonus)
 report.otsalary =  Math.round(otsalary)
-
-
 report.othours = othours
 report.totalsalary =  Math.round(basicsalary+allowance+bonus+otsalary)
 resolve(report)
@@ -1412,7 +1417,12 @@ for(i=0;i<timesheet.length;i++){
     
 }
 let tempwd = 0
-if( workday > 30 ){
+let month = dd.getMonth();
+if(month === 1 ){
+    report.workdays = workday
+    tempwd = workday
+}
+else if( workday > 30 ){
     report.workdays = 30
     tempwd = 30
 }else{
@@ -1438,4 +1448,5 @@ resolve(report)
 
 
 }
+
 
