@@ -557,7 +557,7 @@ let tempwd = 0
 let month = dd.getMonth();
 if(month === 1 ){
     report.workdays = workday
-    tempwd = workday
+    tempwd = 30
 }
 else if( workday > 30 ){
     report.workdays = 30
