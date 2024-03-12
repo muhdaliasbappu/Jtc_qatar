@@ -1,5 +1,18 @@
 const { report } = require("../app")
-
+var DayView =  require('./DayView')
+function getDaysInMonth(dateString) {
+    // Parse the input date string
+    const dateObject = new Date(dateString);
+  
+    // Get the year and month from the date
+    const year = dateObject.getFullYear();
+    const month = dateObject.getMonth();
+  
+    // Use the same approach to find the last day of the month
+    const lastDay = new Date(year, month + 1, 0).getDate();
+    
+    return lastDay;
+  }
 
 module.exports = {
 
@@ -14,13 +27,13 @@ let allowance = 0
 let bonus = 0
 let dd
 
+  
+
 for(i=0;i<timesheet.length;i++){
     
     dd = new Date(timesheet[i].datevalue);
     let date = dd.getDate();
     let day = dd.getDay();
- 
-
     if(timesheet[i].todaystatus === 'Working'){
         workday++;
         let tempot = 0;
@@ -553,11 +566,15 @@ for(i=0;i<timesheet.length;i++){
     }
     
 }
-let tempwd = 0 
-let month = dd.getMonth();
-if(month === 1 ){
-    report.workdays = workday
-    tempwd = 30
+let month = getDaysInMonth(dd)
+let tempwd = 0
+if(month === 29){
+    report.workdays = 29
+    tempwd = 30-29-workday
+}else if(month === 28){
+    report.workdays = 28
+    tempwd = 30-28-workday
+
 }
 else if( workday > 30 ){
     report.workdays = 30
