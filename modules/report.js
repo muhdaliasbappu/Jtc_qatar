@@ -1433,13 +1433,16 @@ for(i=0;i<timesheet.length;i++){
                 
         }
     }
-    
 }
+let month = getDaysInMonth(dd)
 let tempwd = 0
-let month = dd.getMonth();
-if(month === 1 ){
-    report.workdays = workday
+if(month === 29 && workday === 29){
+    report.workdays = 29
     tempwd = 30
+}else if(month === 28  && workday === 28){
+    report.workdays = 28
+    tempwd = 30
+
 }
 else if( workday > 30 ){
     report.workdays = 30
