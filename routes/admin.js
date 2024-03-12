@@ -254,7 +254,7 @@ router.post("/datasheet", function (req, res) {
   // const currentDate = new Date();
   // const twoDaysAgo = new Date(currentDate);
   // twoDaysAgo.setDate(currentDate.getDate() - 3);
-  // const d = new Date(req.body.searchdate);
+     const d = new Date(req.body.searchdate);
   // if (d < twoDaysAgo) {
   // if(d.getDay() === 5){
   //   addcron.cronfridaynotyou(req.body.searchdate)
