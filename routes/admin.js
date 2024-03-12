@@ -11,7 +11,7 @@ var DayView = require('../modules/DayView')
 
 var allprojectreport = require('../modules/project-report')
 const puppeteer = require('puppeteer');
-var addcron = require('../modules/notcron')
+//var addcron = require('../modules/notcron')
 var salarycalc = require('../modules/salarycalc')
 
 //admin login
@@ -251,17 +251,17 @@ router.get("/datasheet", function (req, res) {
 });
 
 router.post("/datasheet", function (req, res) {
-  const currentDate = new Date();
-  const twoDaysAgo = new Date(currentDate);
-  twoDaysAgo.setDate(currentDate.getDate() - 3);
-  const d = new Date(req.body.searchdate);
-  if (d < twoDaysAgo) {
-  if(d.getDay() === 5){
-    addcron.cronfridaynotyou(req.body.searchdate)
-  }else{
-    addcron.cronnotforyou(req.body.searchdate)
-  }
-  }
+  // const currentDate = new Date();
+  // const twoDaysAgo = new Date(currentDate);
+  // twoDaysAgo.setDate(currentDate.getDate() - 3);
+  // const d = new Date(req.body.searchdate);
+  // if (d < twoDaysAgo) {
+  // if(d.getDay() === 5){
+  //   addcron.cronfridaynotyou(req.body.searchdate)
+  // }else{
+  //   addcron.cronnotforyou(req.body.searchdate)
+  // }
+  // }
  userHelpers.gettimesheetbydate(d).then(function ( searchdatasheet){
     let ar = 0;
     for (let i = 0; i < searchdatasheet.length; i++) {
@@ -420,6 +420,7 @@ router.post("/search-report", async (req, res) => {
    let employeereport = result.employeereport
    totalsum.sum = result.sum
    const month = parseInt(req.body.searchdate.split('-')[1]);
+   
    const monthsWith31Days = [1, 3, 5, 7, 8, 10, 12];
    if (monthsWith31Days.includes(month)) {
        res.render("./admin/report-view", { admin: true, employeereport , searchdata , totalsum });      
