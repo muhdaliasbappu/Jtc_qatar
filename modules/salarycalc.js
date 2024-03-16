@@ -117,12 +117,14 @@ module.exports = {
         else if(employees[i].employeeType === 'Hired Staff (Operations)'  ){
           if(employeeType === 'All'){
             var timesheet = await userHelpers.getDatabByMonthAndEmployee(searchdate, employees[i]._id.toString());
+            if (timesheet.length > 0) {
             const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
           const thedata = await allsalaryreport.salaryreportoperations(searcheddata);
           thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
           index++;
           thedata.index = index;
           employeereport.push(thedata);    
+            }
          }else if (employeeType === 'Hired Staff (Operations)'){
           var timesheet = await userHelpers.getDatabByMonthAndEmployeewithType(searchdate, employees[i]._id.toString(),employeeType );
           if (timesheet.length > 0) {
