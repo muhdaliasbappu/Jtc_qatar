@@ -314,6 +314,7 @@ return report;
         let totalsum = 0
         
         let paidleavecostoperations = await salarycalc.operationpaidleavecost(date, mdetails )
+        console.log(paidleavecostoperations, 'paidleavecostoperations')
         let paidleavecost = await salarycalc.paidleavecost(date, mdetails , 'Own Labour' )
         paidleavecost += await salarycalc.paidleavecost(date, mdetails , 'Hired Labour (Monthly)' )
         paidleavecost += await salarycalc.paidleavecost(date, mdetails , 'Own Staff (Projects)' )
@@ -321,6 +322,7 @@ return report;
         paidleavecost += await salarycalc.paidleavecost(date, mdetails , 'Hired Labour (Hourly)' )
         paidleavecost += paidleavecostoperations
         let operationssum = await operationsum.operationsum(date) - paidleavecostoperations
+        console.log(operationssum,'operationssum')
 
         for (let i = 0; i < projectimesheets.length; i++) {
             let temptotalcost = 0;
