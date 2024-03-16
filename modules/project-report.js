@@ -315,10 +315,15 @@ return report;
         
         let paidleavecostoperations = await salarycalc.operationpaidleavecost(date, mdetails )
         let paidleavecost = await salarycalc.paidleavecost(date, mdetails , 'Own Labour' )
+        console.log(paidleavecost,'Own Labour')
         paidleavecost += await salarycalc.paidleavecost(date, mdetails , 'Hired Labour (Monthly)' )
+        console.log(paidleavecost,'Hired Labour (Monthly)')
         paidleavecost += await salarycalc.paidleavecost(date, mdetails , 'Own Staff (Projects)' )
+        console.log(paidleavecost,'Own Staff (Projects)')
         paidleavecost += await salarycalc.paidleavecost(date, mdetails , 'Hired Staff (Projects)' )
+        console.log(paidleavecost,'Hired Staff (Projects)' )
         paidleavecost += await salarycalc.paidleavecost(date, mdetails , 'Hired Labour (Hourly)' )
+        console.log(paidleavecost,'Hired Labour (Hourly)')
         paidleavecost += paidleavecostoperations
         let operationssum = await operationsum.operationsum(date) - paidleavecostoperations
     
