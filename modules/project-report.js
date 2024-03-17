@@ -324,9 +324,9 @@ return report;
         console.log(own, 'own' )
         let Hired = await salarycalc.paidleavecost(date, mdetails , 'Hired Labour (Monthly)' )
         console.log(Hired ,'Hired Labour (Monthly)')
-        let OwnStaff = await salarycalc.paidleavecost(date, mdetails , 'Hired Labour (Monthly)' )
+        let OwnStaff = await salarycalc.paidleavecost(date, mdetails , 'Own Staff (Projects' )
         console.log(OwnStaff ,'Own Staff (Projects)')
-        let HiredStaff = await salarycalc.paidleavecost(date, mdetails , 'Hired Labour (Monthly)' )
+        let HiredStaff = await salarycalc.paidleavecost(date, mdetails , 'Hired Staff (Projects)' )
         console.log(HiredStaff ,'Hired Staff (Projects)')
         console.log(paidleavecostoperations ,'operation')
         paidleavecost = paidleavecostoperations + own + Hired + OwnStaff + HiredStaff 
