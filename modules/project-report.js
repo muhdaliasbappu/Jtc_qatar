@@ -314,23 +314,12 @@ return report;
         let totalsum = 0
         
         let paidleavecostoperations = await salarycalc.operationpaidleavecost(date, mdetails )
-      //  let paidleavecost = await salarycalc.paidleavecost(date, mdetails , 'Own Labour' )
-      //  paidleavecost += await salarycalc.paidleavecost(date, mdetails , 'Hired Labour (Monthly)' )
-       // paidleavecost += await salarycalc.paidleavecost(date, mdetails , 'Own Staff (Projects)' )
-       // paidleavecost += await salarycalc.paidleavecost(date, mdetails , 'Hired Staff (Projects)' )      
-      //  paidleavecost += paidleavecostoperations
+      let paidleavecost = await salarycalc.paidleavecost(date, mdetails , 'Own Labour' )
+       paidleavecost += await salarycalc.paidleavecost(date, mdetails , 'Hired Labour (Monthly)' )
+       paidleavecost += await salarycalc.paidleavecost(date, mdetails , 'Own Staff (Projects)' )
+      paidleavecost += await salarycalc.paidleavecost(date, mdetails , 'Hired Staff (Projects)' )      
+      paidleavecost += paidleavecostoperations
 
-       let own = await salarycalc.paidleavecost(date, mdetails , 'Own Labour' )
-        console.log(own, 'own' )
-        let Hired = await salarycalc.paidleavecost(date, mdetails , 'Hired Labour (Monthly)' )
-        console.log(Hired ,'Hired Labour (Monthly)')
-        let OwnStaff = await salarycalc.paidleavecost(date, mdetails , 'Own Staff (Projects' )
-        console.log(OwnStaff ,'Own Staff (Projects)')
-        let HiredStaff = await salarycalc.paidleavecost(date, mdetails , 'Hired Staff (Projects)' )
-        console.log(HiredStaff ,'Hired Staff (Projects)')
-        console.log(paidleavecostoperations ,'operation')
-        paidleavecost = paidleavecostoperations + own + Hired + OwnStaff + HiredStaff 
-        let operationssum = await operationsum.operationsum(date) - paidleavecostoperations
     
         for (let i = 0; i < projectimesheets.length; i++) {
             let temptotalcost = 0;
