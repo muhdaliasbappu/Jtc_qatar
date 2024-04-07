@@ -507,9 +507,11 @@ router.post('/printreport', async (req, res) => {
   try {
     var index = 0
     let searchdata = {}
+    let totalsum = {}
     searchdata.searchdate = req.body.searchdate
     const result = await salarycalc.salarycalculate(req.body.searchdate , req.body.employeeType)
    let employeereport = result.employeereport
+   totalsum.sum = result.sum
 
   
    
@@ -521,7 +523,7 @@ router.post('/printreport', async (req, res) => {
    const monthsWith31Days = [1, 3, 5, 7, 8, 10, 12];
    if (monthsWith31Days.includes(month)) {
       
-      res.render('reporttemplate', { employeereport }, async (err, html) => {
+      res.render('reporttemplate', { employeereport, totalsum }, async (err, html) => {
         if (err) {
           return res.status(500).send(err);
         }
@@ -554,7 +556,7 @@ router.post('/printreport', async (req, res) => {
       
        
    } else {
-    res.render('reporttemplate2', { employeereport }, async (err, html) => {
+    res.render('reporttemplate2', { employeereport , totalsum }, async (err, html) => {
       if (err) {
         return res.status(500).send(err);
       }
