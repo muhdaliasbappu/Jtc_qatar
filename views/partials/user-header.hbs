@@ -137,10 +137,10 @@
                             <div class="collapse" id="sidebarEcommerce">
                                 <ul class="side-nav-second-level">
                                     <li>
-                                        <a href="/employeelist">Date 1</a>
+                                        <a href="/employeelist" id="timesheet-date1">Date 1</a>
                                     </li>
                                      <li>
-                                        <a href="/employeelist2">Date 2</a>
+                                        <a href="/employeelist2" id="timesheet-date2">Date 2</a>
                                     </li>
                             
                       
@@ -155,10 +155,10 @@
                             <div class="collapse" id="sidebarEcommerce">
                                 <ul class="side-nav-second-level">
                                     <li>
-                                        <a href="/employee-data">Date 1</a>
+                                        <a href="/employee-data" id="vtimesheet-date1">Date 1</a>
                                     </li>
                                      <li>
-                                        <a href="/employee-data2">Date 2</a>
+                                        <a href="/employee-data2" id="vtimesheet-date2">Date 2</a>
                                     </li>
                             
                       
@@ -172,5 +172,32 @@
                 </div>
             </div>
             <!-- ========== Left Sidebar End ========== -->
+
+       
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Get today's date and yesterday's date
+        const today = new Date();
+        const yesterday = new Date();
+        const dbyesterday = new Date();
+        yesterday.setDate(today.getDate() - 1);
+        dbyesterday.setDate(today.getDate() - 2);
+        // Format options for day, day of the month, and month
+        const options = { weekday: 'long', day: '2-digit', month: 'long' };
+        
+        // Format the dates
+        const dbyesterdayStr = dbyesterday.toLocaleDateString('en-US', options);
+        const yesterdayStr = yesterday.toLocaleDateString('en-US', options);
+
+        // Set the text of the links to the formatted dates
+        document.getElementById('timesheet-date1').textContent = yesterdayStr;
+        document.getElementById('timesheet-date2').textContent = dbyesterdayStr;
+        document.getElementById('vtimesheet-date1').textContent = yesterdayStr;
+        document.getElementById('vtimesheet-date2').textContent = dbyesterdayStr;
+
+    });
+</script>
+
 
        
