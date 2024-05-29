@@ -558,8 +558,28 @@ getDatabByMonthofPaidLeaveoperation: (month, id) => {
                 reject(error);
             });
     });
-}
+},
+gettimesheetbydatevalue: ( datevalue ) => {
+        
+    return new Promise((resolve, reject) => {
+            db.get().collection('datasheet').find({
+            $and: [
+                { datevalue: datevalue } ,               
+            ]
+            
+            
+        }).toArray()
+        .then((response) => {
+            resolve(response);
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+            reject(error);
+        });
+    });
+},
 
     
 }
+
 
