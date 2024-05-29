@@ -78,7 +78,7 @@ router.get('/employeelist', async function (req, res) {
       // Filter active projects
       let activeProjects = projects.filter(project => project.projectstatus === 'Ongoing');
 
-      if(activeProjects.length === 0){
+      if(activeEmployees.length === 0){
         res.render('./users/submissiondone', {
           user: true,
           employees: JSON.stringify(activeEmployees),
@@ -130,7 +130,7 @@ router.get('/employeelist2', async function (req, res) {
       
       // Filter active projects
       let activeProjects = projects.filter(project => project.projectstatus === 'Ongoing');
-      if(activeProjects.length === 0){
+      if(activeEmployees.length === 0){
       res.render('./users/submissiondone', {
           user: true,
           employees: JSON.stringify(activeEmployees),
