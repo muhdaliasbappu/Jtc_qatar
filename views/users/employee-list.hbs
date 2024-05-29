@@ -272,10 +272,16 @@ var employeetype;
     for (var i = 0; i < radioButtons.length; i++) {
         radioButtons[i].addEventListener("click", handleRadioButtonClick);
     }
+    var submittedEmployeeIds = [];
 
 
     function displayEmployee() {
         var employee = employees[currentIndex];
+        var employeeId = employee._id;
+        if (submittedEmployeeIds.includes(employeeId)) {
+            nextEmployee(); // Skip to the next employee
+            return;
+        }else{
  
     
          document.getElementById("employeeNames").textContent = employee.surname;
@@ -287,7 +293,7 @@ var employeetype;
         
         employeetype = employee.employeeType
           handleRadioButtonClick()
-   
+   }
     }
     
 
@@ -487,7 +493,7 @@ var employeetype;
         })
            
           var employeeId = $("#employee_id").val();
- 
+    submittedEmployeeIds.push(employeeId);
     nextEmployee();
     })
 
