@@ -79,19 +79,20 @@ router.get('/employeelist', async function (req, res) {
       let activeProjects = projects.filter(project => project.projectstatus === 'Ongoing');
 
       if(activeProjects.length === 0){
-        res.render('./users/employee-list', {
+        res.render('./users/submissiondone', {
           user: true,
           employees: JSON.stringify(activeEmployees),
           activeProjects,
           datess
         });
+       
         }else{
-          res.render('./users/submissiondone', {
-            user: true,
-            employees: JSON.stringify(activeEmployees),
-            activeProjects,
-            datess
-          });
+         res.render('./users/employee-list', {
+          user: true,
+          employees: JSON.stringify(activeEmployees),
+          activeProjects,
+          datess
+        });  
         }
     } catch (error) {
       console.error("Error fetching employee list:", error);
@@ -130,19 +131,20 @@ router.get('/employeelist2', async function (req, res) {
       // Filter active projects
       let activeProjects = projects.filter(project => project.projectstatus === 'Ongoing');
       if(activeProjects.length === 0){
-      res.render('./users/employee-list2', {
-        user: true,
-        employees: JSON.stringify(activeEmployees),
-        activeProjects,
-        datess
-      });
-      }else{
-        res.render('./users/submissiondone', {
+      res.render('./users/submissiondone', {
           user: true,
           employees: JSON.stringify(activeEmployees),
           activeProjects,
           datess
         });
+      }else{
+        res.render('./users/employee-list2', {
+          user: true,
+          employees: JSON.stringify(activeEmployees),
+          activeProjects,
+          datess
+        });
+        
       }
     } catch (error) {
       console.error("Error fetching employee list:", error);
@@ -498,6 +500,7 @@ router.post('/edit-datasheet/:id', (req, res) => {
 })
 
 module.exports = router;
+
 
 
 
