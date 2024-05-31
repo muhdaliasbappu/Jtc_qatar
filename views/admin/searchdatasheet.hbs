@@ -8,20 +8,9 @@
       <div class="row">
                             <div class="col-12">
                                 <div class="page-title-box">
-                                         {{!-- <div class="page-title-right">
-                                        <form  action="/admin/change-workhour/{{searchdatasheet.date1}}" method="POST">
-                                            <div class="input-group">
-                                                <input type="number" name="workhour" class="form-control dropdown-toggle" placeholder="Change Working Hour" id="top-search"  required>
-                                                <button class="input-group-text btn btn-primary " type="submit" data-bs-toggle="dropdown"
-                                                    aria-haspopup="true" aria-expanded="false" onclick="return confirm('Are you sure you want to change the working hours on {{searchdatasheet.date}}')">
-                                                    Apply
-                                                </button>
-                                          
-                                            </div>
-                                        </form>
-                                    </div> --}}
                                   <div class="page-title-right">
                                     <form action="/admin/change-workhour/{{searchdatasheet.date1}}" method="POST" >
+                                    
                                 <div class="input-group">
                                     <input type="number" name="workhour" class="form-control dropdown-toggle" placeholder="Change Working Hour" min="0" max="16" required style="width: 200px;">
 
@@ -31,14 +20,24 @@
                                     
                                     </div>
                                     <h4 class="page-title">DATE: {{searchdatasheet.date}}  :  Working Hour: {{searchdatasheet.workinghour1}}</h4>
-        
+                                <div class="btn-group">
+                                    <form action="/admin/predatasheet" method="POST">
+                                       <input type="hidden" name="searcheddate" value="{{searchdatasheet.searcheddate}}">
+                                       <button type="submit" title="Previous Month" aria-pressed="false" class="fc-prev-button btn btn-primary">Prev</button>
+                                    </form>
+                                    <form action="/admin/nextdatasheet" method="POST">
+                                       <input type="hidden" name="searcheddate" value="{{searchdatasheet.searcheddate}}">
+                                       <button type="submit"title="Next Month" aria-pressed="false" class="fc-next-button btn btn-primary">Next</button>
+                                    </form>                                   
+                                </div>
                                 </div>
 
                             </div>
+                            
                         </div>
                         <!-- end page title -->
 
-                        <div class="row mb-2">
+                        <div class="row mb-2 mt-2">
                             <div class="col-12">
                                 <div class="card">
                                     <div class="card-body">
@@ -100,7 +99,7 @@
                                     </div> <!-- end card body-->
                                 </div> <!-- end card -->
                             </div><!-- end col-->
-                        </div> <!-- end row-->
-                        </div> 
-                        </div> 
-                        </div> 
+                </div> <!-- end row-->
+         </div> 
+    </div> 
+</div> 
