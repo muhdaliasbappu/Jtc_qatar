@@ -473,7 +473,7 @@ router.post("/search-report", async (req, res) => {
   let searchdata = {}
   let totalsum = {}
   searchdata.searchdate = req.body.searchdate
-    searchdata.employeeType = req.body.employeeType
+  searchdata.employeeType = req.body.employeeType
 
    const result = await salarycalc.salarycalculate(req.body.searchdate , req.body.employeeType)
    let employeereport = result.employeereport
@@ -578,6 +578,8 @@ router.post('/printreport', async (req, res) => {
   var formattedDate = DayView.getMonthAndYear(req.body.searchdate)
   
   employeereport.date = formattedDate
+  employeereport.currentDate = DayView.getCurrentDate()
+  employeereport.employeeType = req.body.employeeType
 
    const monthsWith31Days = [1, 3, 5, 7, 8, 10, 12];
    if (monthsWith31Days.includes(month)) {
