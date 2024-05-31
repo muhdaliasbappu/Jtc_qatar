@@ -725,6 +725,7 @@ router.post("/project-search", async (req, res) => {
           
       let  sumemployeetype = await allprojectreport.sumemployeetype(projectimesheets) 
        sumemployeetype.reqdate = req.body.searchdate;
+       sumemployeetype.reqmonth = DayView.getMonthAndYear(req.body.searchdate)
       
       res.render("./admin/project-report", { admin: true , projectimesheets , sumemployeetype});
   } catch (error) {
