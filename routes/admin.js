@@ -299,32 +299,42 @@ router.post("/predatasheet/", function (req, res) {
 });
 router.post("/nextdatasheet/", function (req, res) {
   const d = new Date(req.body.searcheddate); // Convert to Date object
+
   if (!isNaN(d)) { // Check if the date is valid
-    d.setDate(d.getDate() + 1);
+    d.setDate(d.getDate() + 1); // Increment the date by one day
 
-    userHelpers.gettimesheetbydate(d).then(function (searchdatasheet) {
-      let ar = 0;
-      for (let i = 0; i < searchdatasheet.length; i++) {
-        searchdatasheet[ar].index = ar + 1;
-        ar++;
-      }
+    const currentDate = new Date();
+    currentDate.setHours(0, 0, 0, 0);
+    
 
-      if (searchdatasheet[0]) {
-        searchdatasheet.date = DayView.dayview(searchdatasheet[0].datevalue);
-        searchdatasheet.date1 = searchdatasheet[0].datevalue;
-        searchdatasheet.workinghour1 = searchdatasheet[0].workinghour;
-        searchdatasheet.searcheddate = d;
-      }
+    if (d > currentDate) { 
+      res.status(400).send("No Timesheet available");
+    } else {
+      userHelpers.gettimesheetbydate(d).then(function (searchdatasheet) {
+        let ar = 0;
+        for (let i = 0; i < searchdatasheet.length; i++) {
+          searchdatasheet[ar].index = ar + 1;
+          ar++;
+        }
 
-      res.render("./admin/searchdatasheet", { admin: true, searchdatasheet });
-    }).catch(function (error) {
-      console.error("Error fetching timesheet by date:", error);
-      res.status(500).send("Error fetching timesheet data");
-    });
+        if (searchdatasheet[0]) {
+          searchdatasheet.date = DayView.dayview(searchdatasheet[0].datevalue);
+          searchdatasheet.date1 = searchdatasheet[0].datevalue;
+          searchdatasheet.workinghour1 = searchdatasheet[0].workinghour;
+          searchdatasheet.searcheddate = d;
+        }
+
+        res.render("./admin/searchdatasheet", { admin: true, searchdatasheet });
+      }).catch(function (error) {
+        console.error("Error fetching timesheet by date:", error);
+        res.status(500).send("Error fetching timesheet data");
+      });
+    }
   } else {
     res.status(400).send("Invalid date format");
   }
 });
+
 
 router.post("/change-workhour/:date", function (req, res) {
 
