@@ -251,17 +251,7 @@ router.get("/datasheet", function (req, res) {
 });
 
 router.post("/datasheet", function (req, res) {
-  // const currentDate = new Date();
-  // const twoDaysAgo = new Date(currentDate);
-  // twoDaysAgo.setDate(currentDate.getDate() - 3);
   const d = new Date(req.body.searchdate);
-  // if (d < twoDaysAgo) {
-  // if(d.getDay() === 5){
-  //   addcron.cronfridaynotyou(req.body.searchdate)
-  // }else{
-  //   addcron.cronnotforyou(req.body.searchdate)
-  // }
-  // }
  userHelpers.gettimesheetbydate(d).then(function ( searchdatasheet){
     let ar = 0;
     for (let i = 0; i < searchdatasheet.length; i++) {
@@ -273,11 +263,69 @@ router.post("/datasheet", function (req, res) {
     searchdatasheet.date =DayView.dayview(searchdatasheet[0].datevalue) ;
     searchdatasheet.date1 = searchdatasheet[0].datevalue
     searchdatasheet.workinghour1 = searchdatasheet[0].workinghour
+    searchdatasheet.searcheddate = d
     }
 
     res.render("./admin/searchdatasheet", { admin: true, searchdatasheet });
   });
 });
+router.post("/predatasheet/", function (req, res) {
+  const d = new Date(req.body.searcheddate); // Convert to Date object
+  if (!isNaN(d)) { // Check if the date is valid
+    d.setDate(d.getDate() - 1);
+
+    userHelpers.gettimesheetbydate(d).then(function (searchdatasheet) {
+      let ar = 0;
+      for (let i = 0; i < searchdatasheet.length; i++) {
+        searchdatasheet[ar].index = ar + 1;
+        ar++;
+      }
+
+      if (searchdatasheet[0]) {
+        searchdatasheet.date = DayView.dayview(searchdatasheet[0].datevalue);
+        searchdatasheet.date1 = searchdatasheet[0].datevalue;
+        searchdatasheet.workinghour1 = searchdatasheet[0].workinghour;
+        searchdatasheet.searcheddate = d;
+      }
+
+      res.render("./admin/searchdatasheet", { admin: true, searchdatasheet });
+    }).catch(function (error) {
+      console.error("Error fetching timesheet by date:", error);
+      res.status(500).send("Error fetching timesheet data");
+    });
+  } else {
+    res.status(400).send("Invalid date format");
+  }
+});
+router.post("/nextdatasheet/", function (req, res) {
+  const d = new Date(req.body.searcheddate); // Convert to Date object
+  if (!isNaN(d)) { // Check if the date is valid
+    d.setDate(d.getDate() + 1);
+
+    userHelpers.gettimesheetbydate(d).then(function (searchdatasheet) {
+      let ar = 0;
+      for (let i = 0; i < searchdatasheet.length; i++) {
+        searchdatasheet[ar].index = ar + 1;
+        ar++;
+      }
+
+      if (searchdatasheet[0]) {
+        searchdatasheet.date = DayView.dayview(searchdatasheet[0].datevalue);
+        searchdatasheet.date1 = searchdatasheet[0].datevalue;
+        searchdatasheet.workinghour1 = searchdatasheet[0].workinghour;
+        searchdatasheet.searcheddate = d;
+      }
+
+      res.render("./admin/searchdatasheet", { admin: true, searchdatasheet });
+    }).catch(function (error) {
+      console.error("Error fetching timesheet by date:", error);
+      res.status(500).send("Error fetching timesheet data");
+    });
+  } else {
+    res.status(400).send("Invalid date format");
+  }
+});
+
 router.post("/change-workhour/:date", function (req, res) {
 
 const targetDate = req.params.date; // Replace with your target date
@@ -302,6 +350,7 @@ const d = new Date(req.params.date);
     searchdatasheet.date =DayView.dayview(searchdatasheet[0].datevalue) ;
     searchdatasheet.date1 = searchdatasheet[0].datevalue
     searchdatasheet.workinghour1 = searchdatasheet[0].workinghour
+    searchdatasheet.searcheddate = d
     }
 
     res.render("./admin/searchdatasheet", { admin: true, searchdatasheet });
