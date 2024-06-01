@@ -77,6 +77,7 @@ router.get('/employeelist', async function (req, res) {
       
       // Filter active projects
       let activeProjects = projects.filter(project => project.projectstatus === 'Ongoing');
+      
 
       if(activeEmployees.length === 0){
         res.render('./users/submissiondone', {
@@ -105,10 +106,10 @@ router.get('/employeelist2', async function (req, res) {
     try {
       let dateObj1 = new Date();
         dateObj1.setDate(dateObj1.getDate() - 2);
-        var date1 = dateObj1.getFullYear() + '-' + (dateObj1.getMonth() + 1) + '-' + dateObj1.getDate();
+        var date2 = dateObj1.getFullYear() + '-' + (dateObj1.getMonth() + 1) + '-' + dateObj1.getDate();
         let datess = []
-        datess.date1 = date1
-        var days = DayView.dayview(date1)
+        datess.date2 = date2
+        var days = DayView.dayview(date2)
         datess.days = days
 
       // Fetch all employees
@@ -154,42 +155,6 @@ router.get('/employeelist2', async function (req, res) {
 })
 
 
-// router.get('/employeelist2', function (req, res) {
-//   if (req.session.users) {
-
-//     employeHelpers.getAllemployee().then(function (employees) {
-//       var activeEmployees = [];
-//       for (let i = 0; i < employees.length; i++) {
-//         if (employees[i].Employeestatus === 'Working') {
-//           if (employees[i].Employeeasigned === req.session.usernames) {
-//             activeEmployees.push(employees[i]);
-//           }
-//         }
-//       }
-//       projectHelpers.getAllproject().then((projects) => {
-//         var activeProjects = [];
-//         for (let j = 0; j < projects.length; j++) {
-//           if (projects[j].projectstatus === 'Ongoing') {
-//             activeProjects.push(projects[j]);
-
-//           }
-//         }
-//         var dateObj2 = new Date();
-//         dateObj2.setDate(dateObj2.getDate() - 2);
-//         var date2 = dateObj2.getFullYear() + '-' + (dateObj2.getMonth() + 1) + '-' + dateObj2.getDate();
-//         let datess = []
-//         datess.date2 = date2
-//         var days = DayView.dayview(date2)
-//         datess.days = days
-//         res.render('./users/employee-list2', {
-
-//           user: true, employees: JSON.stringify(activeEmployees), activeProjects, datess
-//         });
-//       })
-
-//     }); 
-//   }
-// })
 router.get('/printdatasheet', async (req, res) => {
   try {
     const employeedatasheet = await userHelpers.getDatasheet();
@@ -331,6 +296,7 @@ router.get('/logout', (req, res) => {
 
 //Time sheet upload
 router.post('/users/employee-list/', async (req, res) => {
+  
 
    
  let semployee = await employeHelpers.getEmployeeDetails(req.body.employee_id);
@@ -500,7 +466,6 @@ router.post('/edit-datasheet/:id', (req, res) => {
 })
 
 module.exports = router;
-
 
 
 
