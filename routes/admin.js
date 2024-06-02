@@ -71,6 +71,9 @@ router.get("/projects", function (req, res, next) {
 
   if (admin) {
     projectHelpers.getAllproject().then((project) => {
+    
+      const statusOrder = { "Ongoing": 1, "OnHold": 2, "Completed": 3 };
+      project.sort((a, b) => statusOrder[a.projectstatus] - statusOrder[b.projectstatus]);
       for(let i=0; i<project.length; i++){
         project[i].index = i+1;
        }
@@ -78,6 +81,7 @@ router.get("/projects", function (req, res, next) {
     });
   }
 });
+
 
 //add employee
 
