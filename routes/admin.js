@@ -250,25 +250,53 @@ router.get("/datasheet", function (req, res) {
   }
 });
 
-router.post("/datasheet", function (req, res) {
-  const d = new Date(req.body.searchdate);
- userHelpers.gettimesheetbydate(d).then(function ( searchdatasheet){
-    let ar = 0;
-    for (let i = 0; i < searchdatasheet.length; i++) {
-        searchdatasheet[ar].index = ar + 1;
-        ar++;
-    }
-    if(searchdatasheet[0]){
+router.post("/datasheet", async function (req, res) {
+  try {
+    // Parse the date from the request body
+    const d = new Date(req.body.searchdate);
 
-    searchdatasheet.date =DayView.dayview(searchdatasheet[0].datevalue) ;
-    searchdatasheet.date1 = searchdatasheet[0].datevalue
-    searchdatasheet.workinghour1 = searchdatasheet[0].workinghour
-    searchdatasheet.searcheddate = d
+    // Retrieve the timesheet data by date
+    const searchdatasheet = await userHelpers.gettimesheetbydate(d);
+
+    // Define the order for employeeType
+    const employeeTypeOrder = [
+      'Own Labour',
+      'Hired Labour (Monthly)',
+      'Hired Labour (Hourly)',
+      'Hired Staff (Projects)',
+      'Own Staff (Projects)', 
+      'Own Staff (Operations)', 
+      'Hired Staff (Operations)'  
+    ];
+
+    // Sort the searchdatasheet array based on the employeeType
+    searchdatasheet.sort((a, b) => {
+      return employeeTypeOrder.indexOf(a.employeeType) - employeeTypeOrder.indexOf(b.employeeType);
+    });
+
+    // Add an index to each element in the searchdatasheet array
+    searchdatasheet.forEach((item, index) => {
+      item.index = index + 1;
+    });
+
+    // Check if there are any results in the searchdatasheet array
+    if (searchdatasheet.length > 0) {
+      // Extract and format the date
+      const firstItemDate = new Date(searchdatasheet[0].date.$date);
+      searchdatasheet.date = DayView.dayview(firstItemDate);
+      searchdatasheet.date1 = searchdatasheet[0].datevalue;
+      searchdatasheet.workinghour1 = searchdatasheet[0].workhour1;
+      searchdatasheet.searcheddate = d;
     }
 
+    // Render the template with the searchdatasheet data
     res.render("./admin/searchdatasheet", { admin: true, searchdatasheet });
-  });
+  } catch (error) {
+    console.error("Error fetching timesheet data:", error);
+    res.status(500).send("Internal Server Error");
+  }
 });
+
 router.post("/predatasheet/", function (req, res) {
   const d = new Date(req.body.searcheddate); // Convert to Date object
   if (!isNaN(d)) { // Check if the date is valid
@@ -847,3 +875,4 @@ router.post('/printprojectreport', async (req, res) => {
 
 
 module.exports = router;
+
