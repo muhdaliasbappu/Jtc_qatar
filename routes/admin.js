@@ -64,7 +64,6 @@ router.get("/employee", function (req, res, next) {
   }
 });
 
-//project list
 
 router.get("/projects", function (req, res, next) {
   let admin = req.session.user;
@@ -803,7 +802,7 @@ router.post("/project-search", async (req, res) => {
             projectimesheets[g].percentage = operationcost[g].percentage 
           }
           
-      let  sumemployeetype = await allprojectreport.sumemployeetype(projectimesheets) 
+      let sumemployeetype = await allprojectreport.sumemployeetype(projectimesheets) 
        sumemployeetype.reqdate = req.body.searchdate;
        sumemployeetype.reqmonth = DayView.getMonthAndYear(req.body.searchdate)
       
@@ -917,11 +916,87 @@ router.post('/printprojectreport', async (req, res) => {
         res.status(500).send('Internal Server Error');
       }
     });
-   
-
-
-
-
-
+    router.get("/projectreportsearch", function (req, res) {
+       let admin = req.session.user;
+       if (admin) {
+        res.render("./admin/project-reportsearch", { admin: true});
+      }
+    });
+    router.post("/project-report-d-d", async (req, res) => {
+      let dates = {
+        date1: req.body.startdate,
+        date2: req.body.enddate
+    };
+    
+        let employeetype = ['Own Labour', 'Hired Labour (Monthly)', 'Hired Labour (Hourly)', 'Own Staff (Projects)', 'Hired Staff (Projects)'];
+  
+        let projectimesheets = [];
+        
+      
+        try {
+            let projects = await projectHelpers.getAllproject();
+      
+            for (let i = 0; i < projects.length; i++) {
+              let tempobj = {}
+                  
+                for (let j = 0; j < employeetype.length; j++) {
+                  let report = {}
+                  let projectimesheet = []
+                     projectimesheet = await projectHelpers.projecttimesheetdtd(dates,  projects[i].projectname, employeetype[j]);                           
+                    if (projectimesheet.length > 0) {
+                                  
+                      tempobj.projectname = projects[i].projectname
+                       switch(employeetype[j]){
+                        case 'Own Labour':
+                          report = await allprojectreport.projectreportlabour(projectimesheet, projects[i].projectname)
+                          tempobj.ownlaboursalary = report.totalsalary || 0;
+                          tempobj.ownlabourot = report.otsalary;
+                          break;
+                        case 'Hired Labour (Monthly)':  
+                          report = await allprojectreport.projectreportlabour(projectimesheet, projects[i].projectname)
+                          tempobj.hiredlabourmsalary = report.totalsalary || 0
+                          tempobj.hiredlabourmot =  report.otsalary
+                          break;
+                        case  'Own Staff (Projects)': 
+                          report = await allprojectreport.projectreportstaff(projectimesheet, projects[i].projectname)                  
+                          tempobj.ownstaffsalary = report.totalsalary || 0
+                          break;
+                        case  'Hired Staff (Projects)':  
+                          report = await allprojectreport.projectreportstaff(projectimesheet, projects[i].projectname)
+                          tempobj.hiredstaffsalary = report.totalsalary || 0
+                          break;
+                        case  'Hired Labour (Hourly)':  
+                          report = await allprojectreport.projectreporthourly(projectimesheet, projects[i].projectname)
+                          tempobj.hiredstaffhourly = report.totalsalary || 0
+                          break;  
+                       }                
+                    }
+                }
+                
+                if (Object.keys(tempobj).length !== 0) {
+                  projectimesheets.push(tempobj);
+                }         
+            }
+            // let operationcost = await allprojectreport.projectoperations(projectimesheets , req.body.searchdate )
+            
+            //     for(let g = 0; g < projectimesheets.length; g++){
+            //       projectimesheets[g].index = g+1 
+            //       projectimesheets[g].operationcost = operationcost[g].operationcost   
+            //       projectimesheets[g].overheadcost = operationcost[g].overheadcost  
+            //       projectimesheets[g].total = operationcost[g].total  
+            //       projectimesheets[g].percentage = operationcost[g].percentage 
+            //     }
+                
+            // let  sumemployeetype = await allprojectreport.sumemployeetype(projectimesheets) 
+            //  sumemployeetype.reqdate = req.body.searchdate;
+            //  sumemployeetype.reqmonth = DayView.getMonthAndYear(req.body.searchdate)
+            
+            res.render("./admin/project-report", { admin: true , projectimesheets});
+        } catch (error) {
+            console.error(error);
+            res.status(500).send("Internal Server Error");
+        }
+    });
+    
 
 module.exports = router;
