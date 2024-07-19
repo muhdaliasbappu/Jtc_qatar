@@ -48,8 +48,17 @@ module.exports = {
         projectimesheet.push(...await userHelpers.getDatabByproject4(month , project , employeetype))
         projectimesheet.push(...await userHelpers.getDatabByproject5(month , project , employeetype))
         return projectimesheet;
-    }
+    },
+    projecttimesheetdtd: async(month , project , employeetype) => {
     
+        let projectimesheet = await userHelpers.getDatabByproject1dtd(month , project , employeetype);
+        projectimesheet.push(...await userHelpers.getDatabByproject2dtd(month , project , employeetype))
+        projectimesheet.push(...await userHelpers.getDatabByproject3dtd(month , project , employeetype))
+        projectimesheet.push(...await userHelpers.getDatabByproject4dtd(month , project , employeetype))
+        projectimesheet.push(...await userHelpers.getDatabByproject5dtd(month , project , employeetype))
+        return projectimesheet;
+    }
     
 
 }
+
