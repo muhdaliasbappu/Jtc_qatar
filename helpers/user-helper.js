@@ -562,8 +562,12 @@ gettimesheetbydatevalue: ( datevalue ) => {
 getDatabByproject1dtd: ( month, projectname , employeeType) => {
         
     return new Promise((resolve, reject) => {
-        const firstDayOfMonth = new Date(month.date1)
+        const firstDayOfMonth = new Date(month.date1);
+        firstDayOfMonth.setHours(0, 0, 0, 0); // Set time to 12:00 AM
+        
         const lastDayOfMonth = new Date(month.date2);
+        lastDayOfMonth.setHours(23, 59, 59, 999); // Set time to 11:59:59 PM
+        
         db.get().collection('datasheet').find({
             $and: [
                 { date: { $gte: firstDayOfMonth } },
@@ -588,8 +592,12 @@ getDatabByproject1dtd: ( month, projectname , employeeType) => {
 getDatabByproject2dtd: ( month, projectname , employeeType) => {
     
     return new Promise((resolve, reject) => {
-        const firstDayOfMonth = new Date(month.date1)
-        const lastDayOfMonth = new Date(month.date2);  
+        const firstDayOfMonth = new Date(month.date1);
+firstDayOfMonth.setHours(0, 0, 0, 0); // Set time to 12:00 AM
+
+const lastDayOfMonth = new Date(month.date2);
+lastDayOfMonth.setHours(23, 59, 59, 999); // Set time to 11:59:59 PM
+
         db.get().collection('datasheet').find({
             $and: [
                 { date: { $gte: firstDayOfMonth } },
@@ -613,8 +621,12 @@ getDatabByproject2dtd: ( month, projectname , employeeType) => {
 }, getDatabByproject3dtd: ( month, projectname , employeeType) => {
     
     return new Promise((resolve, reject) => {
-        const firstDayOfMonth = new Date(month.date1)
-        const lastDayOfMonth = new Date(month.date2);     
+        const firstDayOfMonth = new Date(month.date1);
+firstDayOfMonth.setHours(0, 0, 0, 0); // Set time to 12:00 AM
+
+const lastDayOfMonth = new Date(month.date2);
+lastDayOfMonth.setHours(23, 59, 59, 999); // Set time to 11:59:59 PM
+  
         db.get().collection('datasheet').find({
             $and: [
                 { date: { $gte: firstDayOfMonth } },
@@ -638,8 +650,12 @@ getDatabByproject2dtd: ( month, projectname , employeeType) => {
 }, getDatabByproject4dtd: ( month, projectname , employeeType) => {
     
     return new Promise((resolve, reject) => {
-        const firstDayOfMonth = new Date(month.date1)
-        const lastDayOfMonth = new Date(month.date2);
+        const firstDayOfMonth = new Date(month.date1);
+firstDayOfMonth.setHours(0, 0, 0, 0); // Set time to 12:00 AM
+
+const lastDayOfMonth = new Date(month.date2);
+lastDayOfMonth.setHours(23, 59, 59, 999); // Set time to 11:59:59 PM
+
       db.get().collection('datasheet').find({
             $and: [
                 { date: { $gte: firstDayOfMonth } },
@@ -663,8 +679,12 @@ getDatabByproject2dtd: ( month, projectname , employeeType) => {
 }, getDatabByproject5dtd: ( month, projectname , employeeType) => {
     
     return new Promise((resolve, reject) => {
-        const firstDayOfMonth = new Date(month.date1)
-        const lastDayOfMonth = new Date(month.date2);
+        const firstDayOfMonth = new Date(month.date1);
+firstDayOfMonth.setHours(0, 0, 0, 0); // Set time to 12:00 AM
+
+const lastDayOfMonth = new Date(month.date2);
+lastDayOfMonth.setHours(23, 59, 59, 999); // Set time to 11:59:59 PM
+
         db.get().collection('datasheet').find({
             $and: [
                 { date: { $gte: firstDayOfMonth } },
