@@ -977,21 +977,24 @@ router.post('/printprojectreport', async (req, res) => {
                   projectimesheets.push(tempobj);
                 }         
             }
-            // let operationcost = await allprojectreport.projectoperations(projectimesheets , req.body.searchdate )
+
+
             
-            //     for(let g = 0; g < projectimesheets.length; g++){
-            //       projectimesheets[g].index = g+1 
-            //       projectimesheets[g].operationcost = operationcost[g].operationcost   
-            //       projectimesheets[g].overheadcost = operationcost[g].overheadcost  
-            //       projectimesheets[g].total = operationcost[g].total  
-            //       projectimesheets[g].percentage = operationcost[g].percentage 
-            //     }
+             let operationcost = await allprojectreport.projectoperationsdtd(projectimesheets , req.body.startdate, req.body.enddate)
+            
+                for(let g = 0; g < projectimesheets.length; g++){
+                  projectimesheets[g].index = g+1 
+                  projectimesheets[g].operationcost = operationcost[g].operationcost   
+                  projectimesheets[g].overheadcost = operationcost[g].overheadcost  
+                  projectimesheets[g].total = operationcost[g].total  
+                  projectimesheets[g].percentage = operationcost[g].percentage 
+                }
                 
-            // let  sumemployeetype = await allprojectreport.sumemployeetype(projectimesheets) 
+            let  sumemployeetype = await allprojectreport.sumemployeetype(projectimesheets) 
             //  sumemployeetype.reqdate = req.body.searchdate;
             //  sumemployeetype.reqmonth = DayView.getMonthAndYear(req.body.searchdate)
             
-            res.render("./admin/project-report", { admin: true , projectimesheets});
+            res.render("./admin/project-report", { admin: true , projectimesheets , sumemployeetype});
         } catch (error) {
             console.error(error);
             res.status(500).send("Internal Server Error");
@@ -1000,3 +1003,4 @@ router.post('/printprojectreport', async (req, res) => {
     
 
 module.exports = router;
+
