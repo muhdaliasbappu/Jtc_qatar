@@ -1,7 +1,7 @@
 var employeHelpers = require("../helpers/employee-helpers");
 var userHelpers = require("../helpers/user-helper");
 var allsalaryreport = require('../modules/report')
-
+var DayView =  require('../modules/DayView')
 
 module.exports = {
 
@@ -202,7 +202,6 @@ module.exports = {
 
     },
     paidleavecost: async (date , mdetails , employeetype)=>{
-
       let total = 0 
       const employees = await employeHelpers.getAllemployee();  
         for (let i = 0; i < employees.length; i++) { 
@@ -275,6 +274,44 @@ module.exports = {
               total = total+paidleavedata[j].sallowance/30;
               total = total+paidleavedata[j].sbonus/30;
             }
+          }
+        }
+        }
+
+      return total
+    },
+    operationpaidleavecostdtd: async (dates , mdetails)=>{
+      
+      let total = 0 
+      const employees = await employeHelpers.getAllemployee();  
+        for (let i = 0; i < employees.length; i++) { 
+          let fri = 1
+          let paidleavedata = []
+          paidleavedata = await userHelpers.getDatabByMonthofPaidLeaveoperationdtd(dates , employees[i]._id.toString())
+          let count = await userHelpers.getLeaveAndVacationCountdtd(dates , employees[i]._id.toString())     
+          if(paidleavedata.length != 0){
+          for( let j = 0; j < paidleavedata.length; j++){
+            const dd = new Date(paidleavedata[j].datevalue);
+            let day = dd.getDay();
+            if(day === 5){
+              if(mdetails.has31Days === true && count === 0){
+                
+                if( fri != mdetails.fridayCount ){
+                  fri++
+                  total = total+paidleavedata[j].sbasic/30;
+                  total = total+paidleavedata[j].sallowance/30;
+                  total = total+paidleavedata[j].sbonus/30;
+                }
+              }else{
+                  total = total+paidleavedata[j].sbasic/30;
+                  total = total+paidleavedata[j].sallowance/30;
+                  total = total+paidleavedata[j].sbonus/30;
+              }
+            }else{
+              total = total+paidleavedata[j].sbasic/30;
+              total = total+paidleavedata[j].sallowance/30;
+              total = total+paidleavedata[j].sbonus/30;
+            }
             
           
           
@@ -284,6 +321,57 @@ module.exports = {
 
       return total
     },
+    paidleavecostdtd: async (date , mdetails , employeetype) =>{
+      let total = 0 
+      const employees = await employeHelpers.getAllemployee();  
+        for (let i = 0; i < employees.length; i++) { 
+          let fri = 1
+          let paidleavedata = []
+          paidleavedata = await userHelpers.getDatabByMonthofPaidLeavedtd(date , employees[i]._id.toString() , employeetype )   
+          let count = await userHelpers.getLeaveAndVacationCountdtd(date , employees[i]._id.toString()) 
+          if(paidleavedata.length != 0){
+          for( let j = 0; j < paidleavedata.length; j++){
+            const dd = new Date(paidleavedata[j].datevalue);
+            let day = dd.getDay();
+            if(day === 5){
+              if(mdetails.has31Days === true && count === 0){
+                
+                if( fri != mdetails.fridayCount ){
+                  fri++
+                  total = total+paidleavedata[j].sbasic/30;
+                  total = total+paidleavedata[j].sallowance/30;
+                  total = total+paidleavedata[j].sbonus/30;
+                }
+              }else{
+                  total = total+paidleavedata[j].sbasic/30;
+                  total = total+paidleavedata[j].sallowance/30;
+                  total = total+paidleavedata[j].sbonus/30;
+              }
+            }else{
+              total = total+paidleavedata[j].sbasic/30;
+              total = total+paidleavedata[j].sallowance/30;
+              total = total+paidleavedata[j].sbonus/30;
+            }
+        }
+        }
+
+
+      return total
+        }
+    },
+calulateworkingoperationdata: async (month)=>{
+let total = 0
+let data = await userHelpers.getallworkingoperationdata(month)
+    for(let i = 0 ; i<data.length ; i++){
+      temp = 0
+     temp = data[i].sbasic/30 + data[i].sallowance/30 + data[i].sbonus/30
+     total = total + temp
+    }
+    return total
+},
+
+    
+    
 
 
 
