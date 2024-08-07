@@ -1,3 +1,4 @@
+const { months } = require('moment-timezone')
 var operationsum = require('../modules/DayView')
 var salarycalc = require('../modules/salarycalc')
 var DayView =  require('./DayView')
@@ -313,12 +314,15 @@ return report;
         let temptotalcosts = [];
         let totalsum = 0
         
-        let paidleavecostoperations = await salarycalc.operationpaidleavecost(date, mdetails )
-      let paidleavecost = await salarycalc.paidleavecost(date, mdetails , 'Own Labour' )
+       let paidleavecostoperations = await salarycalc.operationpaidleavecost(date, mdetails )
+       let paidleavecost = await salarycalc.paidleavecost(date, mdetails , 'Own Labour' )
        paidleavecost += await salarycalc.paidleavecost(date, mdetails , 'Hired Labour (Monthly)' )
        paidleavecost += await salarycalc.paidleavecost(date, mdetails , 'Own Staff (Projects)' )
       paidleavecost += await salarycalc.paidleavecost(date, mdetails , 'Hired Staff (Projects)' )      
+
+ 
       paidleavecost += paidleavecostoperations
+      
  let operationssum = await operationsum.operationsum(date) - paidleavecostoperations
     
         for (let i = 0; i < projectimesheets.length; i++) {
@@ -396,9 +400,74 @@ return report;
         return sumemployeetype
     
         
+    },
+    projectoperationsdtd: async (projectimesheets , startdate, enddate) => {
+        let paidleavecost = 0
+        let paidleavecostoperations = 0
+        range = DayView.getDateRanges(startdate,enddate)
+        month = {}
+        month.startdate = startdate
+        month.enddate = enddate
+            
+        let operationssum = 0
+        let temptotalcosts = [];
+        let totalsum = 0
+        
+        for(h = 0; h<range.length ; h++){
+            let temppcost = 0
+        let mdetails= DayView.countFridaysInMonthdtd(range[h].startDate)
+        temppcost = await salarycalc.operationpaidleavecostdtd(range[h], mdetails )
+        paidleavecostoperations += temppcost
+        paidleavecost += await salarycalc.paidleavecostdtd(range[h], mdetails , 'Own Labour' )
+        paidleavecost += await salarycalc.paidleavecostdtd(range[h], mdetails , 'Hired Labour (Monthly)' )
+        paidleavecost += await salarycalc.paidleavecostdtd(range[h], mdetails , 'Own Staff (Projects)' ) 
+        paidleavecost += await salarycalc.paidleavecostdtd(range[h], mdetails , 'Hired Staff (Projects)' )  
+        paidleavecost += temppcost
+        }
+        console.log(paidleavecostoperations,'paidleavecostoperationshere')
+   
+     operationssum = await salarycalc.calulateworkingoperationdata(month) 
+     console.log(operationssum,'operationsum')
+    
+        for (let i = 0; i < projectimesheets.length; i++) {
+            let temptotalcost = 0;
+            temptotalcost += projectimesheets[i].ownlaboursalary || 0;
+            temptotalcost += projectimesheets[i].hiredlabourmsalary || 0;
+            temptotalcost += projectimesheets[i].ownstaffsalary || 0;
+            temptotalcost += projectimesheets[i].hiredstaffsalary || 0;
+            temptotalcost += projectimesheets[i].hiredstaffhourly || 0;
+            totalsum = totalsum + temptotalcost
+        }
+        for (let j = 0; j < projectimesheets.length; j++) {
+            tempobj = {}
+            let tempcost = 0
+            let temppaid = 0
+            let tempperc = 0 
+            let temptotalcost = 0;
+            temptotalcost += projectimesheets[j].ownlaboursalary || 0;
+            temptotalcost += projectimesheets[j].hiredlabourmsalary || 0;
+            temptotalcost += projectimesheets[j].ownstaffsalary || 0;
+            temptotalcost += projectimesheets[j].hiredstaffsalary || 0;
+            temptotalcost += projectimesheets[j].hiredstaffhourly || 0;
+            tempcost = temptotalcost/totalsum*operationssum 
+            temppaid = temptotalcost/totalsum*paidleavecost 
+            tempperc = temptotalcost/totalsum*100
+            tempobj.total = Math.round(temptotalcost + tempcost + temppaid ) 
+            tempobj.percentage =  Math.round((tempperc + Number.EPSILON) * 100) / 100
+            tempobj.overheadcost = Math.round(temppaid)
+            tempobj.operationcost = Math.round(tempcost)          
+            temptotalcosts.push(tempobj)
+        }
+        
+        return temptotalcosts
+
+    
+        
     }
+    
     
 
 
 
 }
+
