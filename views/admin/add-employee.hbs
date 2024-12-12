@@ -330,4 +330,30 @@
                 hiredFieldset.style.display = "none";
             }
         });
+
+
+  // Function to get the value of a specific query parameter
+  function getQueryParam(param) {
+    const params = new URLSearchParams(window.location.search);
+    return params.get(param);
+  }
+
+  // Example usage
+  const error = getQueryParam('error'); // Get 'error' parameter
+  const success = getQueryParam('success'); // Get 'success' parameter
+
+  // Display alerts based on query parameters
+  if (error === 'employeeExists') {
+    alert('Employee already exists!');
+  } else if (error === 'serverError') {
+    alert('An error occurred while fetching employees. Please try again.');
+  } else if (error === 'addError') {
+    alert('An error occurred while adding the employee. Please try again.');
+  }
+
+  if (success === 'employeeAdded') {
+    alert('Employee added successfully!');
+  }
+
+
     </script>
