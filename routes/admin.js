@@ -88,6 +88,9 @@ router.get("/add-employee", function (req, res, next) {
   let admin = req.session.user;
   if (admin) {
     userHelpers.getAlluser().then((users) => {
+
+      
+
       res.render("./admin/add-employee", { admin: true, users });
     });
   }
@@ -126,12 +129,23 @@ router.get("/add-user", function (req, res, next) {
 });
 
 //post add employee
-
 router.post("/add-employee", function (req, res) {
-  employeHelpers.addemployee(req.body, (result) => {
-    res.redirect("/admin/add-employee");
+  employeHelpers.getAllemployee().then((employees) => {
+    const employeeExists = employees.some((employee) => employee.qid === req.body.qid);
+    if (employeeExists) {
+      res.redirect("/admin/add-employee?error=employeeExists");
+    } else {
+      employeHelpers.addemployee(req.body, (success) => {
+        if (success) {
+          res.redirect("/admin/add-employee?success=employeeAdded");
+        } else {
+          res.redirect("/admin/add-employee?error=addFailed");
+        }
+      });
+    }
   });
 });
+
 
 //post add project
 
@@ -1003,3 +1017,4 @@ router.post('/printprojectreport', async (req, res) => {
     
 
 module.exports = router;
+
