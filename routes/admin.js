@@ -64,13 +64,15 @@ router.get("/employee", function (req, res, next) {
   }
 });
 
-//project list
 
 router.get("/projects", function (req, res, next) {
   let admin = req.session.user;
 
   if (admin) {
     projectHelpers.getAllproject().then((project) => {
+    
+      const statusOrder = { "Ongoing": 1, "OnHold": 2, "Completed": 3 };
+      project.sort((a, b) => statusOrder[a.projectstatus] - statusOrder[b.projectstatus]);
       for(let i=0; i<project.length; i++){
         project[i].index = i+1;
        }
@@ -79,12 +81,16 @@ router.get("/projects", function (req, res, next) {
   }
 });
 
+
 //add employee
 
 router.get("/add-employee", function (req, res, next) {
   let admin = req.session.user;
   if (admin) {
     userHelpers.getAlluser().then((users) => {
+
+      
+
       res.render("./admin/add-employee", { admin: true, users });
     });
   }
@@ -123,12 +129,23 @@ router.get("/add-user", function (req, res, next) {
 });
 
 //post add employee
-
 router.post("/add-employee", function (req, res) {
-  employeHelpers.addemployee(req.body, (result) => {
-    res.redirect("/admin/add-employee");
+  employeHelpers.getAllemployee().then((employees) => {
+    const employeeExists = employees.some((employee) => employee.qid === req.body.qid);
+    if (employeeExists) {
+      res.redirect("/admin/add-employee?error=employeeExists");
+    } else {
+      employeHelpers.addemployee(req.body, (success) => {
+        if (success) {
+          res.redirect("/admin/add-employee?success=employeeAdded");
+        } else {
+          res.redirect("/admin/add-employee?error=addFailed");
+        }
+      });
+    }
   });
 });
+
 
 //post add project
 
@@ -250,34 +267,166 @@ router.get("/datasheet", function (req, res) {
   }
 });
 
-router.post("/datasheet", function (req, res) {
-  // const currentDate = new Date();
-  // const twoDaysAgo = new Date(currentDate);
-  // twoDaysAgo.setDate(currentDate.getDate() - 3);
-  const d = new Date(req.body.searchdate);
-  // if (d < twoDaysAgo) {
-  // if(d.getDay() === 5){
-  //   addcron.cronfridaynotyou(req.body.searchdate)
-  // }else{
-  //   addcron.cronnotforyou(req.body.searchdate)
-  // }
-  // }
- userHelpers.gettimesheetbydate(d).then(function ( searchdatasheet){
-    let ar = 0;
-    for (let i = 0; i < searchdatasheet.length; i++) {
-        searchdatasheet[ar].index = ar + 1;
-        ar++;
-    }
+router.post("/datasheet", async function (req, res) {
+  try {
+    // Parse the date from the request body
+    const d = new Date(req.body.searchdate);
+
+    // Retrieve the timesheet data by date
+    const searchdatasheet = await userHelpers.gettimesheetbydate(d);
+
+    // Define the order for employeeType
+    const employeeTypeOrder = [
+      'Own Labour',
+      'Hired Labour (Monthly)',
+      'Hired Labour (Hourly)',
+      'Hired Staff (Projects)',
+      'Own Staff (Projects)', 
+      'Own Staff (Operations)', 
+      'Hired Staff (Operations)'  
+    ];
+
+    // Sort the searchdatasheet array based on the employeeType
+    searchdatasheet.sort((a, b) => {
+      return employeeTypeOrder.indexOf(a.employeeType) - employeeTypeOrder.indexOf(b.employeeType);
+    });
+
+    // Add an index to each element in the searchdatasheet array
+    searchdatasheet.forEach((item, index) => {
+      item.index = index + 1;
+    });
+
+    // Check if there are any results in the searchdatasheet array
     if(searchdatasheet[0]){
 
-    searchdatasheet.date =DayView.dayview(searchdatasheet[0].datevalue) ;
-    searchdatasheet.date1 = searchdatasheet[0].datevalue
-    searchdatasheet.workinghour1 = searchdatasheet[0].workinghour
+      searchdatasheet.date =DayView.dayview(searchdatasheet[0].datevalue) ;
+      searchdatasheet.date1 = searchdatasheet[0].datevalue
+      searchdatasheet.workinghour1 = searchdatasheet[0].workinghour
+      searchdatasheet.searcheddate = d
+      }
+   
+
+    // Render the template with the searchdatasheet data
+    res.render("./admin/searchdatasheet", { admin: true, searchdatasheet });
+  } catch (error) {
+    console.error("Error fetching timesheet data:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+router.post("/predatasheet/", async function (req, res) {
+  try {
+    // Parse the date from the request body and check if it's valid
+    const d = new Date(req.body.searcheddate);
+    if (isNaN(d)) {
+      return res.status(400).send("Invalid date format");
     }
 
+    // Subtract one day from the date
+    d.setDate(d.getDate() - 1);
+
+    // Retrieve the timesheet data by date
+    const searchdatasheet = await userHelpers.gettimesheetbydate(d);
+
+    // Define the order for employeeType
+    const employeeTypeOrder = [
+      'Own Labour',
+      'Hired Labour (Monthly)',
+      'Hired Labour (Hourly)',
+      'Hired Staff (Projects)',
+      'Own Staff (Projects)', 
+      'Own Staff (Operations)', 
+      'Hired Staff (Operations)'  
+    ];
+
+    // Sort the searchdatasheet array based on the employeeType
+    searchdatasheet.sort((a, b) => {
+      return employeeTypeOrder.indexOf(a.employeeType) - employeeTypeOrder.indexOf(b.employeeType);
+    });
+
+    // Add an index to each element in the searchdatasheet array
+    searchdatasheet.forEach((item, index) => {
+      item.index = index + 1;
+    });
+
+    // Check if there are any results in the searchdatasheet array
+    if(searchdatasheet[0]){
+
+      searchdatasheet.date =DayView.dayview(searchdatasheet[0].datevalue) ;
+      searchdatasheet.date1 = searchdatasheet[0].datevalue
+      searchdatasheet.workinghour1 = searchdatasheet[0].workinghour
+      searchdatasheet.searcheddate = d
+      }
+
+    // Render the template with the searchdatasheet data
     res.render("./admin/searchdatasheet", { admin: true, searchdatasheet });
-  });
+  } catch (error) {
+    console.error("Error fetching timesheet by date:", error);
+    res.status(500).send("Error fetching timesheet data");
+  }
 });
+
+router.post("/nextdatasheet/", async function (req, res) {
+  try {
+    // Parse the date from the request body and check if it's valid
+    const d = new Date(req.body.searcheddate);
+    if (isNaN(d)) {
+      return res.status(400).send("Invalid date format");
+    }
+
+    // Increment the date by one day
+    d.setDate(d.getDate() + 1);
+
+    // Get the current date at midnight
+    const currentDate = new Date();
+    currentDate.setHours(0, 0, 0, 0);
+
+    if (d > currentDate) {
+      return res.status(400).send("No Timesheet available");
+    }
+
+    // Retrieve the timesheet data by date
+    const searchdatasheet = await userHelpers.gettimesheetbydate(d);
+
+    // Define the order for employeeType
+    const employeeTypeOrder = [
+      'Own Labour',
+      'Hired Labour (Monthly)',
+      'Hired Labour (Hourly)',
+      'Hired Staff (Projects)',
+      'Own Staff (Projects)', 
+      'Own Staff (Operations)', 
+      'Hired Staff (Operations)'  
+    ];
+
+    // Sort the searchdatasheet array based on the employeeType
+    searchdatasheet.sort((a, b) => {
+      return employeeTypeOrder.indexOf(a.employeeType) - employeeTypeOrder.indexOf(b.employeeType);
+    });
+
+    // Add an index to each element in the searchdatasheet array
+    searchdatasheet.forEach((item, index) => {
+      item.index = index + 1;
+    });
+
+    if(searchdatasheet[0]){
+
+      searchdatasheet.date =DayView.dayview(searchdatasheet[0].datevalue) ;
+      searchdatasheet.date1 = searchdatasheet[0].datevalue
+      searchdatasheet.workinghour1 = searchdatasheet[0].workinghour
+      searchdatasheet.searcheddate = d
+      }
+
+    // Render the template with the searchdatasheet data
+    res.render("./admin/searchdatasheet", { admin: true, searchdatasheet });
+  } catch (error) {
+    console.error("Error fetching timesheet by date:", error);
+    res.status(500).send("Error fetching timesheet data");
+  }
+});
+
+
+
 router.post("/change-workhour/:date", function (req, res) {
 
 const targetDate = req.params.date; // Replace with your target date
@@ -302,6 +451,7 @@ const d = new Date(req.params.date);
     searchdatasheet.date =DayView.dayview(searchdatasheet[0].datevalue) ;
     searchdatasheet.date1 = searchdatasheet[0].datevalue
     searchdatasheet.workinghour1 = searchdatasheet[0].workinghour
+    searchdatasheet.searcheddate = d
     }
 
     res.render("./admin/searchdatasheet", { admin: true, searchdatasheet });
@@ -414,7 +564,7 @@ router.post("/search-report", async (req, res) => {
   let searchdata = {}
   let totalsum = {}
   searchdata.searchdate = req.body.searchdate
-    searchdata.employeeType = req.body.employeeType
+  searchdata.employeeType = req.body.employeeType
 
    const result = await salarycalc.salarycalculate(req.body.searchdate , req.body.employeeType)
    let employeereport = result.employeereport
@@ -519,6 +669,8 @@ router.post('/printreport', async (req, res) => {
   var formattedDate = DayView.getMonthAndYear(req.body.searchdate)
   
   employeereport.date = formattedDate
+  employeereport.currentDate = DayView.getCurrentDate()
+  employeereport.employeeType = req.body.employeeType
 
    const monthsWith31Days = [1, 3, 5, 7, 8, 10, 12];
    if (monthsWith31Days.includes(month)) {
@@ -664,8 +816,9 @@ router.post("/project-search", async (req, res) => {
             projectimesheets[g].percentage = operationcost[g].percentage 
           }
           
-      let  sumemployeetype = await allprojectreport.sumemployeetype(projectimesheets) 
+      let sumemployeetype = await allprojectreport.sumemployeetype(projectimesheets) 
        sumemployeetype.reqdate = req.body.searchdate;
+       sumemployeetype.reqmonth = DayView.getMonthAndYear(req.body.searchdate)
       
       res.render("./admin/project-report", { admin: true , projectimesheets , sumemployeetype});
   } catch (error) {
@@ -777,11 +930,91 @@ router.post('/printprojectreport', async (req, res) => {
         res.status(500).send('Internal Server Error');
       }
     });
-   
+    router.get("/projectreportsearch", function (req, res) {
+       let admin = req.session.user;
+       if (admin) {
+        res.render("./admin/project-reportsearch", { admin: true});
+      }
+    });
+    router.post("/project-report-d-d", async (req, res) => {
+      let dates = {
+        date1: req.body.startdate,
+        date2: req.body.enddate
+    };
+    
+        let employeetype = ['Own Labour', 'Hired Labour (Monthly)', 'Hired Labour (Hourly)', 'Own Staff (Projects)', 'Hired Staff (Projects)'];
+  
+        let projectimesheets = [];
+        
+      
+        try {
+            let projects = await projectHelpers.getAllproject();
+      
+            for (let i = 0; i < projects.length; i++) {
+              let tempobj = {}
+                  
+                for (let j = 0; j < employeetype.length; j++) {
+                  let report = {}
+                  let projectimesheet = []
+                     projectimesheet = await projectHelpers.projecttimesheetdtd(dates,  projects[i].projectname, employeetype[j]);                           
+                    if (projectimesheet.length > 0) {
+                                  
+                      tempobj.projectname = projects[i].projectname
+                       switch(employeetype[j]){
+                        case 'Own Labour':
+                          report = await allprojectreport.projectreportlabour(projectimesheet, projects[i].projectname)
+                          tempobj.ownlaboursalary = report.totalsalary || 0;
+                          tempobj.ownlabourot = report.otsalary;
+                          break;
+                        case 'Hired Labour (Monthly)':  
+                          report = await allprojectreport.projectreportlabour(projectimesheet, projects[i].projectname)
+                          tempobj.hiredlabourmsalary = report.totalsalary || 0
+                          tempobj.hiredlabourmot =  report.otsalary
+                          break;
+                        case  'Own Staff (Projects)': 
+                          report = await allprojectreport.projectreportstaff(projectimesheet, projects[i].projectname)                  
+                          tempobj.ownstaffsalary = report.totalsalary || 0
+                          break;
+                        case  'Hired Staff (Projects)':  
+                          report = await allprojectreport.projectreportstaff(projectimesheet, projects[i].projectname)
+                          tempobj.hiredstaffsalary = report.totalsalary || 0
+                          break;
+                        case  'Hired Labour (Hourly)':  
+                          report = await allprojectreport.projectreporthourly(projectimesheet, projects[i].projectname)
+                          tempobj.hiredstaffhourly = report.totalsalary || 0
+                          break;  
+                       }                
+                    }
+                }
+                
+                if (Object.keys(tempobj).length !== 0) {
+                  projectimesheets.push(tempobj);
+                }         
+            }
 
 
-
-
-
+            
+             let operationcost = await allprojectreport.projectoperationsdtd(projectimesheets , req.body.startdate, req.body.enddate)
+            
+                for(let g = 0; g < projectimesheets.length; g++){
+                  projectimesheets[g].index = g+1 
+                  projectimesheets[g].operationcost = operationcost[g].operationcost   
+                  projectimesheets[g].overheadcost = operationcost[g].overheadcost  
+                  projectimesheets[g].total = operationcost[g].total  
+                  projectimesheets[g].percentage = operationcost[g].percentage 
+                }
+                
+            let  sumemployeetype = await allprojectreport.sumemployeetype(projectimesheets) 
+            //  sumemployeetype.reqdate = req.body.searchdate;
+            //  sumemployeetype.reqmonth = DayView.getMonthAndYear(req.body.searchdate)
+            
+            res.render("./admin/project-report", { admin: true , projectimesheets , sumemployeetype});
+        } catch (error) {
+            console.error(error);
+            res.status(500).send("Internal Server Error");
+        }
+    });
+    
 
 module.exports = router;
+
