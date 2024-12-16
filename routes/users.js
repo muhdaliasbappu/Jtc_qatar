@@ -1,6 +1,5 @@
 var express = require('express');
 
-
 const bodyParser = require('body-parser');
 
 var router = express.Router();
@@ -45,15 +44,13 @@ function getthedate() {
 }
 
 
-
-
-
 router.get('/', function (req, res, next) {
   res.render('./users/user-login');
 });
-router.get('/employeelist', function (req, res) {
+router.get('/employeelist', async function (req, res) {
   if (req.session.users) {
-        var dateObj1 = new Date();
+    try {
+      let dateObj1 = new Date();
         dateObj1.setDate(dateObj1.getDate() - 1);
         var date1 = dateObj1.getFullYear() + '-' + (dateObj1.getMonth() + 1) + '-' + dateObj1.getDate();
         let datess = []
@@ -61,71 +58,103 @@ router.get('/employeelist', function (req, res) {
         var days = DayView.dayview(date1)
         datess.days = days
 
-    employeHelpers.getAllemployee().then(function (employees) {
-      var activeEmployees = [];
-      for (let i = 0; i < employees.length; i++) {
-        if (employees[i].Employeestatus === 'Working') {
-          if (employees[i].Employeeasigned === req.session.usernames) {
-          activeEmployees.push(employees[i]);
+      // Fetch all employees
+      let employees = await employeHelpers.getAllemployee();
+      
+      // Fetch last date values
+      let lastdates = getthedate(); // Assuming getthedate is synchronous and returns an array of date objects
+      let employeedatasheet = await userHelpers.gettimesheetbydatevalue(lastdates[0].date1);
+      
+      // Filter active employees
+      let activeEmployees = employees.filter(employee => {
+        return employee.Employeestatus === 'Working' &&
+          !employeedatasheet.some(sheet => sheet.employee_id === employee._id.toString()) &&
+          employee.Employeeasigned === req.session.usernames;
+      });
 
-          }
-        }
-      }
-      projectHelpers.getAllproject().then((projects) => {
-        var activeProjects = [];
-        for (let j = 0; j < projects.length; j++) {
-          if (projects[j].projectstatus === 'Ongoing') {
-            activeProjects.push(projects[j]);
+      // Fetch all projects
+      let projects = await projectHelpers.getAllproject();
+      
+      // Filter active projects
+      let activeProjects = projects.filter(project => project.projectstatus === 'Ongoing');
+      
 
-          }
-        }
-        
-        res.render('./users/employee-list', {
-
-          user: true, employees: JSON.stringify(activeEmployees), activeProjects, datess
+      if(activeEmployees.length === 0){
+        res.render('./users/submissiondone', {
+          user: true,
+          employees: JSON.stringify(activeEmployees),
+          activeProjects,
+          datess
         });
-      })
-
-    });
-  }
+       
+        }else{
+         res.render('./users/employee-list', {
+          user: true,
+          employees: JSON.stringify(activeEmployees),
+          activeProjects,
+          datess
+        });  
+        }
+    } catch (error) {
+      console.error("Error fetching employee list:", error);
+      res.status(500).send("Internal Server Error");
+    }
+  } 
 })
-
-router.get('/employeelist2', function (req, res) {
+router.get('/employeelist2', async function (req, res) {
   if (req.session.users) {
-
-    employeHelpers.getAllemployee().then(function (employees) {
-      var activeEmployees = [];
-      for (let i = 0; i < employees.length; i++) {
-        if (employees[i].Employeestatus === 'Working') {
-          if (employees[i].Employeeasigned === req.session.usernames) {
-            activeEmployees.push(employees[i]);
-          }
-        }
-      }
-      projectHelpers.getAllproject().then((projects) => {
-        var activeProjects = [];
-        for (let j = 0; j < projects.length; j++) {
-          if (projects[j].projectstatus === 'Ongoing') {
-            activeProjects.push(projects[j]);
-
-          }
-        }
-        var dateObj2 = new Date();
-        dateObj2.setDate(dateObj2.getDate() - 2);
-        var date2 = dateObj2.getFullYear() + '-' + (dateObj2.getMonth() + 1) + '-' + dateObj2.getDate();
+    try {
+      let dateObj1 = new Date();
+        dateObj1.setDate(dateObj1.getDate() - 2);
+        var date2 = dateObj1.getFullYear() + '-' + (dateObj1.getMonth() + 1) + '-' + dateObj1.getDate();
         let datess = []
         datess.date2 = date2
         var days = DayView.dayview(date2)
         datess.days = days
-        res.render('./users/employee-list2', {
 
-          user: true, employees: JSON.stringify(activeEmployees), activeProjects, datess
+      // Fetch all employees
+      let employees = await employeHelpers.getAllemployee();
+      
+      // Fetch last date values
+      let lastdates = getthedate(); // Assuming getthedate is synchronous and returns an array of date objects
+      let employeedatasheet = await userHelpers.gettimesheetbydatevalue(lastdates[0].date2);
+      
+      // Filter active employees
+      let activeEmployees = employees.filter(employee => {
+        return employee.Employeestatus === 'Working' &&
+          !employeedatasheet.some(sheet => sheet.employee_id === employee._id.toString()) &&
+          employee.Employeeasigned === req.session.usernames;
+      });
+
+      // Fetch all projects
+      let projects = await projectHelpers.getAllproject();
+      
+      // Filter active projects
+      let activeProjects = projects.filter(project => project.projectstatus === 'Ongoing');
+      if(activeEmployees.length === 0){
+      res.render('./users/submissiondone', {
+          user: true,
+          employees: JSON.stringify(activeEmployees),
+          activeProjects,
+          datess
         });
-      })
-
-    }); 
-  }
+      }else{
+        res.render('./users/employee-list2', {
+          user: true,
+          employees: JSON.stringify(activeEmployees),
+          activeProjects,
+          datess
+        });
+        
+      }
+    } catch (error) {
+      console.error("Error fetching employee list:", error);
+      res.status(500).send("Internal Server Error");
+    }
+  } 
 })
+
+
 router.get('/printdatasheet', async (req, res) => {
   try {
     const employeedatasheet = await userHelpers.getDatasheet();
@@ -267,6 +296,7 @@ router.get('/logout', (req, res) => {
 
 //Time sheet upload
 router.post('/users/employee-list/', async (req, res) => {
+  
 
    
  let semployee = await employeHelpers.getEmployeeDetails(req.body.employee_id);
@@ -338,12 +368,10 @@ if(edatasheets.length === 0){
 router.get('/employee-data', function (req, res, next) {
 
   if (req.session.users) {
-    userHelpers.getDatasheet().then(function (employeedatasheet) {
-     
+    let lastdates = getthedate() 
+    userHelpers.gettimesheetbydatevalue(lastdates[0].date1).then(function (employeedatasheet) {    
       let alloweddatasheet1 = []
       var activeEmployees1 = [];
-      let lastdates = getthedate() 
-
       employeHelpers.getAllemployee().then(function (employees) {
         for (let i = 0; i < employees.length; i++) {
           if (employees[i].Employeeasigned === req.session.usernames) {
@@ -351,27 +379,19 @@ router.get('/employee-data', function (req, res, next) {
           }
         }
 
-        for (let z = 0; z < employeedatasheet.length; z++) {
-           if (employeedatasheet[z].datevalue === lastdates[0].date1) {
+        for (let z = 0; z < employeedatasheet.length; z++) {          
             for(let x=0; x < activeEmployees1.length; x++){
               if(activeEmployees1[x]._id.toString() === employeedatasheet[z].employee_id){
                 alloweddatasheet1.push(employeedatasheet[z]);
                
               } 
             }
-          }
-        }
 
-   
+        }   
         for(let t=0; t<alloweddatasheet1.length; t++){
           alloweddatasheet1[t].index = t+1
-        }
-
-     
-    
+        }    
       alloweddatasheet1.date = DayView.dayview(lastdates[0].date1) ;
-      
-
         res.render('./users/datasheet' , { user: true,  alloweddatasheet1 });
       });
     });
@@ -446,4 +466,6 @@ router.post('/edit-datasheet/:id', (req, res) => {
 })
 
 module.exports = router;
+
+
 
