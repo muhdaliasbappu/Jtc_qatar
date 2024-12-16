@@ -564,6 +564,9 @@ router.post("/search-report", async (req, res) => {
   try {
   let searchdata = {}
   let totalsum = {}
+  var formattedDate = DayView.getMonthAndYear(req.body.searchdate)
+  
+  searchdata.formattedDate = formattedDate
   searchdata.searchdate = req.body.searchdate
   searchdata.employeeType = req.body.employeeType
 
