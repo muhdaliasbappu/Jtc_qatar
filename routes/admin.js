@@ -55,6 +55,7 @@ router.get("/dashboard", function (req, res, next) {
 router.get("/employee", function (req, res, next) {
   let admin = req.session.user;
   if (admin) {
+
     employeHelpers.getAllemployee().then((employee) => {
    for(let i=0; i<employee.length; i++){
     employee[i].index = i+1;
@@ -1014,7 +1015,8 @@ router.post('/printprojectreport', async (req, res) => {
             res.status(500).send("Internal Server Error");
         }
     });
-    
+   
+  
+
 
 module.exports = router;
-
