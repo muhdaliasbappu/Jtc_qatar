@@ -26,6 +26,7 @@
             <input type="hidden" name="surname" id="hiddensurname" value="">
             <input type="hidden" name="qid" id="hiddenemployeeQID" value="">
             <input type="hidden"  name="datevalue" id="datevalue" value="{{datess.date2}}" >
+             <input type="hidden" name="salarystatus" id="hiddenesalarystatus" value="open">
       
 
 
@@ -474,6 +475,7 @@ var employeetype;
             workhour4: $("#workhour4").val(),
             projectname5: $("#projectname5").val(),
             workhour5: $("#workhour5").val(),
+            salarystatus: $("#hiddenesalarystatus").val(),
         }
 
         $.ajax({
