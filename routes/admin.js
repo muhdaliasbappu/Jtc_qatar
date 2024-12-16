@@ -55,13 +55,7 @@ router.get("/dashboard", function (req, res, next) {
 router.get("/employee", function (req, res, next) {
   let admin = req.session.user;
   if (admin) {
-    userHelpers.addSalaryStatusToAllDatasheets()
-    .then((message) => {
-        console.log(message); // e.g., "Updated 100 documents"
-    })
-    .catch((err) => {
-        console.error('Error updating datasheets:', err.message);
-    });
+    
 
 
     employeHelpers.getAllemployee().then((employee) => {
