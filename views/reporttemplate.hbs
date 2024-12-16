@@ -1,8 +1,6 @@
 
                          
 
-                         
-
 <style>
    tr {
     page-break-inside: avoid;
@@ -23,7 +21,7 @@
     font-size: 18px;
     font-weight: bold;
     padding: 10px 0;
-
+  
   }
 
   th.total-salary {
@@ -36,9 +34,7 @@
       border-bottom: 2px solid #000; /* Black line */
     }
 </style>
-              
-                                   
-                         
+
 <div style="padding-top:10px;">
   <div class="table-heading">
     SALARY STATEMENT | MONTH OF {{employeereport.date}}
@@ -46,15 +42,14 @@
   <div class="date">Type: {{employeereport.employeeType}}<br>
   Genarated On: {{employeereport.currentDate}}
   </div>
-                            
- <table class="table mb-0 table-bordered table-hover" >
-  <thead>
-    <tr>
-      <th style="width: 1%;">#</th>
-      <th style="width: 20%;">Name</th>
 
-      <th>1</th>
-      <th>2</th>
+  <table class="table mb-0 table-bordered table-hover">
+    <thead>
+      <tr>
+        <th style="width: 1%;">#</th>
+        <th style="width: 20%;">Name</th>
+        <th>1</th>
+        <th>2</th>
       <th>3</th>
       <th>4</th>
       <th>5</th>
@@ -83,22 +78,22 @@
       <th>28</th>
       <th>29</th>
       <th>30</th>
+      <th>31</th>
       <th>WD</th>
       <th>OT</th>
       <th style="width: 5%;">Basic</th>
       <th style="width: 5%;">Allowance</th>
       <th style="width: 5%;">Bonus</th>
       <th style="width: 5%;">OT Salary</th>
-      <th >Total Salary</th>
-    </tr>
-  </thead>
-  <tbody>
-     {{#each employeereport}}
-    <tr>
-     
-      <th scope="row">{{this.index}}</th>
-      <td>{{this.employeename}}</td>
-      <td>{{this.d1wh}}</td>
+      <th class="total-salary">Total Salary</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each employeereport}}
+        <tr>
+          <th scope="row">{{this.index}}</th>
+          <td>{{this.employeename}}</td>
+          <td>{{this.d1wh}}</td>
       <td>{{this.d2wh}}</td>
       <td>{{this.d3wh}}</td>
       <td>{{this.d4wh}}</td>
@@ -128,27 +123,29 @@
       <td>{{this.d28wh}}</td>
       <td>{{this.d29wh}}</td>
       <td>{{this.d30wh}}</td>
-
+       <td>{{this.d31wh}}</td>
       <td>{{this.workdays}}</td>
       <td>{{this.othours}}</td>
       <td>{{this.basic}}</td>
       <td>{{this.allowance}}</td>
       <td>{{this.bonus}}</td>
       <td>{{this.otsalary}}</td>
-      <td >QAR {{this.totalsalary}}</td>
-
-    </tr>
-    {{/each}}
-  </tbody>
-    <tbody>
+          <td >QAR {{this.totalsalary}}</td>
+        </tr>
+      {{/each}}
+    </tbody>
+     <tbody>
     <tr>
-     <th scope="row" colspan="38" >Total: </th>
+     <th scope="row" colspan="39" >Total: </th>
      <td >QAR {{totalsum.sum}}</td>
     </tr>
   </tbody>
-</table>
-                                  
-                        </div>
+  </table>
+</div>
+
+
+                         
+
 
 
                          
