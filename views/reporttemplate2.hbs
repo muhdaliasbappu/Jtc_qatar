@@ -1,6 +1,8 @@
 
                          
 
+                         
+
 <style>
    tr {
     page-break-inside: avoid;
@@ -21,12 +23,18 @@
     font-size: 18px;
     font-weight: bold;
     padding: 10px 0;
-    border-bottom: 2px solid #000; /* Black line */
+
   }
 
   th.total-salary {
     width: 15%;
   }
+  .date {
+      font-size: 13px;
+      margin-bottom: 20px;
+      text-align: left; /* Center align the date */
+      border-bottom: 2px solid #000; /* Black line */
+    }
 </style>
               
                                    
@@ -34,6 +42,9 @@
 <div style="padding-top:10px;">
   <div class="table-heading">
     SALARY STATEMENT | MONTH OF {{employeereport.date}}
+  </div>
+  <div class="date">Type: {{employeereport.employeeType}}<br>
+  Genarated On: {{employeereport.currentDate}}
   </div>
                             
  <table class="table mb-0 table-bordered table-hover" >
@@ -139,5 +150,7 @@
                                   
                         </div>
 
+
+                         
 
                          
