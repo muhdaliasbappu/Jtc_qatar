@@ -858,25 +858,7 @@ getLeaveAndVacationCountdtd: (month, employeeId) => {
             });
     });
 },
- addSalaryStatusToAllDatasheets :() => {
-    return new Promise((resolve, reject) => {
-        db.get()
-            .collection('datasheet')
-            .updateMany(
-                {}, // No filter, applies to all documents
-                { $set: { salarystatus: 'open' } } // Add the new field
-            )
-            .then((response) => {
-                if (response.modifiedCount === 0) {
-                    return reject(new Error('No documents were updated'));
-                }
-                resolve(`Updated ${response.modifiedCount} documents`);
-            })
-            .catch((err) => {
-                reject(err);
-            });
-    });
-},
+ 
 
 
     
