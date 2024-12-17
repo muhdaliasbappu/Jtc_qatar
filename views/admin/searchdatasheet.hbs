@@ -1,106 +1,115 @@
+<div class="content-page">
+    <div class="content">
+        <!-- Start Content-->
+        <div class="container-fluid">
 
-  <div class="content-page">
-                <div class="content">
-
-                    <!-- Start Content-->
-                    <div class="container-fluid">
-
-      <div class="row">
-                            <div class="col-12">
-                                <div class="page-title-box">
-                                         {{!-- <div class="page-title-right">
-                                        <form  action="/admin/change-workhour/{{searchdatasheet.date1}}" method="POST">
-                                            <div class="input-group">
-                                                <input type="number" name="workhour" class="form-control dropdown-toggle" placeholder="Change Working Hour" id="top-search"  required>
-                                                <button class="input-group-text btn btn-primary " type="submit" data-bs-toggle="dropdown"
-                                                    aria-haspopup="true" aria-expanded="false" onclick="return confirm('Are you sure you want to change the working hours on {{searchdatasheet.date}}')">
-                                                    Apply
-                                                </button>
-                                          
-                                            </div>
-                                        </form>
-                                    </div> --}}
-                                  <div class="page-title-right">
-                                    <form action="/admin/change-workhour/{{searchdatasheet.date1}}" method="POST" >
+            <div class="row">
+                <div class="col-12">
+                    <div class="page-title-box">
+                        <div class="page-title-right">
+                            <form action="/admin/change-workhour/{{searchdatasheet.date1}}" method="POST">
                                 <div class="input-group">
-                                    <input type="number" name="workhour" class="form-control dropdown-toggle" placeholder="Change Working Hour" min="0" max="16" required style="width: 200px;">
-
-                                    <button class="input-group-text btn btn-primary" type="submit" onclick="return confirm('Are you sure you want to change the working hours on {{searchdatasheet.date}}')">Apply</button>
+                                    <input type="number" name="workhour" class="form-control dropdown-toggle"
+                                           placeholder="Change Working Hour" min="0" max="16" required
+                                           style="width: 200px;">
+                                    <button class="input-group-text btn btn-primary" type="submit"
+                                            onclick="return confirm('Are you sure you want to change the working hours on {{searchdatasheet.date}}')">
+                                        Apply
+                                    </button>
                                 </div>
-                                   </form>
-                                    
-                                    </div>
-                                    <h4 class="page-title">DATE: {{searchdatasheet.date}}  :  Working Hour: {{searchdatasheet.workinghour1}}</h4>
-        
-                                </div>
-
-                            </div>
+                            </form>
                         </div>
-                        <!-- end page title -->
+                        <h4 class="page-title">
+                            DATE: {{searchdatasheet.date}} : Working Hour: {{searchdatasheet.workinghour1}}
+                        </h4>
+                        <div class="btn-group">
+                            <form action="/admin/predatasheet" method="POST">
+                                <input type="hidden" name="searcheddate" value="{{searchdatasheet.searcheddate}}">
+                                <button type="submit" title="Previous Date" aria-pressed="false"
+                                        class="fc-prev-button btn btn-primary">
+                                    Prev
+                                </button>
+                            </form>
+                            <form action="/admin/nextdatasheet" method="POST">
+                                <input type="hidden" name="searcheddate" value="{{searchdatasheet.searcheddate}}">
+                                <button type="submit" title="Next Date" aria-pressed="false"
+                                        class="fc-next-button btn btn-primary">
+                                    Next
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- end page title -->
 
-                        <div class="row mb-2">
-                            <div class="col-12">
-                                <div class="card">
-                                    <div class="card-body">
-                                
-                                      
-                                        <div class="tab-content">
-                                            <div class="tab-pane show active" id="scroll-horizontal-preview">
-                                                <div class="board">
-                                                <table class="table mb-0">
-                                                    <thead>
-                                                        <tr>
+            <div class="row mb-2 mt-2">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="tab-content">
+                                <div class="tab-pane show active" id="scroll-horizontal-preview">
+                                    <div class="board">
+                                        <table class="table mb-0">
+                                            <thead>
+                                                <tr>
                                                     <th scope="col">#</th>
-                    <th scope="col">Given Name</th>
-                    <th scope="col">Status</th>
-                    <th scope="col">Project1</th>
-                    <th scope="col"></th>
-                    <th scope="col">Project2</th>
-                    <th scope="col"></th>
-                    <th scope="col">Project3</th>
-                    <th scope="col"></th>
-                    <th scope="col">Project4</th>
-                    <th scope="col"></th>
-                    <th scope="col">Project5</th>
-                    <th scope="col"></th>
-                    <th scope="col">options</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        {{#each searchdatasheet}}
-                <tr>
-                    <th scope=" row">{{this.index}}</th>
-                    <td>{{this.givenName}}</td>
-                    <td>{{this.todaystatus}}</td>
-                    <td>{{this.projectname1}}</td>
-                    <td>{{this.workhour1}}</td>
-                    <td>{{this.projectname2}}</td>
-                    <td>{{this.workhour2}}</td>
-                    <td>{{this.projectname3}}</td>
-                    <td>{{this.workhour3}}</td>
-                    <td>{{this.projectname4}}</td>
-                    <td>{{this.workhour4}}</td>
-                    <td>{{this.projectname5}}</td>
-                    <td>{{this.workhour5}}</td>
-                    <td class="table-action text-center">
-                <a href="/admin/edit-datasheets/{{this._id}}" class="action-icon"> <i class="ri-edit-fill"></i></a>
-            </td>
-                 
-                </tr>
-                {{/each}}
-                                               
-                                                    </tbody>
-                                                </table>  
-                                                </div>                                        
-                                            </div> <!-- end preview-->
-                                        
-                                           
-                                        </div> <!-- end tab-content-->
+                                                    <th scope="col">Given Name</th>
+                                                    <th scope="col">Status</th>
+                                                    <th scope="col">Project1</th>
+                                                    <th scope="col"></th>
+                                                    <th scope="col">Project2</th>
+                                                    <th scope="col"></th>
+                                                    <th scope="col">Project3</th>
+                                                    <th scope="col"></th>
+                                                    <th scope="col">Project4</th>
+                                                    <th scope="col"></th>
+                                                    <th scope="col">Project5</th>
+                                                    <th scope="col"></th>
+                                                    <th scope="col">options</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {{#each searchdatasheet}}
+                                                <tr>
+                                                    <th scope="row">{{this.index}}</th>
+                                                    <td>{{this.givenName}}</td>
+                                                    <td>{{this.todaystatus}}</td>
+                                                    <td>{{this.projectname1}}</td>
+                                                    <td>{{this.workhour1}}</td>
+                                                    <td>{{this.projectname2}}</td>
+                                                    <td>{{this.workhour2}}</td>
+                                                    <td>{{this.projectname3}}</td>
+                                                    <td>{{this.workhour3}}</td>
+                                                    <td>{{this.projectname4}}</td>
+                                                    <td>{{this.workhour4}}</td>
+                                                    <td>{{this.projectname5}}</td>
+                                                    <td>{{this.workhour5}}</td>
+                                                    <td class="table-action text-center">
+                                                        {{!-- If salarystatus is "open", go to edit page. Otherwise, show an alert. --}}
+                                                        {{#if (eq this.salarystatus "open")}}
+                                                            <a href="/admin/edit-datasheets/{{this._id}}" class="action-icon">
+                                                                <i class="ri-edit-fill"></i>
+                                                            </a>
+                                                        {{else}}
+                                                            <a href="javascript:void(0);" class="action-icon"
+                                                               onclick="alert('Salary of selected date is already closed')">
+                                                                <i class="ri-edit-fill"></i>
+                                                            </a>
+                                                        {{/if}}
+                                                    </td>
+                                                </tr>
+                                                {{/each}}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div> <!-- end preview-->
+                            </div> <!-- end tab-content-->
+                        </div> <!-- end card body-->
+                    </div> <!-- end card -->
+                </div><!-- end col-->
+            </div> <!-- end row-->
 
-                                    </div> <!-- end card body-->
-                                </div> <!-- end card -->
-                            </div><!-- end col-->
-                        </div> <!-- end row-->
-                        </div> 
-                        </div> 
-                        </div> 
+        </div> <!-- end container-fluid -->
+    </div> <!-- end content -->
+</div> <!-- end content-page -->
