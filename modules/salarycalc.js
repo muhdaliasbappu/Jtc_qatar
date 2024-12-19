@@ -34,6 +34,8 @@ properties.forEach(prop => Fstore[prop] = Fstore[prop] || 0);
               thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
               index++;
               thedata.index = index; 
+                              console.log(Fstore)
+
               Fstore.ownLabourtotal += Number(thedata.totalsalary);
               Fstore.ownLabourOT += Number(thedata.otsalary);
 
