@@ -4,6 +4,7 @@ var employeHelpers = require("../helpers/employee-helpers");
 var projectHelpers = require("../helpers/project-helpers");
 var adminHelpers = require("../helpers/admin-helper");
 var userHelpers = require("../helpers/user-helper");
+var reportHelpers = require("../helpers/report-helpers");
 const { response } = require("../app");
 const async = require("hbs/lib/async");
 const { search } = require("./users");
@@ -13,6 +14,7 @@ var allprojectreport = require('../modules/project-report')
 const puppeteer = require('puppeteer');
 //var addcron = require('../modules/notcron')
 var salarycalc = require('../modules/salarycalc')
+const cron = require('node-cron')
 
 //admin login
 
@@ -45,6 +47,17 @@ router.get("/logout", (req, res) => {
 
 router.get("/dashboard", function (req, res, next) {
   let admin = req.session.user;
+  // async function initReports() {
+  //   try {
+  //     // This will create documents for all months in 2024
+  //     await reportHelpers.createMonthlySalaryReportsForYear(2024);
+  //     console.log('All monthly salary reports for 2024 created!');
+  //   } catch (err) {
+  //     console.error('Error creating monthly salary reports:', err);
+  //   }
+  // }
+  
+  // initReports();
   
       res.render("./admin/dashboard", { admin: true});
     
@@ -55,8 +68,6 @@ router.get("/dashboard", function (req, res, next) {
 router.get("/employee", function (req, res, next) {
   let admin = req.session.user;
   if (admin) {
-    
-
 
     employeHelpers.getAllemployee().then((employee) => {
    for(let i=0; i<employee.length; i++){
@@ -72,6 +83,7 @@ router.get("/projects", function (req, res, next) {
   let admin = req.session.user;
 
   if (admin) {
+    
     projectHelpers.getAllproject().then((project) => {
     
       const statusOrder = { "Ongoing": 1, "OnHold": 2, "Completed": 3 };
@@ -566,22 +578,27 @@ router.post("/search-report", async (req, res) => {
   try {
   let searchdata = {}
   let totalsum = {}
+
   var formattedDate = DayView.getMonthAndYear(req.body.searchdate)
-  
+  const salarystatus = await reportHelpers.getSalaryStatusByDate(req.body.searchdate);
+
+
   searchdata.formattedDate = formattedDate
   searchdata.searchdate = req.body.searchdate
   searchdata.employeeType = req.body.employeeType
-
    const result = await salarycalc.salarycalculate(req.body.searchdate , req.body.employeeType)
+   result.Fstore.formattedDate = formattedDate
+   result.Fstore.ClosedDate = DayView.getCurrentDate()
+   let Fstore = result.Fstore
    let employeereport = result.employeereport
    totalsum.sum = result.sum
    const month = parseInt(req.body.searchdate.split('-')[1]);
    
    const monthsWith31Days = [1, 3, 5, 7, 8, 10, 12];
    if (monthsWith31Days.includes(month)) {
-       res.render("./admin/report-view", { admin: true, employeereport , searchdata , totalsum });      
+       res.render("./admin/report-view", { admin: true, employeereport , searchdata , totalsum , Fstore , salarystatus });      
    } else {
-       res.render("./admin/report-view2", { admin: true, employeereport , searchdata , totalsum });
+       res.render("./admin/report-view2", { admin: true, employeereport , searchdata , totalsum , Fstore , salarystatus});
    }
   }
    catch (error) {
@@ -1020,6 +1037,70 @@ router.post('/printprojectreport', async (req, res) => {
             res.status(500).send("Internal Server Error");
         }
     });
+
+    router.post('/salaryclose', async (req, res) => {
+      if (!req.session.user) {
+        return res.status(401).json({ error: "Unauthorized" });
+      }
+    
+      try {
+        const searchDate = req.body.searchdate;
+        const fstoreString = req.body.Fstore;
+        const fstoreObj = JSON.parse(fstoreString);
+    
+        await reportHelpers.updateMonthlySalaryReport(searchDate, fstoreObj);
+    
+        // Redirect back to /admin/search-report with optional query parameters
+        res.redirect(`/admin/search-report?searchdate=${searchDate}&status=success`);
+      } catch (err) {
+        console.error("Error:", err);
+        res.status(400).json({ error: "Invalid data or DB error" });
+      }
+    });
+    router.post('/authenticate-and-close', async (req, res) => {
+      const { username, password, searchdate, fstore } = req.body;
+    
+      try {
+        // Authenticate admin credentials
+        const response = await adminHelpers.doLogin({ username, password });
+    
+        if (!response.status) {
+          return res.status(401).json({ error: "Invalid admin credentials" });
+        }
+    
+        // Parse Fstore object
+        let fstoreObj;
+        try {
+          fstoreObj = JSON.parse(fstore);
+        } catch (parseError) {
+          console.error("Fstore JSON parse error:", parseError);
+          return res.status(400).json({ error: "Invalid Fstore data" });
+        }
+    
+        // Update the monthly salary report
+        const updateResult = await reportHelpers.updateMonthlySalaryReport(searchdate, fstoreObj);
+    
+        if (updateResult.matchedCount === 0) {
+          return res.status(400).json({ error: "No open salary report found for the given date." });
+        }
+    
+        res.json({ success: true });
+      } catch (err) {
+        console.error("Error in authenticate-and-close:", err);
+        res.status(500).json({ error: "Server error during salary closure." });
+      }
+    });
+    
+    cron.schedule('0 0 1 * *', async () => {
+      try {
+        await reportHelpers.closemonthlysalaryreportforcron();
+      } catch (error) {
+        console.error('Error inserting monthly salary report:', error);
+      }
+    });
+    
+    
+  
    
   
 
