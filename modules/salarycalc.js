@@ -231,6 +231,8 @@ properties.forEach(prop => Fstore[prop] = Fstore[prop] || 0);
         sum = sum + employeereport[g].totalsalary
        }
        Fstore.Total += Number(sum);
+               console.log(Fstore,'fstore')
+
 
 
        return { employeereport, sum , Fstore };
