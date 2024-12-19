@@ -204,7 +204,7 @@ properties.forEach(prop => Fstore[prop] = Fstore[prop] || 0);
               index++;
               thedata.index = index;
               Fstore.HStaffPtotal += Number(thedata.totalsalary);
-              store.HStaffPOT += Number(thedata.otsalary);
+              Fstorestore.HStaffPOT += Number(thedata.otsalary);
               
               employeereport.push(thedata);
               }
