@@ -23,6 +23,8 @@ properties.forEach(prop => Fstore[prop] = Fstore[prop] || 0);
         let sum = 0;
         const employees = await employeHelpers.getAllemployee();  
         for (let i = 0; i < employees.length; i++) {
+                      console.log(Fstore,employees.qid)
+          
 
           
         if(employees[i].employeeType === 'Own Labour'){
