@@ -45,8 +45,10 @@ router.get("/logout", (req, res) => {
 
 
 
-router.get("/dashboard", function (req, res, next) {
+router.get("/dashboard",  function (req, res, next) {
   let admin = req.session.user;
+
+  
   
       res.render("./admin/dashboard", { admin: true});
     
@@ -1027,37 +1029,22 @@ router.post('/printprojectreport', async (req, res) => {
         }
     });
 
-    router.post('/salaryclose', async (req, res) => {
-      if (!req.session.user) {
-        return res.status(401).json({ error: "Unauthorized" });
-      }
-    
-      try {
-        const searchDate = req.body.searchdate;
-        const fstoreString = req.body.Fstore;
-        const fstoreObj = JSON.parse(fstoreString);
-    
-        await reportHelpers.updateMonthlySalaryReport(searchDate, fstoreObj);
-    
-        // Redirect back to /admin/search-report with optional query parameters
-        res.redirect(`/admin/search-report?searchdate=${searchDate}&status=success`);
-      } catch (err) {
-        console.error("Error:", err);
-        res.status(400).json({ error: "Invalid data or DB error" });
-      }
-    });
+
     router.post('/authenticate-and-close', async (req, res) => {
       const { username, password, searchdate, fstore } = req.body;
     
       try {
-        // Authenticate admin credentials
-        const response = await adminHelpers.doLogin({ username, password });
+        // 1. Authenticate admin credentials
+        const authResponse = await adminHelpers.doLogin({ username, password });
     
-        if (!response.status) {
+        if (!authResponse.status) {
+          console.warn(`Authentication failed for user: ${username}`);
           return res.status(401).json({ error: "Invalid admin credentials" });
         }
     
-        // Parse Fstore object
+        console.log(`Admin ${username} authenticated successfully.`);
+    
+        // 2. Parse and validate Fstore object
         let fstoreObj;
         try {
           fstoreObj = JSON.parse(fstore);
@@ -1066,14 +1053,52 @@ router.post('/printprojectreport', async (req, res) => {
           return res.status(400).json({ error: "Invalid Fstore data" });
         }
     
-        // Update the monthly salary report
+        // 3. Update the current month's salary report to 'close'
         const updateResult = await reportHelpers.updateMonthlySalaryReport(searchdate, fstoreObj);
     
         if (updateResult.matchedCount === 0) {
+          console.warn(`No open salary report found for date: ${searchdate}`);
           return res.status(400).json({ error: "No open salary report found for the given date." });
         }
     
+        console.log(`Salary report for ${searchdate} closed successfully.`);
+    
+        // 4. Determine the previous month's date string (format: "YYYY-MM")
+        const [yearStr, monthStr] = searchdate.split('-'); // Assuming "YYYY-MM"
+        let year = parseInt(yearStr, 10);
+        let month = parseInt(monthStr, 10);
+    
+        // Calculate previous month
+        if (month === 1) {
+          month = 12;
+          year -= 1;
+        } else {
+          month -= 1;
+        }
+    
+        const prevMonthStr = `${year}-${String(month).padStart(2, '0')}`;
+    
+        console.log(`Checking salary status for previous month: ${prevMonthStr}`);
+    
+        // 5. Check the previous month's salary status
+        const prevStatus = await reportHelpers.getSalaryStatusByDate(prevMonthStr);
+    
+        if (prevStatus === 'open') {
+          console.log(`Previous month's salary (${prevMonthStr}) is still open.`);
+          return res.json({ 
+            success: true, 
+            warning: `Previous month's salary (${prevMonthStr}) is not closed.` 
+          });
+        } else if (prevStatus === 'close') {
+          console.log(`Previous month's salary (${prevMonthStr}) is already closed.`);
+        } else {
+          console.log(`No salary report found for previous month (${prevMonthStr}). Treating as closed.`);
+          // Depending on your business logic, you might want to treat this differently
+        }
+    
+        // 6. If previous month's salary is not open, respond with success
         res.json({ success: true });
+    
       } catch (err) {
         console.error("Error in authenticate-and-close:", err);
         res.status(500).json({ error: "Server error during salary closure." });
