@@ -28,26 +28,7 @@ module.exports = {
           );
       },
       
-      createMonthlySalaryReportsForYear: async (year = 2024) => {
-        const docs = [];
-        for (let month = 1; month <= 12; month++) {
-          const mm = String(month).padStart(2, '0'); // e.g. 01, 02, ... 12
-          const dateStr = `${year}-${mm}`;
-    
-          docs.push({
-            date: dateStr,
-            salarystatus: 'open',
-          });
-        }
-    
-        // Insert all monthly documents for the year
-        const result = await db.get()
-          .collection('monthlysalaryreport')
-          .insertMany(docs);
-    
-        console.log(`Inserted ${result.insertedCount} monthly salary reports for ${year}`);
-        return result;
-      },
+   
       getSalaryStatusByDate: async (dateStr) => {
         // Find the document matching the given date
         const doc = await db.get()
