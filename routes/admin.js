@@ -47,17 +47,17 @@ router.get("/logout", (req, res) => {
 
 router.get("/dashboard", function (req, res, next) {
   let admin = req.session.user;
-  // async function initReports() {
-  //   try {
-  //     // This will create documents for all months in 2024
-  //     await reportHelpers.createMonthlySalaryReportsForYear(2024);
-  //     console.log('All monthly salary reports for 2024 created!');
-  //   } catch (err) {
-  //     console.error('Error creating monthly salary reports:', err);
-  //   }
-  // }
+  async function initReports() {
+    try {
+      // This will create documents for all months in 2024
+      await reportHelpers.createMonthlySalaryReportsForYear(2024);
+      console.log('All monthly salary reports for 2024 created!');
+    } catch (err) {
+      console.error('Error creating monthly salary reports:', err);
+    }
+  }
   
-  // initReports();
+  initReports();
   
       res.render("./admin/dashboard", { admin: true});
     
