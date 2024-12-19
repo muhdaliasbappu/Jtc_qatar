@@ -23,6 +23,7 @@ properties.forEach(prop => Fstore[prop] = Fstore[prop] || 0);
         let sum = 0;
         const employees = await employeHelpers.getAllemployee();  
         for (let i = 0; i < employees.length; i++) {
+                           console.log(Fstore,'fstore')
           
         if(employees[i].employeeType === 'Own Labour'){
           if(employeeType === 'All'){
@@ -34,7 +35,6 @@ properties.forEach(prop => Fstore[prop] = Fstore[prop] || 0);
               thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
               index++;
               thedata.index = index; 
-                              console.log(Fstore)
 
               Fstore.ownLabourtotal += Number(thedata.totalsalary);
               Fstore.ownLabourOT += Number(thedata.otsalary);
@@ -231,7 +231,6 @@ properties.forEach(prop => Fstore[prop] = Fstore[prop] || 0);
         sum = sum + employeereport[g].totalsalary
        }
        Fstore.Total += Number(sum);
-               console.log(Fstore,'fstore')
 
 
 
