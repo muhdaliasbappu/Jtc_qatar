@@ -1,174 +1,245 @@
+<!-- views/admin/report-view.hbs -->
+
 <style>
   table {
     border-collapse: collapse;
     width: 100%;
   }
-
   th, td {
     padding: 4px; /* Minimal padding */
     text-align: left;
     border: 1px solid #ddd;
     font-size: 10px; /* Minimal font size */
   }
+
+  /* Modal styling */
+  #adminAuthModal {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    top: 50%;
+    left: 50%;
+    width: 300px;
+    transform: translate(-50%, -50%);
+    background: #fff;
+    border: 1px solid #ddd;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  }
+  #adminAuthModal h3 {
+    margin-top: 0;
+  }
+  #adminAuthModal input {
+    width: 100%;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+  }
+  #adminAuthModal button {
+    width: 100%;
+    margin-top: 5px;
+  }
+  #adminAuthModal .btn-secondary {
+    background: #f0f0f0;
+  }
 </style>
 
-
-
-            <div class="content-page">
-                <div class="content">
-
-                    <!-- Start Content-->
-                    <div class="container-fluid">
+<div class="content-page">
+  <div class="content">
+    <!-- Start Content-->
+    <div class="container-fluid">
 
       <div class="row">
-                            <div class="col-12">
-                                <div class="page-title-box">
-                                    <div class="page-title-right">
-                                    <form action="/admin/salaryclose" method="POST" >
-                                <div class="input-group">
-                                    
-                                    <input type="hidden" name="employeereport" >
-    
-                                    <button class="input-group-text btn btn-success" type="submit">Salary Close</button>
-                                </div>
-                                   </form>
-                                    
-                                    </div>
-                                  <div class="page-title-right">
-                                    <form action="/admin/printreport" method="POST" >
-                                <div class="input-group">
-                                    <input type="hidden" name="searchdate" value="{{searchdata.searchdate}}">
-                                    <input type="hidden" name="employeeType" value="{{searchdata.employeeType}}">         
-                                    <button class="input-group-text btn btn-primary" type="submit">Download</button>
-                                </div>
-                                   </form>
-                                    
-                                    </div>
-                                 
-                                    <h4 class="page-title">Salary Statement {{searchdata.formattedDate}}</h4>
-                                </div>
-                            </div>
-                        </div>
+        <div class="col-12">
+          <div class="page-title-box">
 
+            {{!-- Conditionally show Salary Close button if employeeType is All and salarystatus is open --}}
+            {{#if (eq searchdata.employeeType "All")}}
+              {{#if (eq salarystatus "open")}}
+                <div class="page-title-right">
+                  <!-- Instead of a direct form submit, we show a button that triggers admin auth modal -->
+                  <button class="input-group-text btn btn-success" onclick="showAdminAuthModal()">Salary Close</button>
+                </div>
+              {{else}}
+                <div class="page-title-right">
+                  <button class="input-group-text btn btn-light" disabled>Salary Closed</button>
+                </div>
+              {{/if}}
+            {{/if}}
 
+            <div class="page-title-right">
+              <form action="/admin/printreport" method="POST">
+                <div class="input-group">
+                  <input type="hidden" name="searchdate" value="{{searchdata.searchdate}}">
+                  <input type="hidden" name="employeeType" value="{{searchdata.employeeType}}">
+                  <button class="input-group-text btn btn-primary" type="submit">Download</button>
+                </div>
+              </form>
+            </div>
 
+            <h4 class="page-title">Salary Statement {{searchdata.formattedDate}}</h4>
+          </div>
+        </div>
+      </div>
 
+      <div class="row">
+        <div class="col-12">
+          <div class="board">
+            <table class="table mb-0 table-bordered table-hover">
+              <thead>
+                <tr>
+                  <th style="width: 1%;">#</th>
+                  <th style="width: 20%;">Name</th>
+                  <th>1</th><th>2</th><th>3</th><th>4</th><th>5</th>
+                  <th>6</th><th>7</th><th>8</th><th>9</th><th>10</th>
+                  <th>11</th><th>12</th><th>13</th><th>14</th><th>15</th>
+                  <th>16</th><th>17</th><th>18</th><th>19</th><th>20</th>
+                  <th>21</th><th>22</th><th>23</th><th>24</th><th>25</th>
+                  <th>26</th><th>27</th><th>28</th><th>29</th><th>30</th><th>31</th>
+                  <th>WD</th>
+                  <th>OT</th>
+                  <th style="width: 5%;">Basic</th>
+                  <th style="width: 5%;">Allowance</th>
+                  <th style="width: 5%;">Bonus</th>
+                  <th style="width: 5%;">OT Salary</th>
+                  <th>Total Salary</th>
+                </tr>
+              </thead>
+              <tbody>
+                {{#each employeereport}}
+                <tr>
+                  <th scope="row">{{this.index}}</th>
+                  <td>{{this.employeename}}</td>
+                  <td>{{this.d1wh}}</td>
+                  <td>{{this.d2wh}}</td>
+                  <td>{{this.d3wh}}</td>
+                  <td>{{this.d4wh}}</td>
+                  <td>{{this.d5wh}}</td>
+                  <td>{{this.d6wh}}</td>
+                  <td>{{this.d7wh}}</td>
+                  <td>{{this.d8wh}}</td>
+                  <td>{{this.d9wh}}</td>
+                  <td>{{this.d10wh}}</td>
+                  <td>{{this.d11wh}}</td>
+                  <td>{{this.d12wh}}</td>
+                  <td>{{this.d13wh}}</td>
+                  <td>{{this.d14wh}}</td>
+                  <td>{{this.d15wh}}</td>
+                  <td>{{this.d16wh}}</td>
+                  <td>{{this.d17wh}}</td>
+                  <td>{{this.d18wh}}</td>
+                  <td>{{this.d19wh}}</td>
+                  <td>{{this.d20wh}}</td>
+                  <td>{{this.d21wh}}</td>
+                  <td>{{this.d22wh}}</td>
+                  <td>{{this.d23wh}}</td>
+                  <td>{{this.d24wh}}</td>
+                  <td>{{this.d25wh}}</td>
+                  <td>{{this.d26wh}}</td>
+                  <td>{{this.d27wh}}</td>
+                  <td>{{this.d28wh}}</td>
+                  <td>{{this.d29wh}}</td>
+                  <td>{{this.d30wh}}</td>
+                  <td>{{this.d31wh}}</td>
+                  <td>{{this.workdays}}</td>
+                  <td>{{this.othours}}</td>
+                  <td>{{this.basic}}</td>
+                  <td>{{this.allowance}}</td>
+                  <td>{{this.bonus}}</td>
+                  <td>{{this.otsalary}}</td>
+                  <td>QAR {{this.totalsalary}}</td>
+                </tr>
+                {{/each}}
+              </tbody>
+              <tbody>
+                <tr>
+                  <th scope="row" colspan="39">Total: </th>
+                  <td>QAR {{totalsum.sum}}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div> <!-- end .board-->
+        </div> <!-- end col -->
+      </div>
 
+    </div> <!-- end container-fluid -->
+  </div> <!-- end content -->
+</div> <!-- end content-page -->
 
-<div class="row">
-                            <div class="col-12">
-                                <div class="board">
-                                  <table class="table mb-0 table-bordered table-hover" >
-  <thead>
-    <tr>
-      <th style="width: 1%;">#</th>
-      <th style="width: 20%;">Name</th>
+<!-- Admin Authentication Modal -->
+<div id="adminAuthModal">
+  <h3>Admin Authentication</h3>
+  <form id="adminAuthForm">
+    <label for="username">Admin Username:</label>
+    <input type="text" id="username" name="username" required>
 
-      <th>1</th>
-      <th>2</th>
-      <th>3</th>
-      <th>4</th>
-      <th>5</th>
-      <th>6</th>
-      <th>7</th>
-      <th>8</th>
-      <th>9</th>
-      <th>10</th>
-      <th>11</th>
-      <th>12</th>
-      <th>13</th>
-      <th>14</th>
-      <th>15</th>
-      <th>16</th>
-      <th>17</th>
-      <th>18</th>
-      <th>19</th>
-      <th>20</th>
-      <th>21</th>
-      <th>22</th>
-      <th>23</th>
-      <th>24</th>
-      <th>25</th>
-      <th>26</th>
-      <th>27</th>
-      <th>28</th>
-      <th>29</th>
-      <th>30</th>
-      <th>31</th>
-        
-      <th>WD</th>
-      <th>OT</th>
-      <th style="width: 5%;">Basic</th>
-      <th style="width: 5%;">Allowance</th>
-      <th style="width: 5%;">Bonus</th>
-      <th style="width: 5%;">OT Salary</th>
-      <th >Total Salary</th>
-    </tr>
-  </thead>
-  <tbody>
-     {{#each employeereport}}
-    <tr>
-     
-      <th scope="row">{{this.index}}</th>
-      <td>{{this.employeename}}</td>
-      <td>{{this.d1wh}}</td>
-      <td>{{this.d2wh}}</td>
-      <td>{{this.d3wh}}</td>
-      <td>{{this.d4wh}}</td>
-      <td>{{this.d5wh}}</td>
-      <td>{{this.d6wh}}</td>
-      <td>{{this.d7wh}}</td>
-      <td>{{this.d8wh}}</td>
-      <td>{{this.d9wh}}</td>
-      <td>{{this.d10wh}}</td>
-      <td>{{this.d11wh}}</td>
-      <td>{{this.d12wh}}</td>
-      <td>{{this.d13wh}}</td>
-      <td>{{this.d14wh}}</td>
-      <td>{{this.d15wh}}</td>
-      <td>{{this.d16wh}}</td>
-      <td>{{this.d17wh}}</td>
-      <td>{{this.d18wh}}</td>
-      <td>{{this.d19wh}}</td>
-      <td>{{this.d20wh}}</td>
-      <td>{{this.d21wh}}</td>
-      <td>{{this.d22wh}}</td>
-      <td>{{this.d23wh}}</td>
-      <td>{{this.d24wh}}</td>
-      <td>{{this.d25wh}}</td>
-      <td>{{this.d26wh}}</td>
-      <td>{{this.d27wh}}</td>
-      <td>{{this.d28wh}}</td>
-      <td>{{this.d29wh}}</td>
-      <td>{{this.d30wh}}</td>
-      
-       <td>{{this.d31wh}}</td>
-       
-      <td>{{this.workdays}}</td>
-      <td>{{this.othours}}</td>
-      <td>{{this.basic}}</td>
-      <td>{{this.allowance}}</td>
-      <td>{{this.bonus}}</td>
-      <td>{{this.otsalary}}</td>
-      <td >QAR {{this.totalsalary}}</td>
+    <label for="password">Admin Password:</label>
+    <input type="password" id="password" name="password" required>
 
-    </tr>
-    {{/each}}
-  </tbody>
-  <tbody>
-    <tr>
-     <th scope="row" colspan="39" >Total: </th>
-     <td >QAR {{totalsum.sum}}</td>
-    </tr>
-  </tbody>
-</table>
-                                    
-                                </div> <!-- end .board-->
-                            </div> <!-- end col -->
-                        </div>
+    <button type="submit" class="btn btn-primary">Authenticate and Close Salary</button>
+    <button type="button" class="btn btn-secondary" onclick="closeAdminAuthModal()">Cancel</button>
+  </form>
+</div>
 
+<!-- Hidden Fstore input -->
+<input type="hidden" name="Fstore" value='{{{json Fstore}}}'>
 
-                                    </div> <!-- end card body-->
-                                </div> <!-- end card -->
-                            </div><!-- end col-->
-                    
+<script>
+  // Ensure the script runs after the DOM is fully loaded
+  document.addEventListener('DOMContentLoaded', function () {
+
+    function showAdminAuthModal() {
+      document.getElementById('adminAuthModal').style.display = 'block';
+    }
+
+    function closeAdminAuthModal() {
+      document.getElementById('adminAuthModal').style.display = 'none';
+    }
+
+    // Attach the functions to the global scope to be accessible by onclick
+    window.showAdminAuthModal = showAdminAuthModal;
+    window.closeAdminAuthModal = closeAdminAuthModal;
+
+    document.getElementById('adminAuthForm').addEventListener('submit', async function (e) {
+      e.preventDefault();
+
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      const searchdate = "{{searchdata.searchdate}}"; // from template
+
+      // Retrieve Fstore from hidden input
+      const fstoreInput = document.querySelector('input[name="Fstore"]');
+      let fstore = "";
+      if (fstoreInput) {
+        fstore = fstoreInput.value;
+      }
+
+      console.log("Fstore before sending:", fstore);
+
+      try {
+        if (!fstore) {
+          alert("Fstore data is missing. Cannot close salary.");
+          return;
+        }
+
+        const response = await fetch("/admin/authenticate-and-close", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, password, searchdate, fstore })
+        });
+
+        const result = await response.json();
+        if (result.success) {
+          alert("Salary closed successfully!");
+          window.location.href = `/admin/search-report?searchdate=${searchdate}&status=success`;
+        } else {
+          alert(result.error || "Authentication failed!");
+        }
+      } catch (error) {
+        console.error("Error:", error);
+        alert("An error occurred. Please try again.");
+      } finally {
+        closeAdminAuthModal();
+      }
+    });
+  });
+</script>
