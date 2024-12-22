@@ -47,12 +47,10 @@ router.get("/logout", (req, res) => {
 
 
 
-router.get("/dashboard",  async  function (req, res, next) {
+router.get("/dashboard",    function (req, res, next) {
   let admin = req.session.user;
 
 
-
-  await reportHelpers.createMonthlySalaryReportsForYear()
   
       res.render("./admin/dashboard", { admin: true});
     
