@@ -858,7 +858,34 @@ getLeaveAndVacationCountdtd: (month, employeeId) => {
             });
     });
 },
- 
+
+
+ closeSalaryStatusForMonth :(yearMonth) => {
+    return new Promise((resolve, reject) => {
+        // Extract year and month from the input string 'YYYY-MM'
+        const [year, month] = yearMonth.split('-').map(Number);
+        const startDate = new Date(year, month - 1, 1); // First day of the month
+        const endDate = new Date(year, month, 1); // First day of the next month
+
+        db.get()
+            .collection('datasheet')
+            .updateMany(
+                { date: { $gte: startDate, $lt: endDate } }, // Filter documents within the month
+                { $set: { salarystatus: 'close' } } // Set the field
+            )
+            .then((response) => {
+                if (response.matchedCount === 0) {
+                    return reject(new Error('No documents found for the specified month.'));
+                }
+                resolve(`Updated ${response.modifiedCount} documents to salarystatus: 'close'`);
+            })
+            .catch((err) => {
+                reject(err);
+            });
+    });
+},
+
+
 
 
     
