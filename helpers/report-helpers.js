@@ -42,8 +42,8 @@ module.exports = {
     
         // Insert all monthly documents for the year
         const result = await db.get()
-       // .collection('monthlysalaryreport')
-          .collection('projectreport')
+       .collection('monthlysalaryreport')
+       //   .collection('projectreport')
           .insertMany(docs);
     
         console.log(`Inserted ${result.insertedCount} monthly salary reports for ${year}`);
