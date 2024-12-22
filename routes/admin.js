@@ -9,12 +9,14 @@ const { response } = require("../app");
 const async = require("hbs/lib/async");
 const { search } = require("./users");
 var DayView = require('../modules/DayView')
+var ProjectReport = require('../modules/functions')
 
 var allprojectreport = require('../modules/project-report')
 const puppeteer = require('puppeteer');
 //var addcron = require('../modules/notcron')
 var salarycalc = require('../modules/salarycalc')
 const cron = require('node-cron')
+
 
 //admin login
 
@@ -45,10 +47,12 @@ router.get("/logout", (req, res) => {
 
 
 
-router.get("/dashboard",  function (req, res, next) {
+router.get("/dashboard",  async  function (req, res, next) {
   let admin = req.session.user;
 
-  
+
+
+  await reportHelpers.createMonthlySalaryReportsForYear()
   
       res.render("./admin/dashboard", { admin: true});
     
@@ -770,76 +774,68 @@ router.get("/project-search/",  (req, res) => {
 
 
 
-router.post("/project-search", async (req, res) => {
-  let employeetype = ['Own Labour', 'Hired Labour (Monthly)', 'Hired Labour (Hourly)', 'Own Staff (Projects)', 'Hired Staff (Projects)'];
-  
-  let projectimesheets = [];
-  
+// routes/admin.js
 
-  try {
-      let projects = await projectHelpers.getAllproject();
 
-      for (let i = 0; i < projects.length; i++) {
-        let tempobj = {}
-            
-          for (let j = 0; j < employeetype.length; j++) {
-            let report = {}
-            let projectimesheet = []
-               projectimesheet = await projectHelpers.projecttimesheet(req.body.searchdate,  projects[i].projectname, employeetype[j]);                           
-              if (projectimesheet.length > 0) {
-                            
-                tempobj.projectname = projects[i].projectname
-                 switch(employeetype[j]){
-                  case 'Own Labour':
-                    report = await allprojectreport.projectreportlabour(projectimesheet, projects[i].projectname)
-                    tempobj.ownlaboursalary = report.totalsalary || 0;
-                    tempobj.ownlabourot = report.otsalary;
-                    break;
-                  case 'Hired Labour (Monthly)':  
-                    report = await allprojectreport.projectreportlabour(projectimesheet, projects[i].projectname)
-                    tempobj.hiredlabourmsalary = report.totalsalary || 0
-                    tempobj.hiredlabourmot =  report.otsalary
-                    break;
-                  case  'Own Staff (Projects)': 
-                    report = await allprojectreport.projectreportstaff(projectimesheet, projects[i].projectname)                  
-                    tempobj.ownstaffsalary = report.totalsalary || 0
-                    break;
-                  case  'Hired Staff (Projects)':  
-                    report = await allprojectreport.projectreportstaff(projectimesheet, projects[i].projectname)
-                    tempobj.hiredstaffsalary = report.totalsalary || 0
-                    break;
-                  case  'Hired Labour (Hourly)':  
-                    report = await allprojectreport.projectreporthourly(projectimesheet, projects[i].projectname)
-                    tempobj.hiredstaffhourly = report.totalsalary || 0
-                    break;  
-                 }                
-              }
-          }
-          
-          if (Object.keys(tempobj).length !== 0) {
-            projectimesheets.push(tempobj);
-          }         
+
+router.post( "/project-search", async (req, res) => {
+ 
+    try {
+      const { searchdate } = req.body;
+
+      // Fetch the existing projectreport document using the helper
+      const existingReport = await reportHelpers.getProjectReportByDate(searchdate);
+
+      if (!existingReport) {
+        return res.status(404).send(`No project report found for date: ${searchdate}`);
       }
-      let operationcost = await allprojectreport.projectoperations(projectimesheets , req.body.searchdate )
-      
-          for(let g = 0; g < projectimesheets.length; g++){
-            projectimesheets[g].index = g+1 
-            projectimesheets[g].operationcost = operationcost[g].operationcost   
-            projectimesheets[g].overheadcost = operationcost[g].overheadcost  
-            projectimesheets[g].total = operationcost[g].total  
-            projectimesheets[g].percentage = operationcost[g].percentage 
-          }
-          
-      let sumemployeetype = await allprojectreport.sumemployeetype(projectimesheets) 
-       sumemployeetype.reqdate = req.body.searchdate;
-       sumemployeetype.reqmonth = DayView.getMonthAndYear(req.body.searchdate)
-      
-      res.render("./admin/project-report", { admin: true , projectimesheets , sumemployeetype});
-  } catch (error) {
-      console.error(error);
+
+      if (existingReport.salarystatus.toLowerCase() === 'close') {
+        const { projectimesheets, sumemployeetype } = existingReport;
+
+        if (!projectimesheets || !sumemployeetype) {
+          return res.status(500).send("Incomplete report data in the database.");
+        }
+
+        return res.render("./admin/project-report", { 
+          admin: true, 
+          projectimesheets, 
+          sumemployeetype 
+        });
+      }
+
+      // Proceed to generate and update the report as before
+      const report = await ProjectReport.ProjectReport(searchdate);
+      const { projectimesheets, sumemployeetype } = report;
+
+      if (!projectimesheets || !sumemployeetype) {
+        return res.status(500).send("Invalid report data generated.");
+      }
+
+      try {
+        await reportHelpers.addProjectReportDataIfOpen(
+          searchdate,
+          projectimesheets,
+          sumemployeetype
+        );
+      } catch (updateError) {
+        return res.status(400).send(updateError.message);
+      }
+
+      res.render("./admin/project-report", { 
+        admin: true, 
+        projectimesheets, 
+        sumemployeetype 
+      });
+    } catch (error) {
+      console.error("Error generating project report:", error);
       res.status(500).send("Internal Server Error");
+    }
   }
-});
+);
+
+
+
 
 
 router.post('/printprojectreport', async (req, res) => {
@@ -1030,6 +1026,17 @@ router.post('/printprojectreport', async (req, res) => {
     });
 
 
+    // Schedule Monthly Cron Job
+    cron.schedule('0 0 1 * *', async () => {
+      try {
+        await reportHelpers.closemonthlysalaryreportforcron(); // Close salary report for the previous month
+        await reportHelpers.monthlyprojectreportforcron(); // Generate the project report for the new month
+      } catch (error) {
+        console.error('Error in scheduled tasks:', error);
+      }
+    });
+
+ 
     router.post('/authenticate-and-close', async (req, res) => {
       const { username, password, searchdate, fstore } = req.body;
     
@@ -1053,17 +1060,7 @@ router.post('/printprojectreport', async (req, res) => {
           return res.status(400).json({ error: "Invalid Fstore data" });
         }
     
-        // 3. Update the current month's salary report to 'close'
-        const updateResult = await reportHelpers.updateMonthlySalaryReport(searchdate, fstoreObj);
-    
-        if (updateResult.matchedCount === 0) {
-          console.warn(`No open salary report found for date: ${searchdate}`);
-          return res.status(400).json({ error: "No open salary report found for the given date." });
-        }
-    
-        console.log(`Salary report for ${searchdate} closed successfully.`);
-    
-        // 4. Determine the previous month's date string (format: "YYYY-MM")
+        // 3. Determine the previous month's date string (format: "YYYY-MM")
         const [yearStr, monthStr] = searchdate.split('-'); // Assuming "YYYY-MM"
         let year = parseInt(yearStr, 10);
         let month = parseInt(monthStr, 10);
@@ -1080,43 +1077,63 @@ router.post('/printprojectreport', async (req, res) => {
     
         console.log(`Checking salary status for previous month: ${prevMonthStr}`);
     
-        // 5. Check the previous month's salary status
+        // 4. Check the previous month's salary status
         const prevStatus = await reportHelpers.getSalaryStatusByDate(prevMonthStr);
+    
+        let warningMessage = null;
     
         if (prevStatus === 'open') {
           console.log(`Previous month's salary (${prevMonthStr}) is still open.`);
-          return res.json({ 
-            success: true, 
-            warning: `Previous month's salary (${prevMonthStr}) is not closed.` 
-          });
+          warningMessage = `Previous month's salary (${prevMonthStr}) is not closed.`;
         } else if (prevStatus === 'close') {
           console.log(`Previous month's salary (${prevMonthStr}) is already closed.`);
         } else {
           console.log(`No salary report found for previous month (${prevMonthStr}). Treating as closed.`);
-          // Depending on your business logic, you might want to treat this differently
+          // Depending on your business logic, you might want to handle this differently
         }
     
-        // 6. If previous month's salary is not open, respond with success
-        res.json({ success: true });
+        // 5. Update the current month's salary report to 'close'
+        const updateResult = await reportHelpers.updateMonthlySalaryReport(searchdate, fstoreObj);
+        userHelpers.closeSalaryStatusForMonth(searchdate)
+    
+        if (updateResult.matchedCount === 0) {
+          console.warn(`No open salary report found for date: ${searchdate}`);
+          return res.status(400).json({ error: "No open salary report found for the given date." });
+        }
+    
+        console.log(`Salary report for ${searchdate} closed successfully.`);
+    
+        // 6. Respond to the client with success and warning if any
+        const response = { success: true };
+        if (warningMessage) {
+          response.warning = warningMessage;
+        }
+        res.json(response);
+    
+        // 7. Perform the time-consuming tasks asynchronously in the background
+        setImmediate(async () => {
+          try {
+            // a. Fetch the report
+            const report = await ProjectReport.ProjectReport(searchdate);
+            const { projectimesheets, sumemployeetype } = report;
+    
+            // b. Update the report to close
+            await reportHelpers.addProjectReportDataToClose(searchdate, projectimesheets, sumemployeetype);
+            console.log(`Background processing for ${searchdate} completed successfully.`);
+    
+            // You can add more background tasks here if needed
+    
+          } catch (error) {
+            console.error('Error during background processing:', error);
+            // Optionally, implement retry logic or alerting mechanisms here
+          }
+        });
     
       } catch (err) {
         console.error("Error in authenticate-and-close:", err);
         res.status(500).json({ error: "Server error during salary closure." });
       }
     });
-    
-    cron.schedule('0 0 1 * *', async () => {
-      try {
-        await reportHelpers.closemonthlysalaryreportforcron();
-      } catch (error) {
-        console.error('Error inserting monthly salary report:', error);
-      }
-    });
-    
-    
-  
-   
-  
 
 
 module.exports = router;
