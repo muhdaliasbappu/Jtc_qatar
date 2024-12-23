@@ -1,0 +1,38 @@
+<div class="content-page">
+    <div class="content">
+
+        <!-- Start Content-->
+        <div class="container-fluid">
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="page-title-box">
+                        <h4 class="page-title">Project Search</h4>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mb-2 justify-content-center">
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <form id="employeeForm" action="/admin/project-report-d-d" method="POST">
+                                <div class="form-group" style="margin-bottom: 20px;">                                 
+                                    <label style="font-weight: bold;">Start Month:</label>
+                                    <input type="month" name="startmonth" class="form-control" required>
+                                </div>
+                                <div class="form-group" style="margin-bottom: 20px;">
+                                    <label style="font-weight: bold;">End Month:</label>
+                                    <input type="month" name="endmonth" class="form-control" required>
+                                </div>
+                                <button type="submit" id="submit" class="btn btn-primary">Submit</button>
+                            </form>
+                        </div>
+                    </div> <!-- end card-->
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
