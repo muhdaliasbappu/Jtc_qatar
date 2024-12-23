@@ -937,9 +937,9 @@ router.post('/printprojectreport', async (req, res) => {
     
         if (prevStatus === 'open') {
           console.log(`Previous month's salary (${prevMonthStr}) is still open.`);
-          warningMessage = `Previous month's salary (${prevMonthStr}) is not closed.`;
+          warningMessage = `Previous month's salary (${prevMonthStr}) is not Saved.`;
         } else if (prevStatus === 'close') {
-          console.log(`Previous month's salary (${prevMonthStr}) is already closed.`);
+          console.log(`Previous month's salary (${prevMonthStr}) is already Saved.`);
         } else {
           console.log(`No salary report found for previous month (${prevMonthStr}). Treating as closed.`);
           // Depending on your business logic, you might want to handle this differently
