@@ -57,11 +57,11 @@
               {{#if (eq salarystatus "open")}}
                 <div class="page-title-right">
                   <!-- Instead of a direct form submit, we show a button that triggers admin auth modal -->
-                  <button class="input-group-text btn btn-success" onclick="showAdminAuthModal()">Salary Close</button>
+                  <button class="input-group-text btn btn-success" onclick="showAdminAuthModal()">Save</button>
                 </div>
               {{else}}
                 <div class="page-title-right">
-                  <button class="input-group-text btn btn-light" disabled>Salary Closed</button>
+                  <button class="input-group-text btn btn-light" disabled>Saved</button>
                 </div>
               {{/if}}
             {{/if}}
@@ -175,7 +175,7 @@
     <label for="password">Admin Password:</label>
     <input type="password" id="password" name="password" required>
 
-    <button type="submit" class="btn btn-primary">Authenticate and Close Salary</button>
+    <button type="submit" class="btn btn-primary">Authenticate and Save Salary</button>
     <button type="button" class="btn btn-secondary" onclick="closeAdminAuthModal()">Cancel</button>
   </form>
 </div>
@@ -213,7 +213,7 @@
         fstore = fstoreInput.value;
       }
 
-      console.log("Fstore before sending:", fstore);
+
 
       try {
         if (!fstore) {
@@ -231,9 +231,9 @@
 
         if (result.success) {
           if (result.warning) {
-            alert(`Salary closed successfully!\n${result.warning}`);
+            alert(`Salary Saved successfully!\n${result.warning}`);
           } else {
-            alert("Salary closed successfully!");
+            alert("Salary Saved successfully!");
           }
           window.location.href = `/admin/search-report?searchdate=${searchdate}&status=success`;
         } else {
