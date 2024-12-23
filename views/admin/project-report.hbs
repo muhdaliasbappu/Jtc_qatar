@@ -44,6 +44,19 @@
               <div class="tab-content">
                 <div class="tab-pane show active" id="scroll-horizontal-preview">
                   <div class="board">
+                    <!-- Display warnings if any -->
+                    {{#if failedMonths}}
+                      <div class="alert alert-warning">
+                        <strong>Warning:</strong> Failed to generate reports for the following month(s): {{failedMonths.join ", "}}.
+                      </div>
+                    {{/if}}
+
+                    {{#if skippedProjects}}
+                      <div class="alert alert-info">
+                        <strong>Note:</strong> The following project(s) were skipped due to incomplete data: {{skippedProjects.join ", "}}.
+                      </div>
+                    {{/if}}
+
                     <table class="table table-bordered table-centered mb-0">
                       <thead>
                         <tr>
