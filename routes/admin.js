@@ -10,12 +10,14 @@ const async = require("hbs/lib/async");
 const { search } = require("./users");
 var DayView = require('../modules/DayView')
 var ProjectReport = require('../modules/functions')
-
 var allprojectreport = require('../modules/project-report')
 const puppeteer = require('puppeteer');
 //var addcron = require('../modules/notcron')
 var salarycalc = require('../modules/salarycalc')
 const cron = require('node-cron')
+const dayjs = require('dayjs'); // For date manipulations
+const customParseFormat = require('dayjs/plugin/customParseFormat');
+dayjs.extend(customParseFormat);
 
 
 //admin login
@@ -772,12 +774,6 @@ router.get("/project-search/",  (req, res) => {
   }
 });
 
-
-
-// routes/admin.js
-
-
-
 router.post( "/project-search", async (req, res) => {
  
     try {
@@ -880,84 +876,7 @@ router.post('/printprojectreport', async (req, res) => {
         res.render("./admin/project-reportsearch", { admin: true});
       }
     });
-    router.post("/project-report-d-d", async (req, res) => {
-      let dates = {
-        date1: req.body.startdate,
-        date2: req.body.enddate
-    };
     
-        let employeetype = ['Own Labour', 'Hired Labour (Monthly)', 'Hired Labour (Hourly)', 'Own Staff (Projects)', 'Hired Staff (Projects)'];
-  
-        let projectimesheets = [];
-        
-      
-        try {
-            let projects = await projectHelpers.getAllproject();
-      
-            for (let i = 0; i < projects.length; i++) {
-              let tempobj = {}
-                  
-                for (let j = 0; j < employeetype.length; j++) {
-                  let report = {}
-                  let projectimesheet = []
-                     projectimesheet = await projectHelpers.projecttimesheetdtd(dates,  projects[i].projectname, employeetype[j]);                           
-                    if (projectimesheet.length > 0) {
-                                  
-                      tempobj.projectname = projects[i].projectname
-                       switch(employeetype[j]){
-                        case 'Own Labour':
-                          report = await allprojectreport.projectreportlabour(projectimesheet, projects[i].projectname)
-                          tempobj.ownlaboursalary = report.totalsalary || 0;
-                          tempobj.ownlabourot = report.otsalary;
-                          break;
-                        case 'Hired Labour (Monthly)':  
-                          report = await allprojectreport.projectreportlabour(projectimesheet, projects[i].projectname)
-                          tempobj.hiredlabourmsalary = report.totalsalary || 0
-                          tempobj.hiredlabourmot =  report.otsalary
-                          break;
-                        case  'Own Staff (Projects)': 
-                          report = await allprojectreport.projectreportstaff(projectimesheet, projects[i].projectname)                  
-                          tempobj.ownstaffsalary = report.totalsalary || 0
-                          break;
-                        case  'Hired Staff (Projects)':  
-                          report = await allprojectreport.projectreportstaff(projectimesheet, projects[i].projectname)
-                          tempobj.hiredstaffsalary = report.totalsalary || 0
-                          break;
-                        case  'Hired Labour (Hourly)':  
-                          report = await allprojectreport.projectreporthourly(projectimesheet, projects[i].projectname)
-                          tempobj.hiredstaffhourly = report.totalsalary || 0
-                          break;  
-                       }                
-                    }
-                }
-                
-                if (Object.keys(tempobj).length !== 0) {
-                  projectimesheets.push(tempobj);
-                }         
-            }
-
-
-            
-             let operationcost = await allprojectreport.projectoperationsdtd(projectimesheets , req.body.startdate, req.body.enddate)
-            
-                for(let g = 0; g < projectimesheets.length; g++){
-                  projectimesheets[g].index = g+1 
-                  projectimesheets[g].operationcost = operationcost[g].operationcost   
-                  projectimesheets[g].overheadcost = operationcost[g].overheadcost  
-                  projectimesheets[g].total = operationcost[g].total  
-                  projectimesheets[g].percentage = operationcost[g].percentage 
-                }
-                
-            let  sumemployeetype = await allprojectreport.sumemployeetype(projectimesheets) 
-            //  sumemployeetype.reqdate = req.body.searchdate;
-            //  sumemployeetype.reqmonth = DayView.getMonthAndYear(req.body.searchdate)
-            
-            res.render("./admin/project-report", { admin: true , projectimesheets , sumemployeetype});
-        } catch (error) {
-            console.error(error);
-            res.status(500).send("Internal Server Error");
-        }
-    });
 
 
     // Schedule Monthly Cron Job
@@ -1068,6 +987,226 @@ router.post('/printprojectreport', async (req, res) => {
         res.status(500).json({ error: "Server error during salary closure." });
       }
     });
+    const getMonthsInRange = (startMonth, endMonth) => {
+      const start = dayjs(startMonth, 'YYYY-MM', true);
+      const end = dayjs(endMonth, 'YYYY-MM', true);
+      const months = [];
+    
+      if (!start.isValid() || !end.isValid()) {
+        throw new Error('Invalid date format. Use YYYY-MM.');
+      }
+    
+      if (start.isAfter(end)) {
+        throw new Error('Start month must be before or equal to end month.');
+      }
+    
+      let current = start.clone();
+      while (current.isBefore(end) || current.isSame(end)) { // Modified condition
+        months.push(current.format('YYYY-MM'));
+        current = current.add(1, 'month');
+      }
+    
+      return months;
+    };
+    
+    // Helper function to aggregate sumemployeetype data
+    const aggregateSumEmployeeType = (accumulator, current) => {
+      return {
+        totalownlaboursalary: accumulator.totalownlaboursalary + (current.totalownlaboursalary || 0),
+        totalhiredlabourmsalary: accumulator.totalhiredlabourmsalary + (current.totalhiredlabourmsalary || 0),
+        totalhiredstaffhourly: accumulator.totalhiredstaffhourly + (current.totalhiredstaffhourly || 0),
+        totalownstaffsalary: accumulator.totalownstaffsalary + (current.totalownstaffsalary || 0),
+        totalhiredstaffsalary: accumulator.totalhiredstaffsalary + (current.totalhiredstaffsalary || 0),
+        totaloperationcost: accumulator.totaloperationcost + (current.totaloperationcost || 0),
+        totaloverheadcost: accumulator.totaloverheadcost + (current.totaloverheadcost || 0),
+        total: accumulator.total + (current.total || 0),
+        // reqdate and reqmonth can be handled as needed
+      };
+    };
+    
+    // Helper function to aggregate projectimesheets by projectname with validation
+    const aggregateProjectTimeSheets = (projectimesheetsArray) => {
+      const aggregated = {};
+      const skippedProjects = [];
+    
+      projectimesheetsArray.forEach((project) => {
+        // Validate essential fields
+        if (!project.projectname || typeof project.total !== 'number') {
+          console.warn(`Skipping invalid project entry: ${JSON.stringify(project)}`);
+          skippedProjects.push(project.projectname || 'Unknown Project');
+          return; // Skip this project
+        }
+    
+        const key = project.projectname;
+    
+        if (!aggregated[key]) {
+          // Initialize the project entry with all necessary fields, defaulting to 0 if missing
+          aggregated[key] = {
+            projectname: project.projectname,
+            ownlaboursalary: typeof project.ownlaboursalary === 'number' ? project.ownlaboursalary : 0,
+            ownlabourot: typeof project.ownlabourot === 'number' ? project.ownlabourot : 0,
+            hiredlabourmsalary: typeof project.hiredlabourmsalary === 'number' ? project.hiredlabourmsalary : 0,
+            hiredlabourmot: typeof project.hiredlabourmot === 'number' ? project.hiredlabourmot : 0,
+            hiredstaffhourly: typeof project.hiredstaffhourly === 'number' ? project.hiredstaffhourly : 0,
+            ownstaffsalary: typeof project.ownstaffsalary === 'number' ? project.ownstaffsalary : 0,
+            hiredstaffsalary: typeof project.hiredstaffsalary === 'number' ? project.hiredstaffsalary : 0,
+            operationcost: typeof project.operationcost === 'number' ? project.operationcost : 0,
+            overheadcost: typeof project.overheadcost === 'number' ? project.overheadcost : 0,
+            total: typeof project.total === 'number' ? project.total : 0,
+            index: project.index, // Assuming 'index' is consistent across projects
+          };
+        } else {
+          // Sum numerical fields, excluding 'projectname', 'index', and 'percentage'
+          const fieldsToSum = [
+            'ownlaboursalary',
+            'ownlabourot',
+            'hiredlabourmsalary',
+            'hiredlabourmot',
+            'hiredstaffhourly',
+            'ownstaffsalary',
+            'hiredstaffsalary',
+            'operationcost',
+            'overheadcost',
+            'total',
+          ];
+    
+          fieldsToSum.forEach((field) => {
+            aggregated[key][field] += typeof project[field] === 'number' ? project[field] : 0;
+          });
+    
+          // Optionally, you can handle 'index' if needed (e.g., keep the first index)
+        }
+      });
+    
+      // Convert the aggregated object back to an array
+      const aggregatedArray = Object.values(aggregated);
+    
+      return { aggregatedArray, skippedProjects };
+    };
+    
+    // Helper function to recalculate percentages
+    const recalculatePercentages = (projectimesheets, sumemployeetypeTotal) => {
+      projectimesheets.forEach((project) => {
+        if (sumemployeetypeTotal > 0) {
+          project.percentage = parseFloat(((project.total / sumemployeetypeTotal) * 100).toFixed(2));
+        } else {
+          project.percentage = 0;
+        }
+      });
+    };
+    
+    // POST route to handle project report for a date range
+    router.post("/project-report-d-d", async (req, res) => {
+      const { startmonth, endmonth } = req.body; // Expected format: "YYYY-MM"
+    
+      if (!startmonth || !endmonth) {
+        return res.status(400).send("Start month and end month are required.");
+      }
+    
+      let months;
+      try {
+        months = getMonthsInRange(startmonth, endmonth);
+      } catch (error) {
+        return res.status(400).send(error.message);
+      }
+    
+      let aggregatedProjectimesheets = [];
+      let aggregatedSumEmployeeType = {
+        totalownlaboursalary: 0,
+        totalhiredlabourmsalary: 0,
+        totalhiredstaffhourly: 0,
+        totalownstaffsalary: 0,
+        totalhiredstaffsalary: 0,
+        totaloperationcost: 0,
+        totaloverheadcost: 0,
+        total: 0,
+        // reqdate and reqmonth can be handled as needed
+      };
+    
+      // To keep track of months with issues
+      const failedMonths = [];
+    
+      try {
+        for (const month of months) {
+          // Fetch existing report
+          let report = await reportHelpers.getProjectReportByDate(month);
+    
+          // If report does not exist, generate and store it
+          if (!report) {
+            try {
+              report = await ProjectReport.ProjectReport(month);
+              
+              if (!report || !report.projectimesheets || !report.sumemployeetype) {
+                console.error(`Invalid report data generated for month: ${month}`);
+                failedMonths.push(month);
+                continue; // Skip to the next month
+              }
+    
+              await reportHelpers.addProjectReportDataIfOpen(
+                month,
+                report.projectimesheets,
+                report.sumemployeetype
+              );
+            } catch (error) {
+              console.error(`Error generating or saving report for month ${month}:`, error);
+              failedMonths.push(month);
+              continue; // Skip to the next month
+            }
+          }
+    
+          // Accumulate projectimesheets
+          if (report.projectimesheets && Array.isArray(report.projectimesheets)) {
+            aggregatedProjectimesheets = aggregatedProjectimesheets.concat(report.projectimesheets);
+          } else {
+            console.warn(`Missing or invalid projectimesheets for month: ${month}`);
+            failedMonths.push(month);
+            continue; // Skip to the next month
+          }
+    
+          // Accumulate sumemployeetype
+          if (report.sumemployeetype) {
+            aggregatedSumEmployeeType = aggregateSumEmployeeType(aggregatedSumEmployeeType, report.sumemployeetype);
+          } else {
+            console.warn(`Missing sumemployeetype for month: ${month}`);
+            failedMonths.push(month);
+            continue; // Skip to the next month
+          }
+        }
+    
+        // Check if all months failed
+        if (failedMonths.length === months.length) {
+          return res.status(500).send("Failed to generate reports for all selected months.");
+        }
+    
+        // Aggregate projectimesheets by projectname with validation
+        const { aggregatedArray: consolidatedProjectimesheets, skippedProjects } = aggregateProjectTimeSheets(aggregatedProjectimesheets);
+    
+        // Recalculate percentages based on the aggregated totals
+        recalculatePercentages(consolidatedProjectimesheets, aggregatedSumEmployeeType.total);
+    
+        // Prepare response data
+        const responseData = {
+          admin: true,
+          projectimesheets: consolidatedProjectimesheets,
+          sumemployeetype: aggregatedSumEmployeeType,
+        };
+    
+        // Inform the user about any failed months or skipped projects
+        if (failedMonths.length > 0 || skippedProjects.length > 0) {
+          responseData.failedMonths = failedMonths;
+          responseData.skippedProjects = skippedProjects;
+          // Optionally, handle this in the rendered view (e.g., display warnings)
+        }
+    
+        res.render("./admin/project-report", responseData);
+      } catch (error) {
+        console.error("Error generating consolidated project report:", error);
+        res.status(500).send("Internal Server Error");
+      }
+    });
+    
+
+
 
 
 module.exports = router;
