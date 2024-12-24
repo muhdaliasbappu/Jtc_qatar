@@ -1,35 +1,155 @@
-  
-            <div class="content-page">
-                <div class="content">
+ <div class="content-page">
+      <div class="content">
+        <!-- Start Content-->
+        <div class="container-fluid">
 
-                    <!-- Start Content-->
-                    <div class="container-fluid">
-   <div class="row justify-content-center">
-                    <div class="col-xl-10">
-
-                        <div class="text-center">
-                       
-                            <h3 class="mt-4">Site is Under Maintenance</h3>
-                            <p class="text-muted">We're making the system more awesome. We'll be back shortly.</p>
-
-                           
-                        </div> <!-- end /.text-center-->
-
-                    </div> <!-- end col -->
-                </div>
-                        
-                    </div>
-                    <!-- container -->
-
-                </div>
-                <!-- content -->
-
-               
-
+          <!-- Title Row -->
+          <div class="row">
+            <div class="col-12">
+              <div class="page-title-box">
+                <h4 class="page-title">Dashboard</h4>
+              </div>
             </div>
+          </div>
 
-            <!-- ============================================================== -->
-            <!-- End Page content -->
-            <!-- ============================================================== -->
+          <!-- Main Row -->
+          <div class="row">
+            <!-- Left Column -->
+            <div class="col-xl-3 col-lg-4">
+              <div class="card tilebox-one">
+                <div class="card-body">
+                  <i class='uil uil-users-alt float-end'></i>
+                  <h6 class="text-uppercase mt-0">Working Employees</h6>
+                  <h2 class="my-2" id="active-users-count">121</h2>
+                </div>
+              </div>
+
+              <div class="card tilebox-one">
+                <div class="card-body">
+                  <i class='uil uil-window-restore float-end'></i>
+                  <h6 class="text-uppercase mt-0">Active Projects</h6>
+                  <h2 class="my-2" id="active-views-count">4</h2>
+                </div>
+              </div>
+
+              <div class="card cta-box overflow-hidden">
+                <div class="card-body">
+                  <div class="d-flex align-items-center">
+                    <div>
+                      <h3 class="m-0 fw-normal cta-box-title">
+                        Track <b>Your</b> <br>Expense
+                        <i class="mdi mdi-arrow-right"></i>
+                      </h3>
+                    </div>
+                    
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- End Left Column -->
+
+            <!-- Right Column -->
+            <div class="col-xl-9 col-lg-8">
+          <div class="card card-h-100">
+            <div class="col-12">
+              <div class="card">
+                <div class="card-header align-items-center d-sm-flex justify-content-sm-between">
+                  <h4 class="header-title mb-0">Project Cost Overview</h4>
+                  <ul class="nav nav-pills" id="pills-tab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                      <span>Last 12 Months</span>
+                    </li>
+                  </ul>
+                </div>
+                <div class="card-body pt-0">
+                  <div class="tab-content" id="pills-tabContent">
+                    <div class="tab-pane fade show active" id="month-status" role="tabpanel">
+                      <div dir="ltr">
+                        <!-- The container for ApexCharts -->
+                        <div id="month-balance-chart" class="apex-charts"style="height: 350px;" data-colors="#0acf97"></div>
+                      </div>
+                    </div>  
+                  </div>
+                </div>
+              </div> <!-- end card -->
+            </div>
+          </div>
+        </div>
+          </div>
+          <!-- End row -->
+          
+
+        </div>
+        <!-- container -->
+      </div>
+      <!-- content -->
+    </div>
 
 
+<script>
+  // 1) Convert your server-side data into JavaScript arrays/objects.
+  //    Using Handlebars' JSON helper ({{{json}}}) so it's not escaped.
+  var categories = {{{json categories}}}; // e.g. ["Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov"]
+  var data = {{{json data}}};             // e.g. [0,0,0,0,503,1213,407,0,0,0]
+
+  console.log("Categories from server:", categories);
+  console.log("Data from server:", data);
+
+  // 2) ApexCharts configuration
+  var optionsMonth = {
+    chart: {
+      height: 350,
+      type: 'line',
+      toolbar: { show: false }
+    },
+    series: [
+      {
+        name: 'Project Cost',
+        data: data
+      }
+    ],
+    xaxis: {
+      categories: categories
+    },
+    yaxis: {
+      labels: {
+        formatter: function (val) {
+          return 'QAR ' + val;
+        }
+      }
+    },
+    tooltip: {
+      y: {
+        formatter: function (val) {
+          return 'QAR ' + val;
+        }
+      }
+    }
+  };
+
+  // 3) Initialize and render the chart
+  var monthChart = new ApexCharts(
+    document.querySelector("#month-balance-chart"), 
+    optionsMonth
+  );
+  monthChart.render();
+
+  // 4) Listen for nav toggle clicks (assuming your toggle has id="navToggle")
+  const navToggle = document.getElementById('navToggle');
+
+  if (navToggle) {
+    navToggle.addEventListener('click', () => {
+      console.log("Nav toggle clicked");
+
+      // Optionally wait for the nav animation to complete, e.g. 300ms
+      setTimeout(() => {
+        console.log("Resizing chart after nav toggle");
+        // monthChart.resize() often works; or dispatch a window resize event:
+        monthChart.resize();
+        // window.dispatchEvent(new Event('resize'));
+      }, 300);
+    });
+  } else {
+    console.warn("No element found with id='navToggle'. Cannot attach event listener.");
+  }
+</script>
