@@ -13,6 +13,7 @@ const puppeteer = require('puppeteer');
 var salarycalc = require('./salarycalc')
 const cron = require('node-cron')
 const dayjs = require('dayjs');
+const e = require("express");
 
 // For month abbreviations; adjust if you need full names or different locale
 const MONTH_NAMES = ['Jan','Feb','Mar','Apr','May','Jun',
@@ -172,7 +173,27 @@ getProjectReportTotalsForLast12Months: async()=> {
     throw error;
   }
 
+}, 
+getCounts: () => {
+  let count = {}
+  employeHelpers.getWorkingEmployeeCount()
+    .then((countE) => {
+        count.workingemployees = countE
+    })
+    .catch((error) => {
+        console.error("Error fetching count:", error);
+    });
+    projectHelpers.getOngoingProjectCount()
+    .then((countP) => {
+     count.activeProjects = countP
+    })
+    .catch((error) => {
+        console.error("Error fetching count:", error);
+    });
+  return count
+  
 },
+
 
 
 
