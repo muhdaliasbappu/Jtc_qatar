@@ -57,6 +57,21 @@ module.exports = {
                 resolve(response)
             })
         })
+    },
+    getWorkingEmployeeCount: () => {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const count = await db.get()
+                    .collection('employee')
+                    .countDocuments({ Employeestatus: "Working" }); // Filter by Employeestatus "Working"
+                
+                resolve(count); // Return the count
+            } catch (error) {
+                console.error("Error fetching working employee count:", error);
+                reject(error); // Reject the promise if there’s an error
+            }
+        });
     }
+    
 
 }
