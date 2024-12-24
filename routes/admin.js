@@ -48,18 +48,32 @@ router.get("/logout", (req, res) => {
 });
 
 
+// routes/admin.js (or your relevant routes file)
 
-router.get("/dashboard",    function (req, res, next) {
-  let admin = req.session.user;
-// await userHelpers.closeSalaryStatusForMonth('2024-08')
+// routes/admin.js
 
-
-//  await reportHelpers.createMonthlySalaryReportsForYear()
-  
-      res.render("./admin/dashboard", { admin: true});
+router.get("/dashboard", async function (req, res, next) {
+  try {
+    let admin = req.session.user;
     
-  
+    // Suppose this returns { categories: [...], data: [...] }
+    const reportData = await ProjectReport.getProjectReportTotalsForLast12Months();
+    console.log('Categories:', reportData.categories);
+console.log('Data:', reportData.data);
+
+
+    res.render("./admin/dashboard", {
+      admin: true,
+      categories: reportData.categories, 
+      data: reportData.data,
+    });
+  } catch (error) {
+    console.error("Error in /dashboard route:", error);
+    return res.status(500).send("Internal Server Error");
+  }
 });
+
+
 //employee list
 
 router.get("/employee", function (req, res, next) {
