@@ -58,14 +58,13 @@ router.get("/dashboard", async function (req, res, next) {
     
     // Suppose this returns { categories: [...], data: [...] }
     const reportData = await ProjectReport.getProjectReportTotalsForLast12Months();
-    console.log('Categories:', reportData.categories);
-console.log('Data:', reportData.data);
-
+    let counts = await ProjectReport.getCounts();
 
     res.render("./admin/dashboard", {
       admin: true,
       categories: reportData.categories, 
       data: reportData.data,
+      counts
     });
   } catch (error) {
     console.error("Error in /dashboard route:", error);
