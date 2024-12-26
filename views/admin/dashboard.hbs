@@ -63,19 +63,127 @@
                 </div>
                 <div class="card-body pt-0">
                   <div class="tab-content" id="pills-tabContent">
-                    <div class="tab-pane fade show active" id="month-status" role="tabpanel">
+                    <div class="tab-pane fade show active" id="month-status" role="tabpanel" aria-labelledby="day-status-tab">
                       <div dir="ltr">
                         <!-- The container for ApexCharts -->
-                        <div id="month-balance-chart" class="apex-charts"style="height: 350px;" data-colors="#0acf97"></div>
+                        <div id="month-balance-chart" class="apex-charts" data-colors="#0acf97"></div>
                       </div>
                     </div>  
                   </div>
                 </div>
+                
               </div> <!-- end card -->
             </div>
           </div>
         </div>
           </div>
+          {{!-- <div class="row">
+                            
+    
+    <div class="col-xxl-6">
+        <div class="card card-h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h4 class="header-title">Project Overvieew</h4>
+                <div class="dropdown">
+                    <a href="#" class="dropdown-toggle arrow-none card-drop" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="mdi mdi-dots-vertical"></i>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-end">
+                        <!-- item-->
+                        <a href="javascript:void(0);" class="dropdown-item">Overall</a>
+                        <!-- item-->
+                        <a href="javascript:void(0);" class="dropdown-item">Last Year</a>
+                        <!-- item-->
+                        <a href="javascript:void(0);" class="dropdown-item">Last 6 Months</a>
+                        <!-- item-->
+                        <a href="javascript:void(0);" class="dropdown-item">Last Month</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-body pt-0">
+                <div class="row align-items-center">
+                    <div class="col-md-6 order-2 order-md-1">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="flex-shrink-0">
+                                <i class="mdi mdi-checkbox-blank-circle widget-icon rounded-circle bg-primary-lighten text-primary"></i>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h5 class="fw-semibold mt-0 mb-1">Product Design</h5>
+                                <ul class="list-inline mb-0 text-muted">
+                                    <li class="list-inline-item"><b>26</b> Total Projects</li>
+                                    <li class="list-inline-item"><i class="mdi mdi-circle-small"></i></li>
+                                    <li class="list-inline-item"><b>4</b> Employees</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="flex-shrink-0">
+                                <i class="mdi mdi-checkbox-blank-circle widget-icon rounded-circle bg-danger-lighten text-danger"></i>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h5 class="fw-semibold mt-0 mb-1">Web Development</h5>
+                                <ul class="list-inline mb-0 text-muted">
+                                    <li class="list-inline-item"><b>30</b> Total Projects</li>
+                                    <li class="list-inline-item"><i class="mdi mdi-circle-small"></i></li>
+                                    <li class="list-inline-item"><b>5</b> Employees</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="flex-shrink-0">
+                                <i class="mdi mdi-checkbox-blank-circle widget-icon rounded-circle bg-success-lighten text-success"></i>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h5 class="fw-semibold mt-0 mb-1">Illustration Design</h5>
+                                <ul class="list-inline mb-0 text-muted">
+                                    <li class="list-inline-item"><b>12</b> Total Projects</li>
+                                    <li class="list-inline-item"><i class="mdi mdi-circle-small"></i></li>
+                                    <li class="list-inline-item"><b>3</b> Employees</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="d-flex align-items-center">
+                            <div class="flex-shrink-0">
+                                <i class="mdi mdi-checkbox-blank-circle widget-icon rounded-circle bg-warning-lighten text-warning"></i>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h5 class="fw-semibold mt-0 mb-1">UI/UX Design</h5>
+                                <ul class="list-inline mb-0 text-muted">
+                                    <li class="list-inline-item"><b>8</b> Total Projects</li>
+                                    <li class="list-inline-item"><i class="mdi mdi-circle-small"></i></li>
+                                    <li class="list-inline-item"><b>4</b> Employees</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 order-1 order-md-2">
+                        <div class="mb-3 mb-md-0">
+                            <div id="project-overview-chart" class="apex-charts" data-colors="#727cf5,#ff679b,#0acf97,#ffbc00"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-6">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="header-title">Simple Pie Chart</h4>
+                <div dir="ltr">
+                    <div id="simple-pie" class="apex-charts" data-colors="#727cf5,#6c757d,#0acf97,#fa5c7c,#e3eaef"></div>
+                </div>
+            </div>
+            <!-- end card body-->
+        </div>
+        <!-- end card -->
+    </div>
+    <!-- end col-->
+</div> --}}
           <!-- End row -->
           
 
@@ -84,72 +192,12 @@
       </div>
       <!-- content -->
     </div>
-
-
 <script>
-  // 1) Convert your server-side data into JavaScript arrays/objects.
-  //    Using Handlebars' JSON helper ({{{json}}}) so it's not escaped.
-  var categories = {{{json categories}}}; // e.g. ["Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov"]
-  var data = {{{json data}}};             // e.g. [0,0,0,0,503,1213,407,0,0,0]
 
-  console.log("Categories from server:", categories);
-  console.log("Data from server:", data);
-
-  // 2) ApexCharts configuration
-  var optionsMonth = {
-    chart: {
-      height: 350,
-      type: 'line',
-      toolbar: { show: false }
-    },
-    series: [
-      {
-        name: 'Project Cost',
-        data: data
-      }
-    ],
-    xaxis: {
-      categories: categories
-    },
-    yaxis: {
-      labels: {
-        formatter: function (val) {
-          return 'QAR ' + val;
-        }
-      }
-    },
-    tooltip: {
-      y: {
-        formatter: function (val) {
-          return 'QAR ' + val;
-        }
-      }
-    }
-  };
-
-  // 3) Initialize and render the chart
-  var monthChart = new ApexCharts(
-    document.querySelector("#month-balance-chart"), 
-    optionsMonth
-  );
-  monthChart.render();
-
-  // 4) Listen for nav toggle clicks (assuming your toggle has id="navToggle")
-  const navToggle = document.getElementById('navToggle');
-
-  if (navToggle) {
-    navToggle.addEventListener('click', () => {
-      console.log("Nav toggle clicked");
-
-      // Optionally wait for the nav animation to complete, e.g. 300ms
-      setTimeout(() => {
-        console.log("Resizing chart after nav toggle");
-        // monthChart.resize() often works; or dispatch a window resize event:
-        monthChart.resize();
-        // window.dispatchEvent(new Event('resize'));
-      }, 300);
-    });
-  } else {
-    console.warn("No element found with id='navToggle'. Cannot attach event listener.");
-  }
+    var reportData = {
+      categories: {{{ json categories }}},
+      data: {{{ json data }}}
+    };
 </script>
+
+
