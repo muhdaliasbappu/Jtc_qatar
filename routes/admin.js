@@ -25,21 +25,21 @@ router.get("/create", function (req, res, next) {
 
 });
 
-router.post("/create", async (req, res) => {
-  try {
-    const response = await adminHelpers.createAdmin(req.body);
-    if (response.status) {
-      // Admin created successfully
-      res.status(201).send("Admin created successfully");
-    } else {
-      // Could not create admin (maybe username is taken, etc.)
-      res.status(400).send(response.message || "Error creating admin");
-    }
-  } catch (error) {
-    console.error(error);
-    res.status(500).send("Internal Server Error");
-  }
-});
+// router.post("/create", async (req, res) => {
+//   try {
+//     const response = await adminHelpers.createAdmin(req.body);
+//     if (response.status) {
+//       // Admin created successfully
+//       res.status(201).send("Admin created successfully");
+//     } else {
+//       // Could not create admin (maybe username is taken, etc.)
+//       res.status(400).send(response.message || "Error creating admin");
+//     }
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).send("Internal Server Error");
+//   }
+// });
 
 //admin login
 
