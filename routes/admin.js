@@ -18,7 +18,28 @@ const cron = require('node-cron')
 const dayjs = require('dayjs'); // For date manipulations
 const customParseFormat = require('dayjs/plugin/customParseFormat');
 dayjs.extend(customParseFormat);
+router.get("/create", function (req, res, next) {
+  
+  res.render('admin/create');
 
+
+});
+
+router.post("/create", async (req, res) => {
+  try {
+    const response = await adminHelpers.createAdmin(req.body);
+    if (response.status) {
+      // Admin created successfully
+      res.status(201).send("Admin created successfully");
+    } else {
+      // Could not create admin (maybe username is taken, etc.)
+      res.status(400).send(response.message || "Error creating admin");
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Internal Server Error");
+  }
+});
 
 //admin login
 
@@ -29,17 +50,20 @@ router.get("/", function (req, res, next) {
 });
 //post login
 
-router.post("/", (req, res) => {
-  adminHelpers.doLogin(req.body).then((response) => {
-    if (response.status) {
-      req.session.user = response.admin;
-      req.session.user = true;
-      res.redirect("/admin/dashboard");
-    } else {
-      res.redirect("/");
-    }
-  });
+router.post("/", async (req, res) => {
+  const response = await adminHelpers.doLogin(req.body);
+  if (response.status) {
+    // Store admin object in session or do whatever you need
+    req.session.user = response.admin;
+    req.session.user = true;
+    // Redirect to dashboard or wherever
+    res.redirect("/admin/dashboard");
+  } else {
+    // Login failed, redirect back or show an error
+    res.redirect("/admin");
+  }
 });
+
 
 // logout
 router.get("/logout", (req, res) => {
@@ -52,25 +76,28 @@ router.get("/logout", (req, res) => {
 
 // routes/admin.js
 
+// routes/admin.js
 router.get("/dashboard", async function (req, res, next) {
   try {
     let admin = req.session.user;
-    
-    // Suppose this returns { categories: [...], data: [...] }
-    const reportData = await ProjectReport.getProjectReportTotalsForLast12Months();
-    let counts = await ProjectReport.getCounts();
 
+    const reportData = await ProjectReport.getProjectReportTotalsForLast12Months();
+    const counts = await ProjectReport.getCounts();
+
+    // Render your view
     res.render("./admin/dashboard", {
       admin: true,
-      categories: reportData.categories, 
-      data: reportData.data,
-      counts
+      counts,
+      // possibly embed categories, data into the template too
+      categories: reportData.categories,
+      data: reportData.data
     });
   } catch (error) {
     console.error("Error in /dashboard route:", error);
     return res.status(500).send("Internal Server Error");
   }
 });
+
 
 
 //employee list
@@ -267,22 +294,49 @@ router.get("/edit-admin", async function (req, res) {
   }
 });
 
-router.post("/admin-dlogin", (req, res) => {
-  adminHelpers.doLogin(req.body).then((response) => {
+router.post("/admin-dlogin", async (req, res) => {
+  try {
+    // Call your login helper
+    const response = await adminHelpers.doLogin(req.body);
+    
     if (response.status) {
-      req.session.adminuser = response.admin;
-      req.session.adminuser = true;
-      res.redirect("/admin/edit-admin");
+      
+      let sadmin = await adminHelpers.getadminDetails();
+
+    res.render("admin/edit-admin", { admin: true, sadmin });        // redirect to the edit-admin page
     } else {
+      // If login fails, perhaps set an error message and redirect to login again
+      req.session.loginError = "Invalid credentials. Please try again.";
       res.redirect("/admin/admin-dlogin");
     }
-  });
+  } catch (error) {
+    console.error(error);
+    // Handle unexpected errors
+    res.status(500).send("Internal Server Error");
+  }
 });
-router.post("/edit-admin/:id", (req, res) => {
-  adminHelpers.updateadmin(req.params.id, req.body).then(() => {
-    res.redirect("/admin/employee/");
-  });
+
+
+router.post("/edit-admin/:id", async (req, res) => {
+  try {
+    const adminId = req.params.id;
+    const adminDetails = req.body;
+
+    const response = await adminHelpers.updateadmin(adminId, adminDetails);
+    if (response.status) {
+      // Set a success message in the session
+      warningMessage = `Admin Credentials Reseted successfully!`;
+      req.session.destroy();
+      res.redirect("/admin");
+    } else {
+      res.status(400).send("Failed to update admin details");
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Internal Server Error");
+  }
 });
+
 
 //  datasheet
 router.get("/datasheet", function (req, res) {
@@ -915,7 +969,6 @@ router.post('/printprojectreport', async (req, res) => {
           return res.status(401).json({ error: "Invalid admin credentials" });
         }
     
-        console.log(`Admin ${username} authenticated successfully.`);
     
         // 2. Parse and validate Fstore object
         let fstoreObj;
@@ -941,7 +994,7 @@ router.post('/printprojectreport', async (req, res) => {
     
         const prevMonthStr = `${year}-${String(month).padStart(2, '0')}`;
     
-        console.log(`Checking salary status for previous month: ${prevMonthStr}`);
+
     
         // 4. Check the previous month's salary status
         const prevStatus = await reportHelpers.getSalaryStatusByDate(prevMonthStr);
