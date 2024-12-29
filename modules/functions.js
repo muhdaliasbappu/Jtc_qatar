@@ -192,7 +192,7 @@ getCounts: () => {
   return count
   
 },
-reportForDashboard : async () => {
+ reportForDashboard : async () => {
   const currentMonth = new Date();
   const lastMonth = new Date(currentMonth);
   lastMonth.setMonth(currentMonth.getMonth() - 1);
@@ -219,22 +219,22 @@ reportForDashboard : async () => {
 
   try {
       // Fetch all projects
-      const projects = await projectHelpers.getAllproject()
+      const projects = await projectHelpers.getAllproject();
 
       for (const project of projects) {
           let projectReports = [];
 
           if (project.projectstatus === "Ongoing") {
               // Fetch reports for ongoing projects by their project name across all months
-              const allMonths = await getMonthsInRange("2024-01", currentMonthStr); // Assuming reports exist from 2020 onwards
+              const allMonths = await getMonthsInRange("2024-01", currentMonthStr);
               for (const month of allMonths) {
-                const report = await reportHelpers.getProjectReportByDate(month);
-                if (report && Array.isArray(report.projectimesheets) && report.projectimesheets.some((timesheet) => timesheet.projectname === project.projectname)) {
-                    projectReports.push(report);
-                } else {
-                    console.warn(`Invalid or missing data for project '${project.projectname}' in month: ${month}`);
-                }
-            }
+                  const report = await reportHelpers.getProjectReportByDate(month);
+                  if (report && Array.isArray(report.projectimesheets) && report.projectimesheets.some((timesheet) => timesheet.projectname === project.projectname)) {
+                      projectReports.push(report);
+                  } else {
+                      console.warn(`Invalid or missing data for project '${project.projectname}' in month: ${month}`);
+                  }
+              }
           } else {
               // Fetch reports for non-ongoing projects for the last year only
               const lastYearMonths = await getMonthsInRange(lastYearStr + "-01", lastYearStr + "-12");
@@ -283,15 +283,13 @@ reportForDashboard : async () => {
       topProjects.lastSixMonths = sortAndLimitTop7(topProjects.lastSixMonths);
       topProjects.overall = sortAndLimitTop7(topProjects.overall);
 
-      //return topProjects;
-      console.log(topProjects, 'i am here')
+      return topProjects;
   } catch (error) {
       console.error("Error fetching dashboard reports:", error);
       throw new Error("Failed to generate reports for dashboard.");
   }
 },
 }
-
 // Helper function to aggregate project reports
 const aggregateProjectReports = (reports) => {
   return reports.reduce(
@@ -332,7 +330,3 @@ const getMonthsInRange = async (startMonth, endMonth) => {
 
   return months;
 };
-
-
-
-
