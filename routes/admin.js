@@ -56,6 +56,7 @@ router.post("/", async (req, res) => {
     // Store admin object in session or do whatever you need
     req.session.user = response.admin;
     req.session.user = true;
+    
     // Redirect to dashboard or wherever
     res.redirect("/admin/dashboard");
   } else {
@@ -83,6 +84,7 @@ router.get("/dashboard", async function (req, res, next) {
 
     const reportData = await ProjectReport.getProjectReportTotalsForLast12Months();
     const counts = await ProjectReport.getCounts();
+      ProjectReport.reportForDashboard()
 
     // Render your view
     res.render("./admin/dashboard", {
