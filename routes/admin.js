@@ -84,7 +84,7 @@ router.get("/dashboard", async function (req, res, next) {
 
     const reportData = await ProjectReport.getProjectReportTotalsForLast12Months();
     const counts = await ProjectReport.getCounts();
-      ProjectReport.reportForDashboard()
+     // ProjectReport.reportForDashboard()
 
     // Render your view
     res.render("./admin/dashboard", {
