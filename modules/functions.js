@@ -12,7 +12,8 @@ const puppeteer = require('puppeteer');
 var salarycalc = require('./salarycalc')
 const cron = require('node-cron')
 const dayjs = require('dayjs');
-const e = require("express");
+
+
 
 // For month abbreviations; adjust if you need full names or different locale
 const MONTH_NAMES = ['Jan','Feb','Mar','Apr','May','Jun',
@@ -192,148 +193,339 @@ getCounts: () => {
   return count
   
 },
-reportForDashboard : async () => {
-  const currentMonth = new Date();
-  const lastMonth = new Date(currentMonth);
-  lastMonth.setMonth(currentMonth.getMonth() - 1);
 
-  const sixMonthsAgo = new Date(currentMonth);
-  sixMonthsAgo.setMonth(currentMonth.getMonth() - 6);
-
-  const lastYear = new Date(currentMonth);
-  lastYear.setFullYear(currentMonth.getFullYear() - 1);
-
-  const dateFormat = (date) => date.toISOString().slice(0, 7); // YYYY-MM
-
-  const currentMonthStr = dateFormat(currentMonth);
-  const lastMonthStr = dateFormat(lastMonth);
-  const sixMonthsAgoStr = dateFormat(sixMonthsAgo);
-  const lastYearStr = dateFormat(lastYear);
-
-  let topProjects = {
-      currentMonth: [],
-      lastMonth: [],
-      lastSixMonths: [],
-      overall: []
-  };
-
+  getMultiCategoryReports: async()=> {
   try {
-      // Fetch all projects
-      const projects = await projectHelpers.getAllproject();
+    // --------- 1. Current Month ---------
+    const currentMonthStr = dayjs().format("YYYY-MM");
+    const {
+      consolidatedProjectimesheets: currentMonthProjects,
+      aggregatedSumEmployeeType: currentMonthSum,
+    } = await getAggregatedDataForMonths([currentMonthStr]);
 
-      for (const project of projects) {
-          let projectReports = [];
+    // Sort by total desc, keep top 7
+    currentMonthProjects.sort((a, b) => b.total - a.total);
+    const topCurrentMonthProjects = currentMonthProjects.slice(0, 7);
 
-          if (project.projectstatus === "Ongoing") {
-              // Fetch reports for ongoing projects by their project name across all months
-              const allMonths = await getMonthsInRange("2024-01", currentMonthStr);
-              for (const month of allMonths) {
-                  const report = await reportHelpers.getProjectReportByDate(month);
-                  if (report && Array.isArray(report.projectimesheets) && report.projectimesheets.some((timesheet) => timesheet.projectname === project.projectname)) {
-                      projectReports.push(report);
-                  } else {
-                      console.warn(`Invalid or missing data for project '${project.projectname}' in month: ${month}`);
-                  }
-              }
-          } else {
-              // Fetch reports for non-ongoing projects for the last year only
-              const lastYearMonths = await getMonthsInRange(lastYearStr + "-01", lastYearStr + "-12");
-              for (const month of lastYearMonths) {
-                  const report = await reportHelpers.getProjectReportByDate(month);
-                  if (report && report.projectimesheets.some((timesheet) => timesheet.projectname === project.projectname)) {
-                      projectReports.push(report);
-                  }
-              }
-          }
+    // --------- 2. Last Month ---------
+    const lastMonthStr = dayjs().subtract(1, "month").format("YYYY-MM");
+    const {
+      consolidatedProjectimesheets: lastMonthProjects,
+      aggregatedSumEmployeeType: lastMonthSum,
+    } = await getAggregatedDataForMonths([lastMonthStr]);
 
-          // Aggregate project reports
-          const aggregatedReport = aggregateProjectReports(projectReports);
-          aggregatedReport.projectname = project.projectname;
+    lastMonthProjects.sort((a, b) => b.total - a.total);
+    const topLastMonthProjects = lastMonthProjects.slice(0, 7);
 
-          // Helper function to avoid duplicates
-          const addUniqueProject = (projectArray, project) => {
-              if (!projectArray.some((p) => p.projectname === project.projectname)) {
-                  projectArray.push(project);
-              }
-          };
+    // --------- 3. Last 6 Months ---------
+    // e.g. from 5 months ago up to the current month
+    // (i.e., "month - 5" to "currentMonthStr")
+    const sixMonthsAgo = dayjs().subtract(5, "month");
+    const sixMonthsRange = getMonthsInRange(
+      sixMonthsAgo.format("YYYY-MM"),
+      currentMonthStr
+    );
+    const {
+      consolidatedProjectimesheets: lastSixMonthsProjects,
+      aggregatedSumEmployeeType: lastSixMonthsSum,
+    } = await getAggregatedDataForMonths(sixMonthsRange);
 
-          // Categorize reports into the required periods
-          const isWithinRange = (start, end, date) => date >= start && date <= end;
-          projectReports.forEach((report) => {
-              const reportMonth = report.date;
+    lastSixMonthsProjects.sort((a, b) => b.total - a.total);
+    const topSixMonthsProjects = lastSixMonthsProjects.slice(0, 7);
 
-              if (reportMonth === currentMonthStr) {
-                  addUniqueProject(topProjects.currentMonth, aggregatedReport);
-              }
+    // --------- 4. Overall ---------
+    // "Overall" is not strictly defined; you might decide to fetch
+    // all reports from the earliest date available to the current date,
+    // or from some fixed start. For demo, let's say from "2023-01" to current:
+    const overallMonthsRange = getMonthsInRange("2023-01", currentMonthStr);
+    let {
+      consolidatedProjectimesheets: overallProjects,
+      aggregatedSumEmployeeType: overallSum,
+    } = await getAggregatedDataForMonths(overallMonthsRange);
 
-              if (reportMonth === lastMonthStr) {
-                  addUniqueProject(topProjects.lastMonth, aggregatedReport);
-              }
+    // Filter by projectstatus = "Ongoing"
+    const allProjectsInfo = await projectHelpers.getAllproject();
+    // Suppose allProjectsInfo = [ { projectname, projectstatus, ... }, ... ]
+    const ongoingProjectNames = allProjectsInfo
+      .filter((proj) => proj.projectstatus === "Ongoing")
+      .map((proj) => proj.projectname);
 
-              if (isWithinRange(sixMonthsAgoStr, currentMonthStr, reportMonth)) {
-                  addUniqueProject(topProjects.lastSixMonths, aggregatedReport);
-              }
-          });
+    overallProjects = overallProjects.filter((proj) =>
+      ongoingProjectNames.includes(proj.projectname)
+    );
 
-          // Add to overall only for Ongoing projects (unique only)
-          if (project.projectstatus === "Ongoing") {
-              addUniqueProject(topProjects.overall, aggregatedReport);
-          }
-      }
+    // Re-sort and keep top 7
+    overallProjects.sort((a, b) => b.total - a.total);
+    const topOverallProjects = overallProjects.slice(0, 7);
 
-      // Sort and get top 7 performing projects for each category
-      const sortAndLimitTop7 = (projects) => 
-          projects.sort((a, b) => b.total - a.total).slice(0, 7);
+    // You might also want to recalc the sumemployeetype if you're excluding
+    // some projects. But the problem statement doesn't explicitly say to recalc
+    // the sum for the "Ongoing" filter. If you do want to recalc, you'd need
+    // to sum only the `total` from the ongoing projects, etc.
 
-      topProjects.currentMonth = sortAndLimitTop7(topProjects.currentMonth);
-      topProjects.lastMonth = sortAndLimitTop7(topProjects.lastMonth);
-      topProjects.lastSixMonths = sortAndLimitTop7(topProjects.lastSixMonths);
-      topProjects.overall = sortAndLimitTop7(topProjects.overall);
-
-      return topProjects;
+    return {
+      currentMonth: {
+        projectimesheets: topCurrentMonthProjects,
+        sumemployeetype: currentMonthSum,
+      },
+      lastMonth: {
+        projectimesheets: topLastMonthProjects,
+        sumemployeetype: lastMonthSum,
+      },
+      lastSixMonths: {
+        projectimesheets: topSixMonthsProjects,
+        sumemployeetype: lastSixMonthsSum,
+      },
+      overall: {
+        projectimesheets: topOverallProjects,
+        sumemployeetype: overallSum,
+      },
+    };
   } catch (error) {
-      console.error("Error fetching dashboard reports:", error);
-      throw new Error("Failed to generate reports for dashboard.");
+    console.error("Error fetching multi-category reports:", error);
+    throw error;
   }
 },
-}
-// Helper function to aggregate project reports
-const aggregateProjectReports = (reports) => {
-  return reports.reduce(
-      (acc, report) => {
-          acc.totalownlaboursalary += report.sumemployeetype.totalownlaboursalary || 0;
-          acc.totalhiredlabourmsalary += report.sumemployeetype.totalhiredlabourmsalary || 0;
-          acc.totalhiredstaffhourly += report.sumemployeetype.totalhiredstaffhourly || 0;
-          acc.totalownstaffsalary += report.sumemployeetype.totalownstaffsalary || 0;
-          acc.totalhiredstaffsalary += report.sumemployeetype.totalhiredstaffsalary || 0;
-          acc.totaloperationcost += report.sumemployeetype.totaloperationcost || 0;
-          acc.totaloverheadcost += report.sumemployeetype.totaloverheadcost || 0;
-          acc.total += report.sumemployeetype.total || 0;
-          return acc;
-      },
-      {
-          totalownlaboursalary: 0,
-          totalhiredlabourmsalary: 0,
-          totalhiredstaffhourly: 0,
-          totalownstaffsalary: 0,
-          totalhiredstaffsalary: 0,
-          totaloperationcost: 0,
-          totaloverheadcost: 0,
-          total: 0
-      }
-  );
-};
 
-// Helper function to get months in a range
-const getMonthsInRange = async (startMonth, endMonth) => {
-  const start = new Date(startMonth + "-01");
-  const end = new Date(endMonth + "-01");
+
+}
+
+/**
+ * Helper function to get an array of months (string in "YYYY-MM" format)
+ * from startMonth to endMonth inclusive
+ */
+const getMonthsInRange = (startMonth, endMonth) => {
+  const start = dayjs(startMonth, "YYYY-MM", true);
+  const end = dayjs(endMonth, "YYYY-MM", true);
   const months = [];
 
-  while (start <= end) {
-      months.push(start.toISOString().slice(0, 7));
-      start.setMonth(start.getMonth() + 1);
+  if (!start.isValid() || !end.isValid()) {
+    throw new Error("Invalid date format. Use YYYY-MM.");
   }
 
+  if (start.isAfter(end)) {
+    throw new Error("Start month must be before or equal to end month.");
+  }
+
+  let current = start.clone();
+  while (current.isBefore(end) || current.isSame(end)) {
+    months.push(current.format("YYYY-MM"));
+    current = current.add(1, "month");
+  }
   return months;
 };
+
+/**
+ * Helper function to aggregate sumemployeetype data
+ */
+const aggregateSumEmployeeType = (accumulator, current) => {
+  return {
+    totalownlaboursalary:
+      accumulator.totalownlaboursalary + (current.totalownlaboursalary || 0),
+    totalhiredlabourmsalary:
+      accumulator.totalhiredlabourmsalary + (current.totalhiredlabourmsalary || 0),
+    totalhiredstaffhourly:
+      accumulator.totalhiredstaffhourly + (current.totalhiredstaffhourly || 0),
+    totalownstaffsalary:
+      accumulator.totalownstaffsalary + (current.totalownstaffsalary || 0),
+    totalhiredstaffsalary:
+      accumulator.totalhiredstaffsalary + (current.totalhiredstaffsalary || 0),
+    totaloperationcost:
+      accumulator.totaloperationcost + (current.totaloperationcost || 0),
+    totaloverheadcost:
+      accumulator.totaloverheadcost + (current.totaloverheadcost || 0),
+    total: accumulator.total + (current.total || 0),
+  };
+};
+
+/**
+ * Helper function to aggregate projectimesheets by projectname with validation
+ */
+const aggregateProjectTimeSheets = (projectimesheetsArray) => {
+  const aggregated = {};
+  const skippedProjects = [];
+
+  projectimesheetsArray.forEach((project) => {
+    // Validate essential fields
+    if (!project.projectname || typeof project.total !== "number") {
+      console.warn(
+        `Skipping invalid project entry: ${JSON.stringify(project)}`
+      );
+      skippedProjects.push(project.projectname || "Unknown Project");
+      return; // Skip this project
+    }
+
+    const key = project.projectname;
+    if (!aggregated[key]) {
+      // Initialize the project entry with all necessary fields, defaulting to 0 if missing
+      aggregated[key] = {
+        projectname: project.projectname,
+        ownlaboursalary: project.ownlaboursalary || 0,
+        ownlabourot: project.ownlabourot || 0,
+        hiredlabourmsalary: project.hiredlabourmsalary || 0,
+        hiredlabourmot: project.hiredlabourmot || 0,
+        hiredstaffhourly: project.hiredstaffhourly || 0,
+        ownstaffsalary: project.ownstaffsalary || 0,
+        hiredstaffsalary: project.hiredstaffsalary || 0,
+        operationcost: project.operationcost || 0,
+        overheadcost: project.overheadcost || 0,
+        total: project.total || 0,
+        index: project.index,
+      };
+    } else {
+      // Sum numerical fields, excluding non-numeric
+      const fieldsToSum = [
+        "ownlaboursalary",
+        "ownlabourot",
+        "hiredlabourmsalary",
+        "hiredlabourmot",
+        "hiredstaffhourly",
+        "ownstaffsalary",
+        "hiredstaffsalary",
+        "operationcost",
+        "overheadcost",
+        "total",
+      ];
+      fieldsToSum.forEach((field) => {
+        aggregated[key][field] += project[field] || 0;
+      });
+    }
+  });
+
+  // Convert the aggregated object back to an array
+  const aggregatedArray = Object.values(aggregated);
+  return { aggregatedArray, skippedProjects };
+};
+
+/**
+ * Helper function to recalculate percentages
+ */
+const recalculatePercentages = (projectimesheets, sumemployeetypeTotal) => {
+  projectimesheets.forEach((project) => {
+    if (sumemployeetypeTotal > 0) {
+      project.percentage = parseFloat(
+        ((project.total / sumemployeetypeTotal) * 100).toFixed(2)
+      );
+    } else {
+      project.percentage = 0;
+    }
+  });
+};
+
+/**
+ * Fetch (or generate) a monthly report for a given month.
+ * Returns { projectimesheets, sumemployeetype }
+ */
+const fetchOrGenerateMonthlyReport = async (month) => {
+  let report = await reportHelpers.getProjectReportByDate(month);
+  if (!report) {
+    // If report does not exist, generate and store it
+    try {
+      report = await ProjectReport.ProjectReport(month);
+      if (
+        !report ||
+        !report.projectimesheets ||
+        !report.sumemployeetype
+      ) {
+        throw new Error(`Invalid report data generated for month: ${month}`);
+      }
+      await reportHelpers.addProjectReportDataIfOpen(
+        month,
+        report.projectimesheets,
+        report.sumemployeetype
+      );
+    } catch (error) {
+      console.error(`Error generating or saving report for month ${month}:`, error);
+      // Return empty data so aggregator can skip or handle
+      return { projectimesheets: [], sumemployeetype: null };
+    }
+  }
+  return {
+    projectimesheets: report.projectimesheets || [],
+    sumemployeetype: report.sumemployeetype || null,
+  };
+};
+
+/**
+ * Helper to get aggregated data for a given range of months
+ * Returns { consolidatedProjectimesheets, aggregatedSumEmployeeType, failedMonths, skippedProjects }
+ */
+const getAggregatedDataForMonths = async (months) => {
+  let aggregatedProjectimesheets = [];
+  let aggregatedSumEmployeeType = {
+    totalownlaboursalary: 0,
+    totalhiredlabourmsalary: 0,
+    totalhiredstaffhourly: 0,
+    totalownstaffsalary: 0,
+    totalhiredstaffsalary: 0,
+    totaloperationcost: 0,
+    totaloverheadcost: 0,
+    total: 0,
+  };
+  const failedMonths = [];
+  const allSkippedProjects = [];
+
+  // Fetch and accumulate data for each month
+  for (const month of months) {
+    const { projectimesheets, sumemployeetype } = await fetchOrGenerateMonthlyReport(month);
+
+    // If sumemployeetype is null or projectimesheets is empty, consider it a "failed" month
+    if (!sumemployeetype || !Array.isArray(projectimesheets) || !projectimesheets.length) {
+      failedMonths.push(month);
+      continue;
+    }
+
+    // Accumulate projectimesheets
+    aggregatedProjectimesheets = aggregatedProjectimesheets.concat(projectimesheets);
+
+    // Accumulate sumemployeetype
+    aggregatedSumEmployeeType = aggregateSumEmployeeType(
+      aggregatedSumEmployeeType,
+      sumemployeetype
+    );
+  }
+
+  // Now aggregate the projectimesheets by project name
+  const {
+    aggregatedArray: consolidatedProjectimesheets,
+    skippedProjects,
+  } = aggregateProjectTimeSheets(aggregatedProjectimesheets);
+
+  // Recalculate percentages in the consolidated array
+  recalculatePercentages(consolidatedProjectimesheets, aggregatedSumEmployeeType.total);
+
+  return {
+    consolidatedProjectimesheets,
+    aggregatedSumEmployeeType,
+    failedMonths,
+    skippedProjects,
+  };
+};
+
+/**
+ * Main function to get the "current month", "last month",
+ * "last 6 months", and "overall" reports.
+ *
+ * - Each category only shows top 7 performing projects by total.
+ * - "Overall" report only shows projects where projectstatus = "Ongoing".
+ *
+ * Return format (example):
+ * {
+ *   currentMonth: {
+ *     projectimesheets: [...],
+ *     sumemployeetype: {...},
+ *   },
+ *   lastMonth: {
+ *     projectimesheets: [...],
+ *     sumemployeetype: {...},
+ *   },
+ *   lastSixMonths: {
+ *     projectimesheets: [...],
+ *     sumemployeetype: {...},
+ *   },
+ *   overall: {
+ *     projectimesheets: [...],
+ *     sumemployeetype: {...},
+ *   }
+ * }
+ */
