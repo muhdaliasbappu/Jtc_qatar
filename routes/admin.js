@@ -85,16 +85,17 @@ router.get("/dashboard", async function (req, res, next) {
     const reportData = await ProjectReport.getProjectReportTotalsForLast12Months();
     const counts = await ProjectReport.getCounts();
        let some = await ProjectReport.getMultiCategoryReports();
+    return res.json(some);
     console.log(some)
 
     // Render your view
-    res.render("./admin/dashboard", {
-      admin: true,
-      counts,
-      // possibly embed categories, data into the template too
-      categories: reportData.categories,
-      data: reportData.data
-    });
+    // res.render("./admin/dashboard", {
+    //   admin: true,
+    //   counts,
+    //   // possibly embed categories, data into the template too
+    //   categories: reportData.categories,
+    //   data: reportData.data
+    // });
   } catch (error) {
     console.error("Error in /dashboard route:", error);
     return res.status(500).send("Internal Server Error");
