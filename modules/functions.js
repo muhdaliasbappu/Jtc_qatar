@@ -193,8 +193,16 @@ getCounts: () => {
   return count
   
 },
-
-  getMultiCategoryReports: async()=> {
+/**
+ * Main function to get the "current month", "last month",
+ * "last 6 months", "last year", and "overall" reports.
+ *
+ * - Each category only shows top 7 performing projects by total.
+ * - "Overall" report only shows projects where projectstatus = "Ongoing".
+ *
+ * Returns an object with each category containing 8 separate arrays.
+ */
+getMultiCategoryReports : async () => {
   try {
     // --------- 1. Current Month ---------
     const currentMonthStr = dayjs().format("YYYY-MM");
@@ -204,8 +212,12 @@ getCounts: () => {
     } = await getAggregatedDataForMonths([currentMonthStr]);
 
     // Sort by total desc, keep top 7
-    currentMonthProjects.sort((a, b) => b.total - a.total);
-    const topCurrentMonthProjects = currentMonthProjects.slice(0, 7);
+    const topCurrentMonthProjects = currentMonthProjects
+      .sort((a, b) => b.total - a.total)
+      .slice(0, 7);
+
+    // Transform to 8 separate arrays sorted ascending by total
+    const transformedCurrentMonth = transformTop7Projects(topCurrentMonthProjects);
 
     // --------- 2. Last Month ---------
     const lastMonthStr = dayjs().subtract(1, "month").format("YYYY-MM");
@@ -214,12 +226,14 @@ getCounts: () => {
       aggregatedSumEmployeeType: lastMonthSum,
     } = await getAggregatedDataForMonths([lastMonthStr]);
 
-    lastMonthProjects.sort((a, b) => b.total - a.total);
-    const topLastMonthProjects = lastMonthProjects.slice(0, 7);
+    const topLastMonthProjects = lastMonthProjects
+      .sort((a, b) => b.total - a.total)
+      .slice(0, 7);
+
+    const transformedLastMonth = transformTop7Projects(topLastMonthProjects);
 
     // --------- 3. Last 6 Months ---------
-    // e.g. from 5 months ago up to the current month
-    // (i.e., "month - 5" to "currentMonthStr")
+    // From 5 months ago up to the current month (total 6 months)
     const sixMonthsAgo = dayjs().subtract(5, "month");
     const sixMonthsRange = getMonthsInRange(
       sixMonthsAgo.format("YYYY-MM"),
@@ -230,70 +244,96 @@ getCounts: () => {
       aggregatedSumEmployeeType: lastSixMonthsSum,
     } = await getAggregatedDataForMonths(sixMonthsRange);
 
-    lastSixMonthsProjects.sort((a, b) => b.total - a.total);
-    const topSixMonthsProjects = lastSixMonthsProjects.slice(0, 7);
+    const topSixMonthsProjects = lastSixMonthsProjects
+      .sort((a, b) => b.total - a.total)
+      .slice(0, 7);
 
-    // --------- 4. Overall ---------
-    // "Overall" is not strictly defined; you might decide to fetch
-    // all reports from the earliest date available to the current date,
-    // or from some fixed start. For demo, let's say from "2023-01" to current:
-    const overallMonthsRange = getMonthsInRange("2023-01", currentMonthStr);
+    const transformedLastSixMonths = transformTop7Projects(topSixMonthsProjects);
+
+    // --------- 4. Last Year ---------
+    // Define "last year" as Jan 1 - Dec 31 of the previous calendar year
+    const lastYearStart = dayjs().subtract(1, "year").startOf("year"); // e.g., 2023-01
+    const lastYearEnd = dayjs().subtract(1, "year").endOf("year"); // e.g., 2023-12
+    const lastYearRange = getMonthsInRange(
+      lastYearStart.format("YYYY-MM"),
+      lastYearEnd.format("YYYY-MM")
+    );
+    const {
+      consolidatedProjectimesheets: lastYearProjects,
+      aggregatedSumEmployeeType: lastYearSum,
+    } = await getAggregatedDataForMonths(lastYearRange);
+
+    const topLastYearProjects = lastYearProjects
+      .sort((a, b) => b.total - a.total)
+      .slice(0, 7);
+
+    const transformedLastYear = transformTop7Projects(topLastYearProjects);
+
+    // --------- 5. Overall ---------
+    // Define "overall" as from "2023-01" to current month
+    // Adjust the start date as per your requirements
+    const overallStart = dayjs("2023-01", "YYYY-MM"); // Example start date
+    const overallEnd = currentMonthStr;
+    const overallMonthsRange = getMonthsInRange(
+      overallStart.format("YYYY-MM"),
+      overallEnd
+    );
     let {
       consolidatedProjectimesheets: overallProjects,
       aggregatedSumEmployeeType: overallSum,
     } = await getAggregatedDataForMonths(overallMonthsRange);
 
-    // Filter by projectstatus = "Ongoing"
+    // Fetch all projects and filter by status "Ongoing"
     const allProjectsInfo = await projectHelpers.getAllproject();
-    // Suppose allProjectsInfo = [ { projectname, projectstatus, ... }, ... ]
     const ongoingProjectNames = allProjectsInfo
       .filter((proj) => proj.projectstatus === "Ongoing")
       .map((proj) => proj.projectname);
 
+    // Filter overallProjects to include only ongoing projects
     overallProjects = overallProjects.filter((proj) =>
       ongoingProjectNames.includes(proj.projectname)
     );
 
-    // Re-sort and keep top 7
-    overallProjects.sort((a, b) => b.total - a.total);
-    const topOverallProjects = overallProjects.slice(0, 7);
+    // Sort by total desc, keep top 7
+    const topOverallProjects = overallProjects
+      .sort((a, b) => b.total - a.total)
+      .slice(0, 7);
 
-    // You might also want to recalc the sumemployeetype if you're excluding
-    // some projects. But the problem statement doesn't explicitly say to recalc
-    // the sum for the "Ongoing" filter. If you do want to recalc, you'd need
-    // to sum only the `total` from the ongoing projects, etc.
+    // Transform to 8 separate arrays sorted ascending by total
+    const transformedOverall = transformTop7Projects(topOverallProjects);
 
-    return {
-      currentMonth: {
-        projectimesheets: topCurrentMonthProjects,
-        sumemployeetype: currentMonthSum,
-      },
-      lastMonth: {
-        projectimesheets: topLastMonthProjects,
-        sumemployeetype: lastMonthSum,
-      },
-      lastSixMonths: {
-        projectimesheets: topSixMonthsProjects,
-        sumemployeetype: lastSixMonthsSum,
-      },
-      overall: {
-        projectimesheets: topOverallProjects,
-        sumemployeetype: overallSum,
-      },
+    // Compile all categories
+    const reports = {
+      currentMonth: transformedCurrentMonth,
+      lastMonth: transformedLastMonth,
+      lastSixMonths: transformedLastSixMonths,
+      lastYear: transformedLastYear,
+      overall: transformedOverall,
     };
+
+    return reports;
   } catch (error) {
     console.error("Error fetching multi-category reports:", error);
     throw error;
   }
 },
 
+/**
+ * POST route to handle multi-category project reports
+ * Endpoint: /multi-category-reports
+ *
+ * Response format:
+ * {
+ *   currentMonth: { ownlaboursalary: [...], ..., projectname: [...] },
+ *   lastMonth: { ... },
+ *   lastSixMonths: { ... },
+ *   lastYear: { ... },
+ *   overall: { ... }
+ * }
+ */
+
 
 }
-
-/**
- * Helper function to get an array of months (string in "YYYY-MM" format)
- * from startMonth to endMonth inclusive
- */
 const getMonthsInRange = (startMonth, endMonth) => {
   const start = dayjs(startMonth, "YYYY-MM", true);
   const end = dayjs(endMonth, "YYYY-MM", true);
@@ -360,17 +400,17 @@ const aggregateProjectTimeSheets = (projectimesheetsArray) => {
       // Initialize the project entry with all necessary fields, defaulting to 0 if missing
       aggregated[key] = {
         projectname: project.projectname,
-        ownlaboursalary: project.ownlaboursalary || 0,
-        ownlabourot: project.ownlabourot || 0,
-        hiredlabourmsalary: project.hiredlabourmsalary || 0,
-        hiredlabourmot: project.hiredlabourmot || 0,
-        hiredstaffhourly: project.hiredstaffhourly || 0,
-        ownstaffsalary: project.ownstaffsalary || 0,
-        hiredstaffsalary: project.hiredstaffsalary || 0,
-        operationcost: project.operationcost || 0,
-        overheadcost: project.overheadcost || 0,
-        total: project.total || 0,
-        index: project.index,
+        ownlaboursalary: typeof project.ownlaboursalary === "number" ? project.ownlaboursalary : 0,
+        ownlabourot: typeof project.ownlabourot === "number" ? project.ownlabourot : 0,
+        hiredlabourmsalary: typeof project.hiredlabourmsalary === "number" ? project.hiredlabourmsalary : 0,
+        hiredlabourmot: typeof project.hiredlabourmot === "number" ? project.hiredlabourmot : 0,
+        hiredstaffhourly: typeof project.hiredstaffhourly === "number" ? project.hiredstaffhourly : 0,
+        ownstaffsalary: typeof project.ownstaffsalary === "number" ? project.ownstaffsalary : 0,
+        hiredstaffsalary: typeof project.hiredstaffsalary === "number" ? project.hiredstaffsalary : 0,
+        operationcost: typeof project.operationcost === "number" ? project.operationcost : 0,
+        overheadcost: typeof project.overheadcost === "number" ? project.overheadcost : 0,
+        total: typeof project.total === "number" ? project.total : 0,
+        index: project.index, // Assuming 'index' is consistent across projects
       };
     } else {
       // Sum numerical fields, excluding non-numeric
@@ -387,7 +427,7 @@ const aggregateProjectTimeSheets = (projectimesheetsArray) => {
         "total",
       ];
       fieldsToSum.forEach((field) => {
-        aggregated[key][field] += project[field] || 0;
+        aggregated[key][field] += typeof project[field] === "number" ? project[field] : 0;
       });
     }
   });
@@ -422,11 +462,7 @@ const fetchOrGenerateMonthlyReport = async (month) => {
     // If report does not exist, generate and store it
     try {
       report = await ProjectReport.ProjectReport(month);
-      if (
-        !report ||
-        !report.projectimesheets ||
-        !report.sumemployeetype
-      ) {
+      if (!report || !report.projectimesheets || !report.sumemployeetype) {
         throw new Error(`Invalid report data generated for month: ${month}`);
       }
       await reportHelpers.addProjectReportDataIfOpen(
@@ -435,7 +471,10 @@ const fetchOrGenerateMonthlyReport = async (month) => {
         report.sumemployeetype
       );
     } catch (error) {
-      console.error(`Error generating or saving report for month ${month}:`, error);
+      console.error(
+        `Error generating or saving report for month ${month}:`,
+        error
+      );
       // Return empty data so aggregator can skip or handle
       return { projectimesheets: [], sumemployeetype: null };
     }
@@ -467,16 +506,23 @@ const getAggregatedDataForMonths = async (months) => {
 
   // Fetch and accumulate data for each month
   for (const month of months) {
-    const { projectimesheets, sumemployeetype } = await fetchOrGenerateMonthlyReport(month);
+    const { projectimesheets, sumemployeetype } =
+      await fetchOrGenerateMonthlyReport(month);
 
     // If sumemployeetype is null or projectimesheets is empty, consider it a "failed" month
-    if (!sumemployeetype || !Array.isArray(projectimesheets) || !projectimesheets.length) {
+    if (
+      !sumemployeetype ||
+      !Array.isArray(projectimesheets) ||
+      !projectimesheets.length
+    ) {
       failedMonths.push(month);
       continue;
     }
 
     // Accumulate projectimesheets
-    aggregatedProjectimesheets = aggregatedProjectimesheets.concat(projectimesheets);
+    aggregatedProjectimesheets = aggregatedProjectimesheets.concat(
+      projectimesheets
+    );
 
     // Accumulate sumemployeetype
     aggregatedSumEmployeeType = aggregateSumEmployeeType(
@@ -486,13 +532,14 @@ const getAggregatedDataForMonths = async (months) => {
   }
 
   // Now aggregate the projectimesheets by project name
-  const {
-    aggregatedArray: consolidatedProjectimesheets,
-    skippedProjects,
-  } = aggregateProjectTimeSheets(aggregatedProjectimesheets);
+  const { aggregatedArray: consolidatedProjectimesheets, skippedProjects } =
+    aggregateProjectTimeSheets(aggregatedProjectimesheets);
 
   // Recalculate percentages in the consolidated array
-  recalculatePercentages(consolidatedProjectimesheets, aggregatedSumEmployeeType.total);
+  recalculatePercentages(
+    consolidatedProjectimesheets,
+    aggregatedSumEmployeeType.total
+  );
 
   return {
     consolidatedProjectimesheets,
@@ -503,29 +550,45 @@ const getAggregatedDataForMonths = async (months) => {
 };
 
 /**
- * Main function to get the "current month", "last month",
- * "last 6 months", and "overall" reports.
- *
- * - Each category only shows top 7 performing projects by total.
- * - "Overall" report only shows projects where projectstatus = "Ongoing".
- *
- * Return format (example):
- * {
- *   currentMonth: {
- *     projectimesheets: [...],
- *     sumemployeetype: {...},
- *   },
- *   lastMonth: {
- *     projectimesheets: [...],
- *     sumemployeetype: {...},
- *   },
- *   lastSixMonths: {
- *     projectimesheets: [...],
- *     sumemployeetype: {...},
- *   },
- *   overall: {
- *     projectimesheets: [...],
- *     sumemployeetype: {...},
- *   }
- * }
+ * Helper to transform top 7 projects into 8 separate arrays sorted ascending by total
  */
+const transformTop7Projects = (projects) => {
+  // 1) Sort the array in ascending order by total
+  const sortedAscending = [...projects].sort((a, b) => a.total - b.total);
+
+  // 2) Create the arrays
+  const ownlaboursalary = sortedAscending.map(
+    (proj) => proj.ownlaboursalary || 0
+  );
+  const hiredlabourmsalary = sortedAscending.map(
+    (proj) => proj.hiredlabourmsalary || 0
+  );
+  const hiredstaffhourly = sortedAscending.map(
+    (proj) => proj.hiredstaffhourly || 0
+  );
+  const ownstaffsalary = sortedAscending.map(
+    (proj) => proj.ownstaffsalary || 0
+  );
+  const hiredstaffsalary = sortedAscending.map(
+    (proj) => proj.hiredstaffsalary || 0
+  );
+  const operationcost = sortedAscending.map(
+    (proj) => proj.operationcost || 0
+  );
+  const overheadcost = sortedAscending.map(
+    (proj) => proj.overheadcost || 0
+  );
+  const projectname = sortedAscending.map((proj) => proj.projectname);
+
+  return {
+    ownlaboursalary,
+    hiredlabourmsalary,
+    hiredstaffhourly,
+    ownstaffsalary,
+    hiredstaffsalary,
+    operationcost,
+    overheadcost,
+    projectname,
+  };
+};
+
