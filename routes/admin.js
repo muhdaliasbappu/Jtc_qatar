@@ -78,27 +78,25 @@ router.get("/logout", (req, res) => {
 // routes/admin.js
 
 // routes/admin.js
-router.get("/dashboard", async function (req, res, next) {
+router.get("/dashboard", async (req, res) => {
   try {
-    let admin = req.session.user;
-
     const reportData = await ProjectReport.getProjectReportTotalsForLast12Months();
     const counts = await ProjectReport.getCounts();
-       let some = await ProjectReport.getMultiCategoryReports();
-    return res.json(some);
-    console.log(some)
+    let projectbar = await ProjectReport.getMultiCategoryReports();
+    console.log(projectbar)
 
-    // Render your view
-    // res.render("./admin/dashboard", {
-    //   admin: true,
-    //   counts,
-    //   // possibly embed categories, data into the template too
-    //   categories: reportData.categories,
-    //   data: reportData.data
-    // });
+
+    res.render("./admin/dashboard", {
+      admin: true,
+      counts,
+      categories: reportData.categories,
+      data: reportData.data,
+      projectbar
+      
+    });
   } catch (error) {
     console.error("Error in /dashboard route:", error);
-    return res.status(500).send("Internal Server Error");
+    res.status(500).send("Internal Server Error");
   }
 });
 
