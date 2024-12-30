@@ -192,7 +192,7 @@ getCounts: () => {
   return count
   
 },
- reportForDashboard : async () => {
+reportForDashboard : async () => {
   const currentMonth = new Date();
   const lastMonth = new Date(currentMonth);
   lastMonth.setMonth(currentMonth.getMonth() - 1);
@@ -250,27 +250,34 @@ getCounts: () => {
           const aggregatedReport = aggregateProjectReports(projectReports);
           aggregatedReport.projectname = project.projectname;
 
+          // Helper function to avoid duplicates
+          const addUniqueProject = (projectArray, project) => {
+              if (!projectArray.some((p) => p.projectname === project.projectname)) {
+                  projectArray.push(project);
+              }
+          };
+
           // Categorize reports into the required periods
           const isWithinRange = (start, end, date) => date >= start && date <= end;
           projectReports.forEach((report) => {
               const reportMonth = report.date;
 
               if (reportMonth === currentMonthStr) {
-                  topProjects.currentMonth.push(aggregatedReport);
+                  addUniqueProject(topProjects.currentMonth, aggregatedReport);
               }
 
               if (reportMonth === lastMonthStr) {
-                  topProjects.lastMonth.push(aggregatedReport);
+                  addUniqueProject(topProjects.lastMonth, aggregatedReport);
               }
 
               if (isWithinRange(sixMonthsAgoStr, currentMonthStr, reportMonth)) {
-                  topProjects.lastSixMonths.push(aggregatedReport);
+                  addUniqueProject(topProjects.lastSixMonths, aggregatedReport);
               }
           });
 
-          // Add to overall only for Ongoing projects
+          // Add to overall only for Ongoing projects (unique only)
           if (project.projectstatus === "Ongoing") {
-              topProjects.overall.push(aggregatedReport);
+              addUniqueProject(topProjects.overall, aggregatedReport);
           }
       }
 
