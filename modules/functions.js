@@ -202,7 +202,7 @@ getCounts: () => {
  *
  * Returns an object with each category containing 8 separate arrays.
  */
-getMultiCategoryReports : async () => {
+ getMultiCategoryReports : async () => {
   try {
     // --------- 1. Current Month ---------
     const currentMonthStr = dayjs().format("YYYY-MM");
@@ -250,30 +250,30 @@ getMultiCategoryReports : async () => {
 
     const transformedLastSixMonths = transformTop7Projects(topSixMonthsProjects);
 
-    // --------- 4. Last Year ---------
-    // Define "last year" as Jan 1 - Dec 31 of the previous calendar year
-    const lastYearStart = dayjs().subtract(1, "year").startOf("year"); // e.g., 2023-01
-    const lastYearEnd = dayjs().subtract(1, "year").endOf("year"); // e.g., 2023-12
-    const lastYearRange = getMonthsInRange(
-      lastYearStart.format("YYYY-MM"),
-      lastYearEnd.format("YYYY-MM")
+    // --------- 4. Last 12 Months ---------
+    // From 11 months ago up to the current month (total 12 months)
+    const twelveMonthsAgo = dayjs().subtract(11, "month");
+    const twelveMonthsRange = getMonthsInRange(
+      twelveMonthsAgo.format("YYYY-MM"),
+      currentMonthStr
     );
     const {
-      consolidatedProjectimesheets: lastYearProjects,
-      aggregatedSumEmployeeType: lastYearSum,
-    } = await getAggregatedDataForMonths(lastYearRange);
+      consolidatedProjectimesheets: lastTwelveMonthsProjects,
+      aggregatedSumEmployeeType: lastTwelveMonthsSum,
+    } = await getAggregatedDataForMonths(twelveMonthsRange);
 
-    const topLastYearProjects = lastYearProjects
+    const topTwelveMonthsProjects = lastTwelveMonthsProjects
       .sort((a, b) => b.total - a.total)
       .slice(0, 7);
 
-    const transformedLastYear = transformTop7Projects(topLastYearProjects);
+    const transformedLastTwelveMonths = transformTop7Projects(topTwelveMonthsProjects);
 
     // --------- 5. Overall ---------
-    // Define "overall" as from "2023-01" to current month
-    // Adjust the start date as per your requirements
-    const overallStart = dayjs("2023-01", "YYYY-MM"); // Example start date
-    const overallEnd = currentMonthStr;
+    // Define "overall" as from the earliest available month to the current month
+    // You can adjust the start date based on your data availability
+    // For demonstration, let's assume data starts from "2020-01"
+    const overallStart = dayjs("2020-01", "YYYY-MM"); // Example start date
+    const overallEnd = dayjs().format("YYYY-MM");
     const overallMonthsRange = getMonthsInRange(
       overallStart.format("YYYY-MM"),
       overallEnd
@@ -307,7 +307,7 @@ getMultiCategoryReports : async () => {
       currentMonth: transformedCurrentMonth,
       lastMonth: transformedLastMonth,
       lastSixMonths: transformedLastSixMonths,
-      lastYear: transformedLastYear,
+      lastYear: transformedLastTwelveMonths,
       overall: transformedOverall,
     };
 
@@ -318,19 +318,6 @@ getMultiCategoryReports : async () => {
   }
 },
 
-/**
- * POST route to handle multi-category project reports
- * Endpoint: /multi-category-reports
- *
- * Response format:
- * {
- *   currentMonth: { ownlaboursalary: [...], ..., projectname: [...] },
- *   lastMonth: { ... },
- *   lastSixMonths: { ... },
- *   lastYear: { ... },
- *   overall: { ... }
- * }
- */
 
 
 }
@@ -592,3 +579,12 @@ const transformTop7Projects = (projects) => {
   };
 };
 
+/**
+ * Main function to get the "current month", "last month",
+ * "last 6 months", "last 12 months", and "overall" reports.
+ *
+ * - Each category only shows top 7 performing projects by total.
+ * - "Overall" report only shows projects where projectstatus = "Ongoing".
+ *
+ * Returns an object with each category containing 8 separate arrays.
+ */
