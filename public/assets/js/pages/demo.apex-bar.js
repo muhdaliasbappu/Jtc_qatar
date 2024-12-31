@@ -67,12 +67,12 @@ document.addEventListener("DOMContentLoaded", function () {
         series: getSeriesData('currentMonth'),
         xaxis: {
             categories: projectbar.currentMonth.projectname || [],
-            labels: { formatter: function(val) { return val + "K"; } },
+            labels: { formatter: function(val) { return  "QAR" + val; } },
             axisBorder: { show: false }
         },
         yaxis: { title: { text: undefined } },
         colors: colorsArray,
-        tooltip: { y: { formatter: function(val) { return val + "K"; } } },
+        tooltip: { y: { formatter: function(val) { return "QAR" + val; } } },
         fill: { opacity: 1 },
         states: { hover: { filter: "none" } },
         legend: {
