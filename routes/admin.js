@@ -81,29 +81,30 @@ router.get("/logout", (req, res) => {
 router.get("/dashboard", async (req, res) => {
   try {
     // const reportData = await ProjectReport.getProjectReportTotalsForLast12Months();
-    // const counts = await ProjectReport.getCounts();
-    // let projectbar = await ProjectReport.getMultiCategoryReports();
-    let some = await ProjectReport.getProjectsPerformanceReport();
-    // const { projects, projectNames } = await ProjectReport.buildAllMonthsForProjects();
-    // // Now you have both the dictionary keyed by project name
-    // // AND an array with the same order, so you can easily render charts or tables.
+     const counts = await ProjectReport.getCounts();
+     let projectbar = await ProjectReport.getMultiCategoryReports();
+    let PPerformance = await ProjectReport.getProjectsPerformanceReport();
+    //res.json({some });
+    
+    let projectNames = PPerformance.projectNames
+    
+    
 
-     res.json({some });
 
-
-    // res.render("./admin/dashboard", {
-    //   admin: true,
-    //   counts,
-    //   categories: reportData.categories,
-    //   data: reportData.data,
-    //   projectbar
+    res.render("./admin/dashboard", {
+      admin: true,
+      counts,
+      PPerformance,
+      projectNames, 
+      projectbar
       
-    // });
+    });
   } catch (error) {
     console.error("Error in /dashboard route:", error);
     res.status(500).send("Internal Server Error");
   }
 });
+
 
 
 
