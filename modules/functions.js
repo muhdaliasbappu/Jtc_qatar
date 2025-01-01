@@ -321,13 +321,15 @@ getCounts: () => {
 },
  getProjectsPerformanceReport: async()=> {
   try {
-    // 1) Fetch and filter "in scope" projects
+    //
+    // 1) Fetch & filter "in scope" projects
+    //
     const allProjects = await projectHelpers.getAllproject();
     const inScopeProjects = allProjects.filter((proj) => {
-      if (proj.projectstatus === 'Ongoing') {
+      if (proj.projectstatus === "Ongoing") {
         return true;
       } else if (
-        proj.projectstatus === 'Completed' &&
+        proj.projectstatus === "Completed" &&
         isCompletedWithinLast12Months(proj.completedDate)
       ) {
         return true;
@@ -336,15 +338,22 @@ getCounts: () => {
     });
 
     if (!inScopeProjects.length) {
+      // no projects
       return {};
     }
 
-    // 2) Gather each project's monthly data
+    //
+    // 2) Gather monthly data for each in-scope project
+    //
     const projectsData = [];
+
     for (const proj of inScopeProjects) {
       const { projectname } = proj;
+
+      // Fetch all projectreport docs that include this project
       const reports = await reportHelpers.getReportsForProject(projectname);
 
+      // We'll store an array of monthly totals (instead of a single cumulative total)
       const projectAccumulator = {
         projectname,
         ownlaboursalary: [],
@@ -355,20 +364,21 @@ getCounts: () => {
         operationcost: [],
         overheadcost: [],
         date: [],
-        total: 0,
+        total: [], // now an ARRAY of monthly totals
       };
 
       // Sort by date ascending
       reports.sort((a, b) => {
-        const da = dayjs(a.date, 'YYYY-MM');
-        const db = dayjs(b.date, 'YYYY-MM');
+        const da = dayjs(a.date, "YYYY-MM");
+        const db = dayjs(b.date, "YYYY-MM");
         return da - db;
       });
 
-      // Accumulate values from each monthly doc
+      // Accumulate data
       for (const doc of reports) {
         const monthStr = doc.date;
 
+        // default 0
         let ownlaboursalary = 0;
         let hiredlabourmsalary = 0;
         let hiredstaffhourly = 0;
@@ -376,7 +386,7 @@ getCounts: () => {
         let hiredstaffsalary = 0;
         let operationcost = 0;
         let overheadcost = 0;
-        let total = 0;
+        let monthlyTotal = 0;
 
         if (Array.isArray(doc.projectimesheets)) {
           const sheet = doc.projectimesheets.find(
@@ -390,7 +400,7 @@ getCounts: () => {
             hiredstaffsalary = sheet.hiredstaffsalary || 0;
             operationcost = sheet.operationcost || 0;
             overheadcost = sheet.overheadcost || 0;
-            total = sheet.total || 0;
+            monthlyTotal = sheet.total || 0; // This doc's total
           }
         }
 
@@ -402,34 +412,45 @@ getCounts: () => {
         projectAccumulator.operationcost.push(operationcost);
         projectAccumulator.overheadcost.push(overheadcost);
         projectAccumulator.date.push(monthStr);
-        projectAccumulator.total += total;
+
+        // push monthly total into total array
+        projectAccumulator.total.push(monthlyTotal);
       }
 
       projectsData.push(projectAccumulator);
     }
 
-    // 3) Sort by total descending, keep top 7
-    projectsData.sort((a, b) => b.total - a.total);
+    //
+    // 3) Sort by sum of the `total[]` array (descending), keep top 7
+    //
+    projectsData.sort((a, b) => {
+      const sumA = a.total.reduce((acc, val) => acc + val, 0);
+      const sumB = b.total.reduce((acc, val) => acc + val, 0);
+      return sumB - sumA;
+    });
+
     const top7 = projectsData.slice(0, 7);
 
-    // 4) Build an object with keys "one", "two", etc. 
-    //    and also an array of { projectName, value: 'one' } entries.
-    const labels = ['one', 'two', 'three', 'four', 'five', 'six', 'seven'];
+    //
+    // 4) Build final object with keys "one", "two", ...
+    //    plus a projectNames array.
+    //
+    const labels = ["one", "two", "three", "four", "five", "six", "seven"];
     const finalObj = {};
     const projectNamesArray = [];
 
-    top7.forEach((pData, idx) => {
-      const label = labels[idx]; // "one", "two", ...
+    top7.forEach((pData, index) => {
+      const label = labels[index]; // "one", "two", etc.
       finalObj[label] = pData;
-      projectNamesArray.push({ projectName: pData.projectname, value: label });
+      projectNamesArray.push(pData.projectname);
     });
 
-    // Place the array on finalObj as `projectNames`
+    // The user wants projectNames as ["imo", "uts", ...]
     finalObj.projectNames = projectNamesArray;
 
     return finalObj;
   } catch (err) {
-    console.error('Error in getProjectsPerformanceReport:', err);
+    console.error("Error in getProjectsPerformanceReport:", err);
     throw err;
   }
 }
