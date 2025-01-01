@@ -116,6 +116,20 @@ module.exports = {
           throw error;
         }
       },
+      getReportsForProject: async (projectName) => {
+        try {
+          const reports = await db
+            .get()
+            .collection('projectreport')
+            .find({ "projectimesheets.projectname": projectName })
+            .toArray();
+    
+          return reports;
+        } catch (error) {
+          console.error('Error fetching all monthly data for project:', error);
+          throw error;
+        }
+      },
       getAllReports: () => {
         return new Promise(async (resolve, reject) => {
             let projectreport = await db.get().collection('projectreport').find().toArray()
