@@ -42,8 +42,8 @@ module.exports = {
     
         // Insert all monthly documents for the year
         const result = await db.get()
-       .collection('monthlysalaryreport')
-       //   .collection('projectreport')
+       // .collection('monthlysalaryreport')
+          .collection('projectreport')
           .insertMany(docs);
     
         console.log(`Inserted ${result.insertedCount} monthly salary reports for ${year}`);
@@ -116,6 +116,12 @@ module.exports = {
           throw error;
         }
       },
+      getAllReports: () => {
+        return new Promise(async (resolve, reject) => {
+            let projectreport = await db.get().collection('projectreport').find().toArray()
+            resolve(projectreport)
+        })
+    },
       addProjectReportDataToClose: async (searchdate, projectimesheets, sumemployeetype) => {
         try {
           const filter = { 
