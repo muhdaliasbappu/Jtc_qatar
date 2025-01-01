@@ -66,7 +66,7 @@
             charts.push(this.initLineChart(
                 "#one",
                 {
-                    labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+                    labels: PPerformance.one.date,
                     datasets: [
                         {
                             label: "Own Labour",
@@ -74,7 +74,7 @@
                             borderColor: "#727cf5",
                             borderDash: [5, 5],
                             fill: true,
-                            data: [32, 42, 40, 62, 52, 75, 62]
+                            data: PPerformance.one.ownlaboursalary
                         },
                         {
                             label: "Hired Labour",
@@ -82,7 +82,7 @@
                             backgroundColor: "transparent",
                             borderColor: "#0acf97",
                             borderDash: [5, 5],
-                            data: [42, 58, 45, 93, 82, 105, 92]
+                            data: PPerformance.one.hiredlabourmsalary
                         },
                         {
                             label: "Man Power",
@@ -90,7 +90,7 @@
                             backgroundColor: "transparent",
                             borderColor: "#fa5c7c",
                             borderDash: [5, 5],
-                            data: [42, 98,50, 93, 82, 108, 292]
+                            data: PPerformance.one.hiredstaffhourly
                         },
                         {
                             label: "Own Staff(P)",
@@ -98,7 +98,7 @@
                             backgroundColor: "transparent",
                             borderColor: "#6c757d",
                             borderDash: [5, 5],
-                            data: [42, 98,60, 93, 82, 108, 292]
+                            data: PPerformance.one.ownstaffsalary
                         },
                         {
                             label: "Hired Staff(P)",
@@ -106,7 +106,7 @@
                             backgroundColor: "transparent",
                             borderColor: "#39afd1",
                             borderDash: [5, 5],
-                            data: [42, 98,70, 93, 82, 108, 292]
+                            data: PPerformance.one.hiredstaffsalary
                         },
                         {
                             label: "Operation Cost",
@@ -114,7 +114,7 @@
                             backgroundColor: "transparent",
                             borderColor: "#ffbc00",
                             borderDash: [5, 5],
-                            data: [42, 98,80, 93, 82, 108, 292]
+                            data: PPerformance.one.operationcost
                         }
                         ,
                         {
@@ -123,14 +123,14 @@
                             backgroundColor: "transparent",
                             borderColor: "#ff6b6b",
                             borderDash: [5, 5],
-                            data: [42, 98,90, 93, 82, 108, 292]
+                            data: PPerformance.one.overheadcost
                         },
                         {
                             label: "Total Cost",
                             fill: true,
                             backgroundColor: "rgba(10, 207, 151, 0.3)",
                             borderColor: "#727cf5",
-                            data: [42, 98,133, 93, 82, 108, 292]
+                            data: PPerformance.one.total
                         }
                     ]
                 },
