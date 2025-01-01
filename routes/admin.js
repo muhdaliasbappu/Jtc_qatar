@@ -84,21 +84,21 @@ router.get("/dashboard", async (req, res) => {
      const counts = await ProjectReport.getCounts();
      let projectbar = await ProjectReport.getMultiCategoryReports();
     let PPerformance = await ProjectReport.getProjectsPerformanceReport();
-    res.json({PPerformance });
+    // res.json({PPerformance });
     
     let projectNames = PPerformance.projectNames
     
     
 
 
-    // res.render("./admin/dashboard", {
-    //   admin: true,
-    //   counts,
-    //   PPerformance,
-    //   projectNames, 
-    //   projectbar
+    res.render("./admin/dashboard", {
+      admin: true,
+      counts,
+      PPerformance,
+      projectNames, 
+      projectbar
       
-    // });
+    });
   } catch (error) {
     console.error("Error in /dashboard route:", error);
     res.status(500).send("Internal Server Error");
