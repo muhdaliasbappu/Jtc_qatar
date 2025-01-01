@@ -319,6 +319,120 @@ getCounts: () => {
     throw error;
   }
 },
+ getProjectsPerformanceReport: async()=> {
+  try {
+    // 1) Fetch and filter "in scope" projects
+    const allProjects = await projectHelpers.getAllproject();
+    const inScopeProjects = allProjects.filter((proj) => {
+      if (proj.projectstatus === 'Ongoing') {
+        return true;
+      } else if (
+        proj.projectstatus === 'Completed' &&
+        isCompletedWithinLast12Months(proj.completedDate)
+      ) {
+        return true;
+      }
+      return false;
+    });
+
+    if (!inScopeProjects.length) {
+      return {};
+    }
+
+    // 2) Gather each project's monthly data
+    const projectsData = [];
+    for (const proj of inScopeProjects) {
+      const { projectname } = proj;
+      const reports = await reportHelpers.getReportsForProject(projectname);
+
+      const projectAccumulator = {
+        projectname,
+        ownlaboursalary: [],
+        hiredlabourmsalary: [],
+        hiredstaffhourly: [],
+        ownstaffsalary: [],
+        hiredstaffsalary: [],
+        operationcost: [],
+        overheadcost: [],
+        date: [],
+        total: 0,
+      };
+
+      // Sort by date ascending
+      reports.sort((a, b) => {
+        const da = dayjs(a.date, 'YYYY-MM');
+        const db = dayjs(b.date, 'YYYY-MM');
+        return da - db;
+      });
+
+      // Accumulate values from each monthly doc
+      for (const doc of reports) {
+        const monthStr = doc.date;
+
+        let ownlaboursalary = 0;
+        let hiredlabourmsalary = 0;
+        let hiredstaffhourly = 0;
+        let ownstaffsalary = 0;
+        let hiredstaffsalary = 0;
+        let operationcost = 0;
+        let overheadcost = 0;
+        let total = 0;
+
+        if (Array.isArray(doc.projectimesheets)) {
+          const sheet = doc.projectimesheets.find(
+            (s) => s.projectname === projectname
+          );
+          if (sheet) {
+            ownlaboursalary = sheet.ownlaboursalary || 0;
+            hiredlabourmsalary = sheet.hiredlabourmsalary || 0;
+            hiredstaffhourly = sheet.hiredstaffhourly || 0;
+            ownstaffsalary = sheet.ownstaffsalary || 0;
+            hiredstaffsalary = sheet.hiredstaffsalary || 0;
+            operationcost = sheet.operationcost || 0;
+            overheadcost = sheet.overheadcost || 0;
+            total = sheet.total || 0;
+          }
+        }
+
+        projectAccumulator.ownlaboursalary.push(ownlaboursalary);
+        projectAccumulator.hiredlabourmsalary.push(hiredlabourmsalary);
+        projectAccumulator.hiredstaffhourly.push(hiredstaffhourly);
+        projectAccumulator.ownstaffsalary.push(ownstaffsalary);
+        projectAccumulator.hiredstaffsalary.push(hiredstaffsalary);
+        projectAccumulator.operationcost.push(operationcost);
+        projectAccumulator.overheadcost.push(overheadcost);
+        projectAccumulator.date.push(monthStr);
+        projectAccumulator.total += total;
+      }
+
+      projectsData.push(projectAccumulator);
+    }
+
+    // 3) Sort by total descending, keep top 7
+    projectsData.sort((a, b) => b.total - a.total);
+    const top7 = projectsData.slice(0, 7);
+
+    // 4) Build an object with keys "one", "two", etc. 
+    //    and also an array of { projectName, value: 'one' } entries.
+    const labels = ['one', 'two', 'three', 'four', 'five', 'six', 'seven'];
+    const finalObj = {};
+    const projectNamesArray = [];
+
+    top7.forEach((pData, idx) => {
+      const label = labels[idx]; // "one", "two", ...
+      finalObj[label] = pData;
+      projectNamesArray.push({ projectName: pData.projectname, value: label });
+    });
+
+    // Place the array on finalObj as `projectNames`
+    finalObj.projectNames = projectNamesArray;
+
+    return finalObj;
+  } catch (err) {
+    console.error('Error in getProjectsPerformanceReport:', err);
+    throw err;
+  }
+}
 
 
 
@@ -590,137 +704,5 @@ function isCompletedWithinLast12Months(completedDate) {
   return dayjs(completedDate).isSameOrAfter(cutoff, "month");
 }
 
-async function getProjectsPerformanceReport() {
-  try {
-    // 1) Fetch all projects (adjust your actual data access method)
-    const allProjects = await projectHelpers.getAllproject();
-    
-    // Filter to "in scope": Ongoing or Completed <12 months
-    const inScopeProjects = allProjects.filter((proj) => {
-      if (proj.projectstatus === "Ongoing") {
-        return true;
-      } else if (
-        proj.projectstatus === "Completed" &&
-        isCompletedWithinLast12Months(proj.completedDate)
-      ) {
-        return true;
-      }
-      return false;
-    });
 
-    if (!inScopeProjects.length) {
-      return {}; // No projects in scope
-    }
 
-    // 2) For each in-scope project, fetch monthly reports
-    const projectsData = []; // array of accumulators
-
-    for (const proj of inScopeProjects) {
-      const { projectname } = proj;
-
-      // Fetch all projectreport docs that contain this project's data
-      const reports = await reportHelpers.getReportsForProject(projectname);
-
-      // Build an accumulator
-      const projectAccumulator = {
-        projectname,
-        ownlaboursalary: [],
-        hiredlabourmsalary: [],
-        hiredstaffhourly: [],
-        ownstaffsalary: [],
-        hiredstaffsalary: [],
-        operationcost: [],
-        overheadcost: [],
-        date: [],
-        total: 0,
-      };
-
-      // Sort by ascending date (YYYY-MM)
-      reports.sort((a, b) => {
-        const da = dayjs(a.date, "YYYY-MM");
-        const db = dayjs(b.date, "YYYY-MM");
-        return da - db;
-      });
-
-      // Accumulate data
-      for (const doc of reports) {
-        const monthStr = doc.date; // e.g. "2024-07"
-
-        // Default 0
-        let ownlaboursalary = 0;
-        let hiredlabourmsalary = 0;
-        let hiredstaffhourly = 0;
-        let ownstaffsalary = 0;
-        let hiredstaffsalary = 0;
-        let operationcost = 0;
-        let overheadcost = 0;
-        let total = 0;
-
-        if (Array.isArray(doc.projectimesheets)) {
-          const sheet = doc.projectimesheets.find(
-            (s) => s.projectname === projectname
-          );
-          if (sheet) {
-            ownlaboursalary = sheet.ownlaboursalary || 0;
-            hiredlabourmsalary = sheet.hiredlabourmsalary || 0;
-            hiredstaffhourly = sheet.hiredstaffhourly || 0;
-            ownstaffsalary = sheet.ownstaffsalary || 0;
-            hiredstaffsalary = sheet.hiredstaffsalary || 0;
-            operationcost = sheet.operationcost || 0;
-            overheadcost = sheet.overheadcost || 0;
-            total = sheet.total || 0;
-          }
-        }
-
-        // Push to arrays
-        projectAccumulator.ownlaboursalary.push(ownlaboursalary);
-        projectAccumulator.hiredlabourmsalary.push(hiredlabourmsalary);
-        projectAccumulator.hiredstaffhourly.push(hiredstaffhourly);
-        projectAccumulator.ownstaffsalary.push(ownstaffsalary);
-        projectAccumulator.hiredstaffsalary.push(hiredstaffsalary);
-        projectAccumulator.operationcost.push(operationcost);
-        projectAccumulator.overheadcost.push(overheadcost);
-        projectAccumulator.date.push(monthStr);
-        projectAccumulator.total += total;
-      }
-
-      projectsData.push(projectAccumulator);
-    }
-
-    // 3) Sort by total DESC, keep top 7
-    projectsData.sort((a, b) => b.total - a.total);
-    const top7 = projectsData.slice(0, 7);
-
-    // 4) Build a result object with "one", "two", "three", etc. 
-    //    Also build a separate array of project names in the same order.
-    const labels = ["one", "two", "three", "four", "five", "six", "seven"];
-    const finalObj = {};
-    const projectNamesArray = [];
-
-    top7.forEach((projectData, index) => {
-      const label = labels[index];
-      finalObj[label] = projectData;
-      projectNamesArray.push(projectData.projectname);
-    });
-
-    // 5) Return an object that includes finalObj plus the projectNames array
-    //    Example structure:
-    //    {
-    //      one: {...},
-    //      two: {...},
-    //      three: {...},
-    //      ...
-    //      projectNames: ['imo','uts','new']
-    //    }
-    finalObj.projectNames = projectNamesArray;
-
-    return finalObj;
-  } catch (err) {
-    console.error("Error in getProjectsPerformanceReport:", err);
-    throw err;
-  }
-}
-
-module.exports = {
-  getProjectsPerformanceReport,
-};
