@@ -12,7 +12,9 @@ const puppeteer = require('puppeteer');
 var salarycalc = require('./salarycalc')
 const cron = require('node-cron')
 const dayjs = require('dayjs');
+const isSameOrAfter = require('dayjs/plugin/isSameOrAfter');
 
+dayjs.extend(isSameOrAfter); // enable the plugin
 
 
 // For month abbreviations; adjust if you need full names or different locale
@@ -579,109 +581,49 @@ const transformTop7Projects = (projects) => {
   };
 };
 
-/**
- * Main function to get the "current month", "last month",
- * "last 6 months", "last 12 months", and "overall" reports.
- *
- * - Each category only shows top 7 performing projects by total.
- * - "Overall" report only shows projects where projectstatus = "Ongoing".
- *
- * Returns an object with each category containing 8 separate arrays.
- */
-function getLast12MonthsRange() {
-  const months = [];
-  // Example: we go from earliestMonth = dayjs().subtract(11, "month") up to current month inclusive
-  let current = dayjs().subtract(11, "month").startOf("month");
-  const end = dayjs().endOf("month"); // this month's end
 
-  while (current.isBefore(end) || current.isSame(end, "month")) {
-    months.push(current.format("YYYY-MM"));
-    current = current.add(1, "month");
-  }
-  return months;
+
+function isCompletedWithinLast12Months(completedDate) {
+  if (!completedDate) return false;
+  const cutoff = dayjs().subtract(12, "month").startOf("month");
+  // Compare by month granularity
+  return dayjs(completedDate).isSameOrAfter(cutoff, "month");
 }
-function buildMonthToReportMap(reports) {
-  const map = {};
-  for (const rep of reports) {
-    map[rep.date] = rep; // rep.date is "YYYY-MM"
-  }
-  return map;
-}
+
 async function getProjectsPerformanceReport() {
   try {
-    // 1) Get all projects
+    // 1) Fetch all projects (adjust your actual data access method)
     const allProjects = await projectHelpers.getAllproject();
-
-    // Separate projects: Ongoing vs Completed (in last 12 months)
-    const ongoingProjects = [];
-    const recentlyCompletedProjects = [];
-    for (const proj of allProjects) {
+    
+    // Filter to "in scope": Ongoing or Completed <12 months
+    const inScopeProjects = allProjects.filter((proj) => {
       if (proj.projectstatus === "Ongoing") {
-        ongoingProjects.push(proj);
+        return true;
       } else if (
         proj.projectstatus === "Completed" &&
         isCompletedWithinLast12Months(proj.completedDate)
       ) {
-        recentlyCompletedProjects.push(proj);
+        return true;
       }
+      return false;
+    });
+
+    if (!inScopeProjects.length) {
+      return {}; // No projects in scope
     }
 
-    // Combine our "in scope" projects
-    const projectsInScope = [...ongoingProjects, ...recentlyCompletedProjects];
+    // 2) For each in-scope project, fetch monthly reports
+    const projectsData = []; // array of accumulators
 
-    // 2) Get all projectreport docs for the last 12 months
-    const allReports = await reportHelpers.getAllReports();
-    const last12MonthsRange = getLast12MonthsRange(); // array of month-strings from earliest to latest
+    for (const proj of inScopeProjects) {
+      const { projectname } = proj;
 
-    // Filter out projectreport docs that are not in our last12MonthsRange
-    // If you store more than 12 months in the DB, this ensures we only keep the needed months
-    const reportsLast12 = allReports.filter((r) =>
-      last12MonthsRange.includes(r.date) // keep only if r.date is in last12MonthsRange
-    );
+      // Fetch all projectreport docs that contain this project's data
+      const reports = await reportHelpers.getReportsForProject(projectname);
 
-    // Build a map: month -> projectreport doc
-    const monthToReport = buildMonthToReportMap(reportsLast12);
-
-    // 3) For each project, find the earliest month in the last 12 months that it appears in ANY doc
-    //    We'll call that startMonth. If the project doesn't appear at all, no data is produced.
-    //    Actually, if the user wants to treat the "first appearance" older than 12 months, you may need
-    //    to fetch older reports or store the earliest known date from the DB. 
-    //    For this example, we only consider the last 12 months of data.
-    const projectNameToEarliestMonth = {};
-
-    for (const month of last12MonthsRange) {
-      const report = monthToReport[month];
-      if (!report || !Array.isArray(report.projectimesheets)) continue;
-
-      for (const sheet of report.projectimesheets) {
-        // If this project's name is in our "in scope" set
-        if (projectsInScope.find((p) => p.projectname === sheet.projectname)) {
-          // If not set, or month is earlier, update it
-          if (!projectNameToEarliestMonth[sheet.projectname]) {
-            projectNameToEarliestMonth[sheet.projectname] = month;
-          } else {
-            // Compare if this month is earlier
-            const currentEarliest = dayjs(
-              projectNameToEarliestMonth[sheet.projectname],
-              "YYYY-MM"
-            );
-            const candidate = dayjs(month, "YYYY-MM");
-            if (candidate.isBefore(currentEarliest)) {
-              projectNameToEarliestMonth[sheet.projectname] = month;
-            }
-          }
-        }
-      }
-    }
-
-    // 4) Build the final data structure for each project
-    //    Key = projectname
-    //    Value = { projectname, arrays..., total }
-    const finalData = {};
-
-    function initProjectAccumulator(projName) {
-      finalData[projName] = {
-        projectname: projName,
+      // Build an accumulator
+      const projectAccumulator = {
+        projectname,
         ownlaboursalary: [],
         hiredlabourmsalary: [],
         hiredstaffhourly: [],
@@ -692,53 +634,19 @@ async function getProjectsPerformanceReport() {
         date: [],
         total: 0,
       };
-    }
 
-    // 5) For each project in scope, figure out the "range of months" from its earliest appearance
-    //    to the project’s completed date (if completed) or the last month in last12MonthsRange, whichever comes first.
-    for (const proj of projectsInScope) {
-      const { projectname, projectstatus, completedDate } = proj;
+      // Sort by ascending date (YYYY-MM)
+      reports.sort((a, b) => {
+        const da = dayjs(a.date, "YYYY-MM");
+        const db = dayjs(b.date, "YYYY-MM");
+        return da - db;
+      });
 
-      // If the project never appeared in the last 12 months, skip it
-      const startMonth = projectNameToEarliestMonth[projectname];
-      if (!startMonth) {
-        // Means we found no timesheets for it in any doc in the last 12 months
-        continue;
-      }
+      // Accumulate data
+      for (const doc of reports) {
+        const monthStr = doc.date; // e.g. "2024-07"
 
-      // parse the earliest month from projectreport
-      let current = dayjs(startMonth, "YYYY-MM");
-      // parse the last month of the 12-month window
-      const lastMonthInWindow = dayjs(
-        last12MonthsRange[last12MonthsRange.length - 1],
-        "YYYY-MM"
-      );
-
-      // figure out the endMonth
-      // - if ongoing, the endMonth is lastMonthInWindow
-      // - if completed, the endMonth is min(completedDate in YYYY-MM, lastMonthInWindow)
-      let endMonth = lastMonthInWindow;
-      if (projectstatus === "Completed" && completedDate) {
-        const completionMonth = dayjs(completedDate).format("YYYY-MM");
-        const completionMonthDayjs = dayjs(completionMonth, "YYYY-MM");
-        if (completionMonthDayjs.isBefore(lastMonthInWindow)) {
-          endMonth = completionMonthDayjs;
-        }
-      }
-
-      // Ensure accumulator
-      initProjectAccumulator(projectname);
-
-      // Walk from current up to endMonth (inclusive)
-      while (
-        current.isBefore(endMonth, "month") ||
-        current.isSame(endMonth, "month")
-      ) {
-        const monthStr = current.format("YYYY-MM");
-
-        // Attempt to find a doc for that month
-        const doc = monthToReport[monthStr];
-        // If doc doesn't exist, all values = 0
+        // Default 0
         let ownlaboursalary = 0;
         let hiredlabourmsalary = 0;
         let hiredstaffhourly = 0;
@@ -748,8 +656,7 @@ async function getProjectsPerformanceReport() {
         let overheadcost = 0;
         let total = 0;
 
-        if (doc && Array.isArray(doc.projectimesheets)) {
-          // See if there's a row for this project
+        if (Array.isArray(doc.projectimesheets)) {
           const sheet = doc.projectimesheets.find(
             (s) => s.projectname === projectname
           );
@@ -765,75 +672,53 @@ async function getProjectsPerformanceReport() {
           }
         }
 
-        // push to arrays
-        finalData[projectname].ownlaboursalary.push(ownlaboursalary);
-        finalData[projectname].hiredlabourmsalary.push(hiredlabourmsalary);
-        finalData[projectname].hiredstaffhourly.push(hiredstaffhourly);
-        finalData[projectname].ownstaffsalary.push(ownstaffsalary);
-        finalData[projectname].hiredstaffsalary.push(hiredstaffsalary);
-        finalData[projectname].operationcost.push(operationcost);
-        finalData[projectname].overheadcost.push(overheadcost);
-        finalData[projectname].date.push(monthStr);
-        finalData[projectname].total += total;
-
-        // move to next month
-        current = current.add(1, "month");
+        // Push to arrays
+        projectAccumulator.ownlaboursalary.push(ownlaboursalary);
+        projectAccumulator.hiredlabourmsalary.push(hiredlabourmsalary);
+        projectAccumulator.hiredstaffhourly.push(hiredstaffhourly);
+        projectAccumulator.ownstaffsalary.push(ownstaffsalary);
+        projectAccumulator.hiredstaffsalary.push(hiredstaffsalary);
+        projectAccumulator.operationcost.push(operationcost);
+        projectAccumulator.overheadcost.push(overheadcost);
+        projectAccumulator.date.push(monthStr);
+        projectAccumulator.total += total;
       }
+
+      projectsData.push(projectAccumulator);
     }
 
-    // 6) Now we have finalData with each project’s arrays from earliest appearance to end-of-range,
-    //    with missing months as 0.
+    // 3) Sort by total DESC, keep top 7
+    projectsData.sort((a, b) => b.total - a.total);
+    const top7 = projectsData.slice(0, 7);
 
-    // Next step: rank them — Ongoing first by descending total, then Completed by descending total.
-    const ongoingRanked = [];
-    const completedRanked = [];
+    // 4) Build a result object with "one", "two", "three", etc. 
+    //    Also build a separate array of project names in the same order.
+    const labels = ["one", "two", "three", "four", "five", "six", "seven"];
+    const finalObj = {};
+    const projectNamesArray = [];
 
-    for (const projName of Object.keys(finalData)) {
-      const projectObj = finalData[projName];
-      // figure out if it's ongoing or completed
-      const realProject = projectsInScope.find((p) => p.projectname === projName);
-      if (realProject?.projectstatus === "Ongoing") {
-        ongoingRanked.push(projectObj);
-      } else {
-        // completed
-        completedRanked.push(projectObj);
-      }
-    }
+    top7.forEach((projectData, index) => {
+      const label = labels[index];
+      finalObj[label] = projectData;
+      projectNamesArray.push(projectData.projectname);
+    });
 
-    ongoingRanked.sort((a, b) => b.total - a.total);
-    completedRanked.sort((a, b) => b.total - a.total);
+    // 5) Return an object that includes finalObj plus the projectNames array
+    //    Example structure:
+    //    {
+    //      one: {...},
+    //      two: {...},
+    //      three: {...},
+    //      ...
+    //      projectNames: ['imo','uts','new']
+    //    }
+    finalObj.projectNames = projectNamesArray;
 
-    // Combine up to 7
-    let finalList = [];
-    const maxSlots = 7;
-
-    for (let i = 0; i < ongoingRanked.length; i++) {
-      if (finalList.length >= maxSlots) break;
-      finalList.push(ongoingRanked[i]);
-    }
-    if (finalList.length < maxSlots) {
-      const needed = maxSlots - finalList.length;
-      finalList = finalList.concat(completedRanked.slice(0, needed));
-    }
-
-    // 7) Build the final object keyed by projectname
-    const resultObj = {};
-    for (const projObj of finalList) {
-      resultObj[projObj.projectname] = projObj;
-    }
-
-    // Done
-    return resultObj;
+    return finalObj;
   } catch (err) {
     console.error("Error in getProjectsPerformanceReport:", err);
     throw err;
   }
-}
-function isCompletedWithinLast12Months(projectCompletionDate) {
-  const currentDate = new Date();
-  const twelveMonthsAgo = new Date();
-  twelveMonthsAgo.setFullYear(currentDate.getFullYear() - 1);
-  return new Date(projectCompletionDate) >= twelveMonthsAgo;
 }
 
 module.exports = {
