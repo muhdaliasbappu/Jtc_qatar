@@ -1306,6 +1306,7 @@ router.post('/printprojectreport', async (req, res) => {
     // Schedule Monthly Cron Job
     cron.schedule('48 12 * * *', async () => {
       try {
+        console.log('done here')
         await reportHelpers.closemonthlysalaryreportforcron(); // Close salary report for the previous month
         await reportHelpers.monthlyprojectreportforcron(); // Generate the project report for the new month
       } catch (error) {
