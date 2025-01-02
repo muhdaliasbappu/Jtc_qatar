@@ -1279,7 +1279,7 @@ router.post('/printprojectreport', async (req, res) => {
       }
     });
     
-    cron.schedule('53 12 * * *',async() => {
+    cron.schedule('58 23 * * *',async() => {
       try {
         // --------- 1. Current Month ---------
         const currentMonthStr = dayjs().format("YYYY-MM");
@@ -1304,7 +1304,7 @@ router.post('/printprojectreport', async (req, res) => {
     })
 
     // Schedule Monthly Cron Job
-    cron.schedule('0 0 1 * *', async () => {
+    cron.schedule('05 0 1 * *', async () => {
       try {
         await reportHelpers.closemonthlysalaryreportforcron(); // Close salary report for the previous month
         await reportHelpers.monthlyprojectreportforcron(); // Generate the project report for the new month
