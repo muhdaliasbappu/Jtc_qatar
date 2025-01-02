@@ -87,8 +87,8 @@
     const options = {
         maintainAspectRatio: false,
         plugins: {
-            filler: { propagate: false },
-            legend: { display: true }, // Show legend for clarity
+            filler: { propagate: true },
+            legend: { display: false }, // Show legend for clarity
             tooltip: { intersect: false },
             hover: { intersect: true }
         },
