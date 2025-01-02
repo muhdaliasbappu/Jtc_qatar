@@ -66,11 +66,6 @@ router.post("/", async (req, res) => {
 });
 
 
-// logout
-router.get("/logout", (req, res) => {
-  req.session.destroy();
-  res.redirect("/admin");
-});
 
 
 function checkAdminSession(req, res, next) {
@@ -95,6 +90,12 @@ function checkAdminSession(req, res, next) {
 
 // Apply middleware to all routes
 router.use(checkAdminSession);
+
+// logout
+router.get("/logout", (req, res) => {
+  req.session.destroy();
+  res.redirect("/admin");
+});
 
 // routes/admin.js
 router.get("/dashboard", async (req, res) => {
