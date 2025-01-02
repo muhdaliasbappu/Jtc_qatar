@@ -99,11 +99,11 @@ document.addEventListener("DOMContentLoaded", function () {
             e.preventDefault();
             const target = this.getAttribute("href").substring(1); // Remove '#' from href
 
-            // Validate the target time frame
-            if (!projectbar[target]) {
-                console.error(`Time frame '${target}' does not exist in projectbar.`);
-                return;
-            }
+            // // Validate the target time frame
+            // if (!projectbar[target]) {
+            //     console.error(`Time frame '${target}' does not exist in projectbar.`);
+            //     return;
+            // }
 
             // Update chart categories and series data
             chart.updateOptions({
