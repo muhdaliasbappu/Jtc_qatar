@@ -89,7 +89,7 @@
         plugins: {
             filler: { propagate: true },
             legend: { display: false }, // Show legend for clarity
-            tooltip: { intersect: false },
+            tooltip: { intersect: true },
             hover: { intersect: true }
         },
         tension: 0.3,
