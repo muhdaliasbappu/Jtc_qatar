@@ -73,9 +73,28 @@ router.get("/logout", (req, res) => {
 });
 
 
-// routes/admin.js (or your relevant routes file)
-
+function checkAdminSession(req, res, next) {
+  if (req.session.user) {
+    next(); // User is authenticated, proceed to the next middleware or route
+  } else {
+    res.redirect('/login'); // Redirect to login page if not authenticated
+  }
+}
+// Apply middleware to all admin routes
+router.use(checkAdminSession);
 // routes/admin.js
+
+// Middleware for checking admin session
+function checkAdminSession(req, res, next) {
+  if (req.session.user) {
+    next(); // Proceed if the admin session exists
+  } else {
+    res.redirect('/admin/admin-dlogin'); // Redirect to login if not authenticated
+  }
+}
+
+// Apply middleware to all routes
+router.use(checkAdminSession);
 
 // routes/admin.js
 router.get("/dashboard", async (req, res) => {
@@ -84,10 +103,10 @@ router.get("/dashboard", async (req, res) => {
      const counts = await ProjectReport.getCounts();
      let projectbar = await ProjectReport.getMultiCategoryReports();
     let PPerformance = await ProjectReport.getProjectsPerformanceReport();
-    // res.json({PPerformance });
+    //res.json({some });
     
     let projectNames = PPerformance.projectNames
-    
+
     
 
 
@@ -107,12 +126,9 @@ router.get("/dashboard", async (req, res) => {
 
 
 
-
 //employee list
 
 router.get("/employee", function (req, res, next) {
-  let admin = req.session.user;
-  if (admin) {
 
     employeHelpers.getAllemployee().then((employee) => {
    for(let i=0; i<employee.length; i++){
@@ -120,14 +136,12 @@ router.get("/employee", function (req, res, next) {
    }
       res.render("./admin/employee", { admin: true, employee });
     });
-  }
+  
 });
 
 
 router.get("/projects", function (req, res, next) {
-  let admin = req.session.user;
-
-  if (admin) {
+  
     
     projectHelpers.getAllproject().then((project) => {
     
@@ -138,22 +152,19 @@ router.get("/projects", function (req, res, next) {
        }
       res.render("./admin/projects", { admin: true, project });
     });
-  }
+  
 });
 
 
 //add employee
 
 router.get("/add-employee", function (req, res, next) {
-  let admin = req.session.user;
-  if (admin) {
-    userHelpers.getAlluser().then((users) => {
 
-      
+    userHelpers.getAlluser().then((users) => {
 
       res.render("./admin/add-employee", { admin: true, users });
     });
-  }
+  
 });
 
 //add project
@@ -168,24 +179,22 @@ router.get("/add-project", function (req, res, next) {
 //user setting
 
 router.get("/user-setting", function (req, res, next) {
-  let admin = req.session.user;
-  if (admin) {
+
     userHelpers.getAlluser().then((users) => {
       for(let i = 0; i<users.length; i++){
         users[i].index = i+1;
       }
       res.render("./admin/user-setting", { admin: true, users });
     });
-  }
+  
 });
 
 //add user
 
 router.get("/add-user", function (req, res, next) {
-  let admin = req.session.user;
-  if (admin) {
+
     res.render("./admin/add-user", { admin: true });
-  }
+  
 });
 
 //post add employee
@@ -954,15 +963,6 @@ router.post('/printprojectreport', async (req, res) => {
     
 
 
-    // Schedule Monthly Cron Job
-    cron.schedule('0 0 1 * *', async () => {
-      try {
-        await reportHelpers.closemonthlysalaryreportforcron(); // Close salary report for the previous month
-        await reportHelpers.monthlyprojectreportforcron(); // Generate the project report for the new month
-      } catch (error) {
-        console.error('Error in scheduled tasks:', error);
-      }
-    });
 
  
     router.post('/authenticate-and-close', async (req, res) => {
@@ -1279,7 +1279,39 @@ router.post('/printprojectreport', async (req, res) => {
       }
     });
     
+    cron.schedule('57 23 * * *',async() => {
+      try {
+        // --------- 1. Current Month ---------
+        const currentMonthStr = dayjs().format("YYYY-MM");
+        report = await ProjectReport.ProjectReport(currentMonthStr);
+        
+        if (!report || !report.projectimesheets || !report.sumemployeetype) {
+          console.error(`Invalid report data generated for month: ${month}`);
+          failedMonths.push(month);
+          
+        }
 
+        await reportHelpers.addProjectReportDataIfOpen(
+          month,
+          report.projectimesheets,
+          report.sumemployeetype
+        );
+      } catch (error) {
+        console.error(`Error generating or saving report for month ${month}:`, error);
+      }
+
+      
+    })
+
+    // Schedule Monthly Cron Job
+    cron.schedule('48 12 * * *', async () => {
+      try {
+        await reportHelpers.closemonthlysalaryreportforcron(); // Close salary report for the previous month
+        await reportHelpers.monthlyprojectreportforcron(); // Generate the project report for the new month
+      } catch (error) {
+        console.error('Error in scheduled tasks:', error);
+      }
+    });
 
 
 
