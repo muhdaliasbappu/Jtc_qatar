@@ -1280,7 +1280,7 @@ router.post('/printprojectreport', async (req, res) => {
       }
     });
     
-    cron.schedule('10 10 * * *',async() => {
+    cron.schedule('05 11 * * *',async() => {
       try {
         console.log('hi i worked')
         // --------- 1. Current Month ---------
@@ -1294,7 +1294,7 @@ router.post('/printprojectreport', async (req, res) => {
         }
 
         await reportHelpers.addProjectReportDataIfOpen(
-          month,
+          currentMonthStr,
           report.projectimesheets,
           report.sumemployeetype
         );
