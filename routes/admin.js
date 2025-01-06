@@ -1280,8 +1280,9 @@ router.post('/printprojectreport', async (req, res) => {
       }
     });
     
-    cron.schedule('58 23 * * *',async() => {
+    cron.schedule('10 10 * * *',async() => {
       try {
+        console.log('hi i worked')
         // --------- 1. Current Month ---------
         const currentMonthStr = dayjs().format("YYYY-MM");
         report = await ProjectReport.ProjectReport(currentMonthStr);
