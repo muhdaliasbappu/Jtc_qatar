@@ -5,6 +5,7 @@ var projectHelpers = require("../helpers/project-helpers");
 var adminHelpers = require("../helpers/admin-helper");
 var userHelpers = require("../helpers/user-helper");
 var reportHelpers = require("../helpers/report-helpers");
+var logHelpers = require("../helpers/logger-helper");
 const { response } = require("../app");
 const async = require("hbs/lib/async");
 const { search } = require("./users");
@@ -104,11 +105,13 @@ router.get("/dashboard", async (req, res) => {
      const counts = await ProjectReport.getCounts();
      let projectbar = await ProjectReport.getMultiCategoryReports();
     let PPerformance = await ProjectReport.getProjectsPerformanceReport();
-    //res.json({some });
+    let typeCounts = await employeHelpers.getEmployeeTypeCounts()
+   
+   
     
     let projectNames = PPerformance.projectNames
 
-    
+
 
 
     res.render("./admin/dashboard", {
@@ -116,7 +119,8 @@ router.get("/dashboard", async (req, res) => {
       counts,
       PPerformance,
       projectNames, 
-      projectbar
+      projectbar,
+      typeCounts
       
     });
   } catch (error) {
@@ -199,14 +203,16 @@ router.get("/add-user", function (req, res, next) {
 });
 
 //post add employee
-router.post("/add-employee", function (req, res) {
+router.post("/add-employee", function async (req, res) {
   employeHelpers.getAllemployee().then((employees) => {
     const employeeExists = employees.some((employee) => employee.qid === req.body.qid);
     if (employeeExists) {
       res.redirect("/admin/add-employee?error=employeeExists");
     } else {
-      employeHelpers.addemployee(req.body, (success) => {
+      employeHelpers.addemployee(req.body, async (success) => {
         if (success) {
+          const logMessage = `New Employee ${req.body.surname} ${req.body.givenName} was added.`;
+          await logHelpers.addlog(logMessage)
           res.redirect("/admin/add-employee?success=employeeAdded");
         } else {
           res.redirect("/admin/add-employee?error=addFailed");
@@ -220,7 +226,9 @@ router.post("/add-employee", function (req, res) {
 //post add project
 
 router.post("/add-project", function (req, res) {
-  projectHelpers.addproject(req.body, () => {
+  projectHelpers.addproject(req.body, async () => {
+    const logMessage = `New Project ${req.body.projectname} was added.`;
+          await logHelpers.addlog(logMessage)
     res.render("./admin/add-project", { admin: true });
   });
 });
@@ -228,7 +236,10 @@ router.post("/add-project", function (req, res) {
 //post add user
 
 router.post("/add-user", function (req, res) {
-  userHelpers.adduser(req.body, () => {
+  userHelpers.adduser(req.body, async () => {
+    const logMessage = `New User ${req.body.usernames} was added.`;
+    await logHelpers.addlog(logMessage)
+    
     res.redirect("/admin/user-setting");
   });
 });
@@ -265,15 +276,21 @@ router.get("/edit-project/:id", async (req, res) => {
   res.render("admin/edit-project", { admin: true, sproject });
 });
 router.post("/edit-project/:id", (req, res) => {
-  projectHelpers.updateProject(req.params.id, req.body).then(() => {
+  projectHelpers.updateProject(req.params.id, req.body).then(async() => {
+
+    const logMessage = `Project: ${req.body.projectname} Status: Changed from  ${req.body.oldstatus} to ${req.body.projectstatus}`;
+    await logHelpers.addlog(logMessage)
     res.redirect("/admin/projects");
   });
 });
 //delete project
 
-router.get("/delete-project/:id", (req, res) => {
+router.get("/delete-project/:id", async (req, res) => {
   let proId = req.params.id;
-  projectHelpers.deleteProject(proId).then((response) => {
+  let sproject = await projectHelpers.getProjectDetails(req.params.id);
+  projectHelpers.deleteProject(proId).then(async (response) => {
+    const logMessage = `Project: ${sproject.projectname} was deleted `;
+    await logHelpers.addlog(logMessage)
     res.redirect("/admin/projects");
   });
 });
@@ -284,7 +301,9 @@ router.get("/edit-user/:id", async (req, res) => {
   res.render("admin/edit-user", { admin: true, suser });
 });
 router.post("/edit-user/:id", (req, res) => {
-  userHelpers.updateuser(req.params.id, req.body).then(() => {
+  userHelpers.updateuser(req.params.id, req.body).then(async () => {
+    const logMessage = `User: ${req.body.usernames} password was changed.`;
+    await logHelpers.addlog(logMessage)
     res.redirect("/admin/user-setting");
   });
 });
@@ -300,10 +319,9 @@ router.get("/delete-user/:id", (req, res) => {
 //adminsetting
 
 router.get("/admin-dlogin", function (req, res, next) {
-  let admin = req.session.user;
-  if (admin) {
+  
     res.render("./admin/admin-dlogin", { admin: true });
-  }
+  
 });
 router.get("/edit-admin", async function (req, res) {
   let sadmin = await adminHelpers.getadminDetails();
@@ -344,6 +362,7 @@ router.post("/edit-admin/:id", async (req, res) => {
     if (response.status) {
       // Set a success message in the session
       warningMessage = `Admin Credentials Reseted successfully!`;
+       await logHelpers.addlog(warningMessage)
       req.session.destroy();
       res.redirect("/admin");
     } else {
@@ -524,10 +543,12 @@ router.post("/nextdatasheet/", async function (req, res) {
 
 
 
-router.post("/change-workhour/:date", function (req, res) {
+router.post("/change-workhour/:date", async function (req, res) {
 
 const targetDate = req.params.date; // Replace with your target date
 const newWorkingHour = req.body.workhour;
+const logMessage = `Working hours for ${targetDate},have been changed to ${newWorkingHour} `;
+    await logHelpers.addlog(logMessage)
 if(newWorkingHour > 0){
   userHelpers.updateWorkingHourForDate(targetDate, newWorkingHour);
 
@@ -550,6 +571,7 @@ const d = new Date(req.params.date);
     searchdatasheet.workinghour1 = searchdatasheet[0].workinghour
     searchdatasheet.searcheddate = d
     }
+    
 
     res.render("./admin/searchdatasheet", { admin: true, searchdatasheet });
   });
@@ -579,13 +601,8 @@ router.post("/edit-datasheets/:id", (req, res) => {
 });
 
 router.get("/datasearch/:id", function (req, res) {
-  let admin = req.session.user;
-
-  if (admin) {
     var idd = req.params.id;
-
     res.render("./admin/datasearch", { admin: true, idd });
-  }
 });
 router.post("/datasearch", async (req, res) => {
   let searcheddatas = [];
@@ -1023,6 +1040,7 @@ router.post('/printprojectreport', async (req, res) => {
         // 5. Update the current month's salary report to 'close'
         const updateResult = await reportHelpers.updateMonthlySalaryReport(searchdate, fstoreObj);
         userHelpers.closeSalaryStatusForMonth(searchdate)
+         
     
         if (updateResult.matchedCount === 0) {
           console.warn(`No open salary report found for date: ${searchdate}`);
@@ -1282,7 +1300,6 @@ router.post('/printprojectreport', async (req, res) => {
     
     cron.schedule('58 23 * * *',async() => {
       try {
-        
         // --------- 1. Current Month ---------
         const currentMonthStr = dayjs().format("YYYY-MM");
         report = await ProjectReport.ProjectReport(currentMonthStr);
@@ -1314,6 +1331,23 @@ router.post('/printprojectreport', async (req, res) => {
         console.error('Error in scheduled tasks:', error);
       }
     });
+
+    router.get("/recent-activity", function (req, res, next) {
+      logHelpers.getAllLog()
+    .then((logs) => {
+      logs.reverse();
+        res.render("./admin/recent-activity", { admin: true, logs });
+        // You can process the logs here
+    })
+    .catch((error) => {
+        console.error('Error retrieving logs:', error);
+    });
+
+
+     
+    
+  });
+  
 
 
 
