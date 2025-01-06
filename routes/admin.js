@@ -1280,7 +1280,7 @@ router.post('/printprojectreport', async (req, res) => {
       }
     });
     
-    cron.schedule('05 11 * * *',async() => {
+    cron.schedule('06 11 * * *',async() => {
       try {
         console.log('hi i worked')
         // --------- 1. Current Month ---------
