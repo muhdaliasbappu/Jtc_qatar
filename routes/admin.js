@@ -85,7 +85,7 @@ function checkAdminSession(req, res, next) {
   if (req.session.user) {
     next(); // Proceed if the admin session exists
   } else {
-    res.redirect('/admin/admin-dlogin'); // Redirect to login if not authenticated
+    res.redirect('/admin'); // Redirect to login if not authenticated
   }
 }
 
@@ -212,7 +212,7 @@ router.post("/add-employee", function async (req, res) {
       employeHelpers.addemployee(req.body, async (success) => {
         if (success) {
           const logMessage = `New Employee ${req.body.surname} ${req.body.givenName} was added.`;
-          await logHelpers.addlog(logMessage)
+          await logHelpers.addlog(logMessage, 'Employee')
           res.redirect("/admin/add-employee?success=employeeAdded");
         } else {
           res.redirect("/admin/add-employee?error=addFailed");
@@ -228,7 +228,7 @@ router.post("/add-employee", function async (req, res) {
 router.post("/add-project", function (req, res) {
   projectHelpers.addproject(req.body, async () => {
     const logMessage = `New Project ${req.body.projectname} was added.`;
-          await logHelpers.addlog(logMessage)
+          await logHelpers.addlog(logMessage, 'Project')
     res.render("./admin/add-project", { admin: true });
   });
 });
@@ -238,7 +238,7 @@ router.post("/add-project", function (req, res) {
 router.post("/add-user", function (req, res) {
   userHelpers.adduser(req.body, async () => {
     const logMessage = `New User ${req.body.usernames} was added.`;
-    await logHelpers.addlog(logMessage)
+    await logHelpers.addlog(logMessage, 'User')
     
     res.redirect("/admin/user-setting");
   });
@@ -279,7 +279,7 @@ router.post("/edit-project/:id", (req, res) => {
   projectHelpers.updateProject(req.params.id, req.body).then(async() => {
 
     const logMessage = `Project: ${req.body.projectname} Status: Changed from  ${req.body.oldstatus} to ${req.body.projectstatus}`;
-    await logHelpers.addlog(logMessage)
+    await logHelpers.addlog(logMessage, 'Project')
     res.redirect("/admin/projects");
   });
 });
@@ -290,7 +290,7 @@ router.get("/delete-project/:id", async (req, res) => {
   let sproject = await projectHelpers.getProjectDetails(req.params.id);
   projectHelpers.deleteProject(proId).then(async (response) => {
     const logMessage = `Project: ${sproject.projectname} was deleted `;
-    await logHelpers.addlog(logMessage)
+    await logHelpers.addlog(logMessage, 'Project')
     res.redirect("/admin/projects");
   });
 });
@@ -303,7 +303,7 @@ router.get("/edit-user/:id", async (req, res) => {
 router.post("/edit-user/:id", (req, res) => {
   userHelpers.updateuser(req.params.id, req.body).then(async () => {
     const logMessage = `User: ${req.body.usernames} password was changed.`;
-    await logHelpers.addlog(logMessage)
+    await logHelpers.addlog(logMessage, 'User')
     res.redirect("/admin/user-setting");
   });
 });
@@ -362,7 +362,7 @@ router.post("/edit-admin/:id", async (req, res) => {
     if (response.status) {
       // Set a success message in the session
       warningMessage = `Admin Credentials Reseted successfully!`;
-       await logHelpers.addlog(warningMessage)
+       await logHelpers.addlog(warningMessage, 'Admin')
       req.session.destroy();
       res.redirect("/admin");
     } else {
@@ -548,7 +548,7 @@ router.post("/change-workhour/:date", async function (req, res) {
 const targetDate = req.params.date; // Replace with your target date
 const newWorkingHour = req.body.workhour;
 const logMessage = `Working hours for ${targetDate},have been changed to ${newWorkingHour} `;
-    await logHelpers.addlog(logMessage)
+    await logHelpers.addlog(logMessage, 'Timesheet')
 if(newWorkingHour > 0){
   userHelpers.updateWorkingHourForDate(targetDate, newWorkingHour);
 
@@ -594,7 +594,38 @@ router.get("/edit-datasheets/:id", async (req, res) => {
     activeProjects,
   });
 });
-router.post("/edit-datasheets/:id", (req, res) => {
+router.post("/edit-datasheets/:id",async (req, res) => {
+  let edatasheet = await userHelpers.getDatasheetDetails(req.params.id);
+  console.log(edatasheet,'first',req.body,'second')
+ let  forstoring = []
+  forstoring[0] = {}
+  forstoring[0].projectname1 = edatasheet.projectname1
+  forstoring[0].workhour1  = edatasheet.workhour1
+  forstoring[0].projectname2  = edatasheet.projectname2
+  forstoring[0].workhour2 = edatasheet.workhour2
+  forstoring[0].projectname3 = edatasheet.projectname3
+  forstoring[0].workhour3 = edatasheet.workhour3
+  forstoring[0].projectname4 = edatasheet.projectname4
+  forstoring[0].workhour4 = edatasheet.workhour4
+  forstoring[0].projectname5 = edatasheet.projectname5
+  forstoring[0].workhour5 = edatasheet.workhour5
+  forstoring[0].date = edatasheet.date
+  forstoring[1] = {}
+  forstoring[1].projectname1 = req.body.projectname1
+  forstoring[1].workhour1  = req.body.workhour1
+  forstoring[1].projectname2  = req.body.projectname2
+  forstoring[1].workhour2 = req.body.workhour2
+  forstoring[1].projectname3 = req.body.projectname3
+  forstoring[1].workhour3 = req.body.workhour3
+  forstoring[1].projectname4 = req.body.projectname4
+  forstoring[1].workhour4 = req.body.workhour4
+  forstoring[1].projectname5 = req.body.projectname5
+  forstoring[1].workhour5 = req.body.workhour5
+  forstoring[1].date = edatasheet.date
+
+  const logMessage = `The timesheet for employee ${edatasheet.givenName} ${edatasheet.surname}, dated ${edatasheet.datevalue}, was updated  `;
+  await logHelpers.addlogtimesheet(logMessage, 'eTimesheet', forstoring)
+
   userHelpers.updateDatasheet(req.params.id, req.body).then(() => {
     res.redirect("/admin/datasheet");
   });
@@ -656,8 +687,12 @@ router.get("/edit-searcheddata/:id", async (req, res) => {
     activeProjects,
   });
 });
-router.post("/edit-searcheddata/:id", (req, res) => {
+router.post("/edit-searcheddata/:id",async (req, res) => {
+  let edatasheet = await userHelpers.getDatasheetDetails(req.params.id);
+  console.log(edatasheet,'first',req.body,'second')
+  
   userHelpers.updateDatasheet(req.params.id, req.body).then(() => {
+
     res.redirect("/admin/employee");
   });
 });
@@ -706,11 +741,35 @@ router.post("/search-report", async (req, res) => {
   }
 });
 
-router.post("/edit-salary/:id", (req, res) => {
+router.post("/edit-salary/:id", async (req, res) => {
   const todaydate = new Date(Date.UTC(new Date().getFullYear(), new Date().getMonth(), new Date().getDate()));
   
   let reqdate;
 
+  let edetail = await employeHelpers.getEmployeeDetails(req.params.id)
+  let sdetails = [];
+
+// Initialize sdetails[0] as an object
+sdetails[0] = {};
+sdetails[0].qid = edetail.qid;
+sdetails[0].employeeType = edetail.employeeType;
+sdetails[0].sbasic = edetail.sbasic;
+sdetails[0].sallowance = edetail.sallowance;
+sdetails[0].sbonus = edetail.sbonus;
+sdetails[0].srateph = edetail.srateph;
+
+// Initialize sdetails[1] as an object
+sdetails[1] = {};
+sdetails[1].qid = edetail.qid;
+sdetails[1].employeeType = req.body.employeeType;
+sdetails[1].sbasic = req.body.sbasic;
+sdetails[1].sallowance = req.body.sallowance;
+sdetails[1].sbonus = req.body.sbonus;
+sdetails[1].srateph = req.body.srateph;
+
+
+  const logMessage = `The salary for employee ${edetail.givenName} ${edetail.surname}, holding QID ${edetail.qid}, was updated for the ${req.body.month} `;
+    await logHelpers.addlogsalary(logMessage, 'Salary', sdetails)
   if (req.body.month === 'This Month') {
     reqdate = new Date(Date.UTC(new Date().getFullYear(), new Date().getMonth(), 1));
   } else if (req.body.month === 'Last Month') {
