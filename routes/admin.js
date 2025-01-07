@@ -249,16 +249,27 @@ router.post("/add-user", function (req, res) {
 
 router.get("/edit-employee/:id", async (req, res) => {
   let semployee = await employeHelpers.getEmployeeDetails(req.params.id);
-
   userHelpers.getAlluser().then((users) => {
     res.render("admin/edit-employee", { admin: true, semployee, users });
   });
 });
-router.post("/edit-employee/:id", (req, res) => {
-  employeHelpers.updateEmployee(req.params.id, req.body).then(() => {
+router.post("/edit-employee/:id", async (req, res) => {
+  let semployee = await employeHelpers.getEmployeeDetails(req.params.id);
+  employeHelpers.updateEmployee(req.params.id, req.body).then(async () => {
+
+    if (semployee.Employeeasigned != req.body.Employeeasigned) {
+      const logMessage = `${semployee.surname} ${semployee.givenName} was assigned to ${req.body.Employeeasigned} from ${semployee.Employeeasigned}.`;
+      await logHelpers.addlog(logMessage, 'Employee');
+    }
+    if (semployee.Employeestatus != req.body.Employeestatus) {
+      const logMessage = `${semployee.surname} ${semployee.givenName} working status was changed to ${req.body.Employeestatus}.`;
+      await logHelpers.addlog(logMessage, 'Employee');
+    }
+   
     res.redirect("/admin/employee");
   });
 });
+
 //delete employee
 
 router.get("/delete-employee/:id", (req, res) => {
