@@ -6,12 +6,13 @@ const { ObjectId } = require("mongodb");
 
 
 module.exports = {
-    addlog: (Message) => {
+    addlog: (Message, type) => {
         const date = new Date(); // Example: Sat Jan 04 2025 10:29:22 GMT+0300 (Arabian Standard Time)
         const dateStr = date.toString().split(' GMT')[0];
         const fstoreObj = {
           Timestamp: dateStr,
-          Message: Message
+          Message: Message,
+          type: type
         };
     
         // Return a Promise that resolves to the result of insertOne
@@ -32,6 +33,40 @@ module.exports = {
             }
         });
     },
+    addlogsalary: (Message, type, sdetails) => {
+        const date = new Date(); // Example: Sat Jan 04 2025 10:29:22 GMT+0300 (Arabian Standard Time)
+        const dateStr = date.toString().split(' GMT')[0];
+        const fstoreObj = {
+          Timestamp: dateStr,
+          Message: Message,
+          type: type,
+          isSalary: true,
+          old: sdetails[0],
+          new: sdetails[1]
+        };
+    
+        // Return a Promise that resolves to the result of insertOne
+        return db.get()
+          .collection('logger')
+          .insertOne(fstoreObj);
+      },
+      addlogtimesheet: (Message, type, forstoring) => {
+        const date = new Date(); // Example: Sat Jan 04 2025 10:29:22 GMT+0300 (Arabian Standard Time)
+        const dateStr = date.toString().split(' GMT')[0];
+        const fstoreObj = {
+          Timestamp: dateStr,
+          Message: Message,
+          type: type,
+          isTimesheet: true,
+          old: forstoring[0],
+          new: forstoring[1]
+        };
+    
+        // Return a Promise that resolves to the result of insertOne
+        return db.get()
+          .collection('logger')
+          .insertOne(fstoreObj);
+      }
 
 
 
