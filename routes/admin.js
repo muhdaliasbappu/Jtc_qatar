@@ -596,7 +596,6 @@ router.get("/edit-datasheets/:id", async (req, res) => {
 });
 router.post("/edit-datasheets/:id",async (req, res) => {
   let edatasheet = await userHelpers.getDatasheetDetails(req.params.id);
-  console.log(edatasheet,'first',req.body,'second')
  let  forstoring = []
   forstoring[0] = {}
   forstoring[0].projectname1 = edatasheet.projectname1
@@ -689,7 +688,35 @@ router.get("/edit-searcheddata/:id", async (req, res) => {
 });
 router.post("/edit-searcheddata/:id",async (req, res) => {
   let edatasheet = await userHelpers.getDatasheetDetails(req.params.id);
-  console.log(edatasheet,'first',req.body,'second')
+  let  forstoring = []
+   forstoring[0] = {}
+   forstoring[0].projectname1 = edatasheet.projectname1
+   forstoring[0].workhour1  = edatasheet.workhour1
+   forstoring[0].projectname2  = edatasheet.projectname2
+   forstoring[0].workhour2 = edatasheet.workhour2
+   forstoring[0].projectname3 = edatasheet.projectname3
+   forstoring[0].workhour3 = edatasheet.workhour3
+   forstoring[0].projectname4 = edatasheet.projectname4
+   forstoring[0].workhour4 = edatasheet.workhour4
+   forstoring[0].projectname5 = edatasheet.projectname5
+   forstoring[0].workhour5 = edatasheet.workhour5
+   forstoring[0].date = edatasheet.date
+   forstoring[1] = {}
+   forstoring[1].projectname1 = req.body.projectname1
+   forstoring[1].workhour1  = req.body.workhour1
+   forstoring[1].projectname2  = req.body.projectname2
+   forstoring[1].workhour2 = req.body.workhour2
+   forstoring[1].projectname3 = req.body.projectname3
+   forstoring[1].workhour3 = req.body.workhour3
+   forstoring[1].projectname4 = req.body.projectname4
+   forstoring[1].workhour4 = req.body.workhour4
+   forstoring[1].projectname5 = req.body.projectname5
+   forstoring[1].workhour5 = req.body.workhour5
+   forstoring[1].date = edatasheet.date
+ 
+   const logMessage = `The timesheet for employee ${edatasheet.givenName} ${edatasheet.surname}, dated ${edatasheet.datevalue}, was updated  `;
+   await logHelpers.addlogtimesheet(logMessage, 'eTimesheet', forstoring)
+ 
   
   userHelpers.updateDatasheet(req.params.id, req.body).then(() => {
 
