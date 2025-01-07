@@ -1,65 +1,263 @@
-     <div class="content-page">
-                <div class="content">
+<div class="content-page">
+    <div class="content">
+        <div class="container-fluid">
+            <!-- Page Title -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="page-title-box">
+                        <h4 class="page-title">Recent Activity</h4>
+                    </div>
+                </div>
+            </div>
+            <!-- Activity List -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="mt-3">
+                                <ul class="email-list">
+                                    {{#each logs}}
+                                    <li>
+                                        <div class="email-sender-info">
+                                            <span class="ri-checkbox-blank-circle-fill"></span>
 
-                    <!-- Start Content-->
-                    <div class="container-fluid">
-                        
-                        <!-- start page email-title -->
-                        <!-- start page title -->
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="page-title-box">
-                                    <h4 class="page-title">Recent Activity</h4>
-                                </div>
+                                            {{#if this.isSalary}}
+                                                <a 
+                                                    class="email-title" 
+                                                    href="#" 
+                                                    style="left: 25px;" 
+                                                    data-bs-toggle="modal" 
+                                                    data-bs-target="#activity-modal" 
+                                                    data-message="{{this.Message}}" 
+                                                    data-timestamp="{{this.Timestamp}}"
+                                                    data-oldemployeeType="{{this.old.employeeType}}"
+                                                    data-oldsbasic="{{this.old.sbasic}}"
+                                                    data-oldsallowance="{{this.old.sallowance}}"
+                                                    data-oldsbonus="{{this.old.sbonus}}"
+                                                    data-newemployeeType="{{this.new.employeeType}}"
+                                                    data-newsbasic="{{this.new.sbasic}}"
+                                                    data-newsallowance="{{this.new.sallowance}}"
+                                                    data-newsbonus="{{this.new.sbonus}}"
+                                                >
+                                                    {{this.Message}}
+                                                </a>
+                                                {{else if this.isTimesheet}}
+                                                <a class="email-title" 
+                                                    href="#" 
+                                                    data-bs-toggle="modal" 
+                                                    style="left: 25px;" 
+                                                    data-bs-target="#timesheetmodal" 
+                                                    data-message="{{this.Message}}" 
+                                                    data-timestamp="{{this.Timestamp}}"
+                                                    data-oldprojectname1="{{this.old.projectname1}}"
+                                                    data-newprojectname1="{{this.new.projectname1}}"
+                                                    data-oldworkhour1="{{this.old.workhour1}}"
+                                                    data-newworkhour1="{{this.new.workhour1}}"
+                                                    data-oldprojectname2="{{this.old.projectname2}}"
+                                                    data-newprojectname2="{{this.new.projectname2}}"
+                                                    data-oldworkhour2="{{this.old.workhour2}}"
+                                                    data-newworkhour2="{{this.new.workhour2}}"
+                                                    data-oldprojectname3="{{this.old.projectname3}}"
+                                                    data-newprojectname3="{{this.new.projectname3}}"
+                                                    data-oldworkhour3="{{this.old.workhour3}}"
+                                                    data-newworkhour3="{{this.new.workhour3}}"
+                                                    data-oldprojectname4="{{this.old.projectname4}}"
+                                                    data-oldworkhour4="{{this.old.workhour4}}"
+                                                    data-newprojectname4="{{this.new.projectname4}}"
+                                                    data-newworkhour4="{{this.new.workhour4}}"
+                                                    data-oldprojectname5="{{this.old.projectname5}}"
+                                                    data-oldworkhour5="{{this.old.workhour5}}"
+                                                    data-newprojectname5="{{this.new.projectname5}}"
+                                                    data-newworkhour5="{{this.new.workhour5}}"
+                                                    >  
+                                                    {{this.Message}}
+                                                </a>
+                                            {{else}}
+                                                <p class="email-title" style="left: 25px;">{{this.Message}}</p>
+                                            {{/if}}
+
+                                            <div class="email-content">
+                                                <p style="right: 0; text-align: right; position: absolute;">{{this.Timestamp}}</p>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    {{/each}}
+                                </ul>
                             </div>
                         </div>
-                        <!-- end page title -->
-                        <!-- end page email-title --> 
-
-                        <div class="row">
-
-                            <!-- Right Sidebar -->
-                            <div class="col-12">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <!-- Left sidebar -->
-                                            <div class="mt-3">
-                                                <ul class="email-list">   
-                                                    {{#each logs}}                                               
-                                                    <li >
-                                                        
-                                                        <div class="email-sender-info"> 
-                                                            
-                                                            <span class=" ri-checkbox-blank-circle-fill "></span>
-                                                          
-                                                                                                                                                          
-                                                            <p class="email-title" style="left: 25px;">{{this.Message}} </p>      
-                                                                                                                                                                             
-                                                            <div class="email-content">
-                                                            <p style="right: 0;  text-align: right;  position:absolute; ">{{this.Timestamp}}</p>
-                                                        </div>
-                                                        </div>                                                                                                          
-                                                    </li>
-                                                    {{/each}}
-                                                  
-                                                </ul>
-                                            </div>
-                                            <!-- end .mt-4 -->
-                                        
-                                        <!-- end inbox-rightbar-->
-                                    </div>
-                                    <!-- end card-body -->
-                                </div> <!-- end card-box -->
-
-                            </div> <!-- end Col -->
-                        </div><!-- End row -->
-                        
-                    </div> <!-- container -->
-
-                </div> <!-- content -->
-
-
-                
-
-
+                    </div>
+                </div>
             </div>
+        </div> <!-- End container -->
+    </div> <!-- End content -->
+</div>
+
+<!-- Modal for Log Details (Salary) -->
+<div class="modal fade" id="activity-modal" tabindex="-1" role="dialog" aria-labelledby="activity-modal-label" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="activity-modal-label">Log Details</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Message:</strong> <span id="activity-modal-message"></span></p>
+                <p><strong>Time:</strong> <span id="activity-modal-timestamp"></span></p>
+                <div class="row">
+                    <div class="col">
+                        <h4>Changed From:</h4>
+                        <p><strong>Employee Type:</strong> <span id="activity-modal-oldemployeeType"></span></p>
+                        <p><strong>Basic Salary:</strong> <span id="activity-modal-oldsbasic"></span></p>
+                        <p><strong>Allowance:</strong> <span id="activity-modal-oldsallowance"></span></p>
+                        <p><strong>Bonus:</strong> <span id="activity-modal-oldsbonus"></span></p>
+                    </div>
+                    <div class="col">
+                        <h4>Changed To:</h4>
+                        <p><strong>Employee Type:</strong> <span id="activity-modal-newemployeeType"></span></p>
+                        <p><strong>Basic Salary:</strong> <span id="activity-modal-newsbasic"></span></p>
+                        <p><strong>Allowance:</strong> <span id="activity-modal-newsallowance"></span></p>
+                        <p><strong>Bonus:</strong> <span id="activity-modal-newsbonus"></span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal for Log Details (Timesheet) -->
+<div class="modal fade" id="timesheetmodal" tabindex="-1" role="dialog" aria-labelledby="timesheet-modal-label" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="timesheet-modal-label">Log Details</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Message:</strong> <span id="timesheet-modal-message"></span></p>
+                <p><strong>Time:</strong> <span id="timesheet-modal-timestamp"></span></p>
+                <div class="row">
+                    <div class="col">
+                        <h4>Changed From:</h4>
+                        <p><strong>Project Name1:</strong> <span id="timesheet-modal-oldprojectname1"></span></p>
+                        <p><strong>Work Hours1:</strong> <span id="timesheet-modal-oldworkhour1"></span></p>
+                        <p><strong>Project Name2:</strong> <span id="timesheet-modal-oldprojectname2"></span></p>
+                        <p><strong>Work Hours2:</strong> <span id="timesheet-modal-oldworkhour2"></span></p>
+                        <p><strong>Project Name3:</strong> <span id="timesheet-modal-oldprojectname3"></span></p>
+                        <p><strong>Work Hours3:</strong> <span id="timesheet-modal-oldworkhour3"></span></p>
+                        <p><strong>Project Name4:</strong> <span id="timesheet-modal-oldprojectname4"></span></p>
+                        <p><strong>Work Hours4:</strong> <span id="timesheet-modal-oldworkhour4"></span></p>
+                        <p><strong>Project Name5:</strong> <span id="timesheet-modal-oldprojectname5"></span></p>
+                        <p><strong>Work Hours5:</strong> <span id="timesheet-modal-oldworkhour5"></span></p>
+                    </div>
+                    <div class="col">
+                        <h4>Changed To:</h4>
+                        <p><strong>Project Name1:</strong> <span id="timesheet-modal-newprojectname1"></span></p>
+                        <p><strong>Work Hours1:</strong> <span id="timesheet-modal-newworkhour1"></span></p>
+                        <p><strong>Project Name2:</strong> <span id="timesheet-modal-newprojectname2"></span></p>
+                        <p><strong>Work Hours2:</strong> <span id="timesheet-modal-newworkhour2"></span></p>
+                        <p><strong>Project Name3:</strong> <span id="timesheet-modal-newprojectname3"></span></p>
+                        <p><strong>Work Hours3:</strong> <span id="timesheet-modal-newworkhour3"></span></p>
+                        <p><strong>Project Name4:</strong> <span id="timesheet-modal-newprojectname4"></span></p>
+                        <p><strong>Work Hours4:</strong> <span id="timesheet-modal-newworkhour4"></span></p>
+                        <p><strong>Project Name5:</strong> <span id="timesheet-modal-newprojectname5"></span></p>
+                        <p><strong>Work Hours5:</strong> <span id="timesheet-modal-newworkhour5"></span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Handler for Activity Modal (Salary)
+        const activityModal = document.getElementById('activity-modal');
+        activityModal.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+            const message = button.getAttribute('data-message');
+            const timestamp = button.getAttribute('data-timestamp');
+            const oldEmployeeType = button.getAttribute('data-oldemployeeType');
+            const oldSbasic = button.getAttribute('data-oldsbasic');
+            const oldSallowance = button.getAttribute('data-oldsallowance');
+            const oldSbonus = button.getAttribute('data-oldsbonus');
+            const newEmployeeType = button.getAttribute('data-newemployeeType');
+            const newSbasic = button.getAttribute('data-newsbasic');
+            const newSallowance = button.getAttribute('data-newsallowance');
+            const newSbonus = button.getAttribute('data-newsbonus');
+
+            // Populate modal content
+            document.getElementById('activity-modal-message').textContent = message || 'N/A';
+            document.getElementById('activity-modal-timestamp').textContent = timestamp || 'N/A';
+            document.getElementById('activity-modal-oldemployeeType').textContent = oldEmployeeType || 'N/A';
+            document.getElementById('activity-modal-oldsbasic').textContent = oldSbasic || 'N/A';
+            document.getElementById('activity-modal-oldsallowance').textContent = oldSallowance || 'N/A';
+            document.getElementById('activity-modal-oldsbonus').textContent = oldSbonus || 'N/A';
+            document.getElementById('activity-modal-newemployeeType').textContent = newEmployeeType || 'N/A';
+            document.getElementById('activity-modal-newsbasic').textContent = newSbasic || 'N/A';
+            document.getElementById('activity-modal-newsallowance').textContent = newSallowance || 'N/A';
+            document.getElementById('activity-modal-newsbonus').textContent = newSbonus || 'N/A';
+        });
+
+        // Handler for Timesheet Modal
+        const timesheetModal = document.getElementById('timesheetmodal');
+        timesheetModal.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+            const message = button.getAttribute('data-message');
+            const timestamp = button.getAttribute('data-timestamp');
+
+            // Timesheet-related attributes
+            const oldProjectName1 = button.getAttribute('data-oldprojectname1');
+            const oldWorkHour1 = button.getAttribute('data-oldworkhour1');
+            const oldProjectName2 = button.getAttribute('data-oldprojectname2');
+            const oldWorkHour2 = button.getAttribute('data-oldworkhour2');
+            const oldProjectName3 = button.getAttribute('data-oldprojectname3');
+            const oldWorkHour3 = button.getAttribute('data-oldworkhour3');
+            const oldProjectName4 = button.getAttribute('data-oldprojectname4');
+            const oldWorkHour4 = button.getAttribute('data-oldworkhour4');
+            const oldProjectName5 = button.getAttribute('data-oldprojectname5');
+            const oldWorkHour5 = button.getAttribute('data-oldworkhour5');
+
+            const newProjectName1 = button.getAttribute('data-newprojectname1');
+            const newWorkHour1 = button.getAttribute('data-newworkhour1');
+            const newProjectName2 = button.getAttribute('data-newprojectname2');
+            const newWorkHour2 = button.getAttribute('data-newworkhour2');
+            const newProjectName3 = button.getAttribute('data-newprojectname3');
+            const newWorkHour3 = button.getAttribute('data-newworkhour3');
+            const newProjectName4 = button.getAttribute('data-newprojectname4');
+            const newWorkHour4 = button.getAttribute('data-newworkhour4');
+            const newProjectName5 = button.getAttribute('data-newprojectname5');
+            const newWorkHour5 = button.getAttribute('data-newworkhour5');
+
+            // Populate modal content
+            document.getElementById('timesheet-modal-message').textContent = message || 'N/A';
+            document.getElementById('timesheet-modal-timestamp').textContent = timestamp || 'N/A';
+
+            // Old Timesheet Data
+            document.getElementById('timesheet-modal-oldprojectname1').textContent = oldProjectName1 || 'N/A';
+            document.getElementById('timesheet-modal-oldworkhour1').textContent = oldWorkHour1 || 'N/A';
+            document.getElementById('timesheet-modal-oldprojectname2').textContent = oldProjectName2 || 'N/A';
+            document.getElementById('timesheet-modal-oldworkhour2').textContent = oldWorkHour2 || 'N/A';
+            document.getElementById('timesheet-modal-oldprojectname3').textContent = oldProjectName3 || 'N/A';
+            document.getElementById('timesheet-modal-oldworkhour3').textContent = oldWorkHour3 || 'N/A';
+            document.getElementById('timesheet-modal-oldprojectname4').textContent = oldProjectName4 || 'N/A';
+            document.getElementById('timesheet-modal-oldworkhour4').textContent = oldWorkHour4 || 'N/A';
+            document.getElementById('timesheet-modal-oldprojectname5').textContent = oldProjectName5 || 'N/A';
+            document.getElementById('timesheet-modal-oldworkhour5').textContent = oldWorkHour5 || 'N/A';
+
+            // New Timesheet Data
+            document.getElementById('timesheet-modal-newprojectname1').textContent = newProjectName1 || 'N/A';
+            document.getElementById('timesheet-modal-newworkhour1').textContent = newWorkHour1 || 'N/A';
+            document.getElementById('timesheet-modal-newprojectname2').textContent = newProjectName2 || 'N/A';
+            document.getElementById('timesheet-modal-newworkhour2').textContent = newWorkHour2 || 'N/A';
+            document.getElementById('timesheet-modal-newprojectname3').textContent = newProjectName3 || 'N/A';
+            document.getElementById('timesheet-modal-newworkhour3').textContent = newWorkHour3 || 'N/A';
+            document.getElementById('timesheet-modal-newprojectname4').textContent = newProjectName4 || 'N/A';
+            document.getElementById('timesheet-modal-newworkhour4').textContent = newWorkHour4 || 'N/A';
+            document.getElementById('timesheet-modal-newprojectname5').textContent = newProjectName5 || 'N/A';
+            document.getElementById('timesheet-modal-newworkhour5').textContent = newWorkHour5 || 'N/A';
+        });
+    });
+</script>
