@@ -94,8 +94,7 @@ let apexChart = null; // Will hold the current ApexCharts instance
       colors: chartColors,
       xaxis: {
         // If your data is monthly, you can manually use months:
-        categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", 
-                     "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+        categories: projectData.date,
         // OR if your backend provides date labels, you could do:
         // categories: projectData.date,
         tooltip: {
