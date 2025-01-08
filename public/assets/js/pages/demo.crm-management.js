@@ -108,7 +108,7 @@ let apexChart = null; // Will hold the current ApexCharts instance
         labels: {
           formatter: function (value) {
             // Example suffix "k"
-            return "QAR" + value ;
+            return  value ;
           },
           offsetX: -15
         }
