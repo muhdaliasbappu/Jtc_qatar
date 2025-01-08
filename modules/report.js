@@ -582,10 +582,13 @@ if(month === 29 && workday === 29){
 else if( workday > 30 ){
     report.workdays = 30
     tempwd = 30
-}else{
-    workday = workday-leavedays;
-    report.workdays = workday
-    tempwd = workday
+}else if(leavedays > 30){
+    report.workdays = 0
+    tempwd = 0
+}else {
+    report.workdays = 30 - leavedays
+    tempwd = 30 - leavedays
+
 }
 basicsalary = tempwd*timesheet[0].sbasic/30
 allowance = tempwd*timesheet[0].sallowance/30
