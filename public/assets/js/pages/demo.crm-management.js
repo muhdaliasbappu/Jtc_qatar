@@ -16,14 +16,14 @@ let apexChart = null; // Will hold the current ApexCharts instance
 
     // Default colors to match each series
     const defaultColors = [
-      "#727cf5", // Own Labour
+      "#6f70af", // Own Labour
       "#0acf97", // Hired Labour
       "#fa5c7c", // Man Power
       "#6c757d", // Own Staff(P)
       "#39afd1", // Hired Staff(P)
       "#ffbc00", // Operation Cost
       "#ff6b6b", // Over Head Cost
-      "#2225ac"  // Total Cost
+      "#727cf5"  // Total Cost
     ];
 
     // If you have a custom color list in a data attribute:
