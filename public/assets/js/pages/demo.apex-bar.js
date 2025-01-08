@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
+    // Check if the 'projectbar' data is defined
     if (typeof projectbar === 'undefined') {
         console.error("projectbar data is not defined.");
         return;
@@ -40,8 +41,18 @@ document.addEventListener("DOMContentLoaded", function () {
     // Generate colors array based on the series order
     const colorsArray = seriesOrder.map(seriesName => seriesColors[seriesName]);
 
-    // Function to generate series data based on selected time frame
+    /**
+     * Function to generate series data based on selected time frame
+     * @param {string} timeFrame - The key representing the time frame in the projectbar object
+     * @returns {Array} - Array of series objects for ApexCharts
+     */
     function getSeriesData(timeFrame) {
+        // Ensure the timeFrame exists in projectbar
+        if (!projectbar[timeFrame]) {
+            console.error(`No data found for time frame: ${timeFrame}`);
+            return [];
+        }
+
         return seriesOrder.map(name => ({
             name: name,
             data: projectbar[timeFrame][seriesMapping[name]] || []
@@ -66,13 +77,23 @@ document.addEventListener("DOMContentLoaded", function () {
         stroke: { show: false },
         series: getSeriesData('currentMonth'),
         xaxis: {
-            categories: projectbar.currentMonth.projectname || [],
-            labels: { formatter: function(val) { return  "QAR" + val; } },
+            categories: (projectbar.currentMonth && projectbar.currentMonth.projectname) || [],
+            labels: { 
+                formatter: function(val) { 
+                    return "QAR " + val; 
+                } 
+            },
             axisBorder: { show: false }
         },
         yaxis: { title: { text: undefined } },
         colors: colorsArray,
-        tooltip: { y: { formatter: function(val) { return "QAR" + val; } } },
+        tooltip: { 
+            y: { 
+                formatter: function(val) { 
+                    return "QAR " + val; 
+                } 
+            } 
+        },
         fill: { opacity: 1 },
         states: { hover: { filter: "none" } },
         legend: {
@@ -92,26 +113,36 @@ document.addEventListener("DOMContentLoaded", function () {
     var chart = new ApexCharts(chartElement, chartOptions);
     chart.render();
 
-    // Handle dropdown selection for dynamic chart switching
+    /**
+     * Handle dropdown selection for dynamic chart switching
+     * Only processes dropdown items with href attributes starting with '#'
+     */
     const dropdownItems = document.querySelectorAll(".dropdown-item");
     dropdownItems.forEach(function(item) {
         item.addEventListener("click", function(e) {
-            e.preventDefault();
-            const target = this.getAttribute("href").substring(1); // Remove '#' from href
+            const href = this.getAttribute("href");
 
-            // // Validate the target time frame
-            // if (!projectbar[target]) {
-            //     console.error(`Time frame '${target}' does not exist in projectbar.`);
-            //     return;
-            // }
+            // Check if href starts with '#'
+            if (href && href.startsWith("#")) {
+                e.preventDefault(); // Prevent default navigation
 
-            // Update chart categories and series data
-            chart.updateOptions({
-                xaxis: {
-                    categories: projectbar[target].projectname || []
-                },
-                series: getSeriesData(target)
-            });
+                const target = href.substring(1); // Remove '#' from href
+
+                // Validate that the target exists in projectbar
+                if (!projectbar[target]) {
+                    console.error(`No data found for target: ${target}`);
+                    return;
+                }
+
+                // Update chart categories and series data
+                chart.updateOptions({
+                    xaxis: {
+                        categories: projectbar[target].projectname || []
+                    },
+                    series: getSeriesData(target)
+                });
+            }
+            // If href does not start with '#', allow default behavior (e.g., navigation for Logout)
         });
     });
 });
