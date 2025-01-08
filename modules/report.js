@@ -571,25 +571,36 @@ for(i=0;i<timesheet.length;i++){
 }
 let month = getDaysInMonth(dd)
 let tempwd = 0
-if(month === 29 && workday === 29){
-    report.workdays = 29
-    tempwd = 30
-}else if(month === 28  && workday === 28){
-    report.workdays = 28
-    tempwd = 30
-
-}
-else if( workday > 30 ){
-    report.workdays = 30
-    tempwd = 30
-}else if(leavedays > 30){
-    report.workdays = 0
-    tempwd = 0
-}else {
-    report.workdays = 30 - leavedays
-    tempwd = 30 - leavedays
-
-}
+if ((month === 28 && workday === 28) || (month === 29 && workday === 29)) {
+    // 28/29 day logic
+    report.workdays = month;
+    tempwd = 30;
+  
+  } else if (month === 30 || month === 31) {
+    const maxWorkdays = 30;
+    
+    if (workday > maxWorkdays) {
+      // cap at 30 if someone claims more than 30 worked days
+      report.workdays = maxWorkdays;
+      tempwd = maxWorkdays;
+      
+    } else if (leavedays > maxWorkdays && workday === 0) {
+      // if they took more than 30 days leave and worked 0
+      report.workdays = 0;
+      tempwd = 0;
+      
+    } else {
+      // old default
+      let computedWorkdays = maxWorkdays - leavedays;
+      // NEW: ensure it's not below reported workday
+      computedWorkdays = Math.max(computedWorkdays, workday);
+  
+      // optionally, ensure we never exceed 30
+      report.workdays = Math.min(computedWorkdays, maxWorkdays);
+      tempwd = report.workdays;
+    }
+  }
+  
 basicsalary = tempwd*timesheet[0].sbasic/30
 allowance = tempwd*timesheet[0].sallowance/30
 bonus = tempwd*timesheet[0].sbonus/30
