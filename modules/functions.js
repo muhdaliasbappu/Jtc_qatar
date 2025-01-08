@@ -368,7 +368,30 @@ getCounts: () => {
 
       // Accumulate data from each monthly doc
       for (const doc of reports) {
-        const monthStr = doc.date;
+        const monthStr = doc.date;  // e.g., "2024-12"
+
+// 1. Split the string by "-" to separate year and month
+const [yearStr, monthStrNum] = monthStr.split("-");  
+// yearStr => "2024", monthStrNum => "12"
+
+// 2. Convert to numeric types
+const year = parseInt(yearStr, 10);     // 2024
+const month = parseInt(monthStrNum, 10); // 12
+
+// 3. Create an array of short month names
+const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+// 4. Get the short month name
+const shortMonth = monthNames[month - 1]; // "Dec"
+
+// 5. Extract the last two digits of the year
+const shortYear = (year % 100).toString().padStart(2, "0"); 
+// e.g., 2024 -> 24
+
+// 6. Format the final string
+const formatted = `${shortMonth} ${shortYear}`; // "Dec 24"
+        
 
         let ownlaboursalary = 0;
         let hiredlabourmsalary = 0;
@@ -402,7 +425,7 @@ getCounts: () => {
         projectAccumulator.hiredstaffsalary.push(hiredstaffsalary);
         projectAccumulator.operationcost.push(operationcost);
         projectAccumulator.overheadcost.push(overheadcost);
-        projectAccumulator.date.push(monthStr);
+        projectAccumulator.date.push(formatted);
 
         projectAccumulator.total.push(monthlyTotal);
       }
