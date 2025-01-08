@@ -55,7 +55,7 @@ let apexChart = null; // Will hold the current ApexCharts instance
       },
       stroke: {
         curve: "smooth",
-        width: 4
+        width: 2
       },
       series: [
         {
