@@ -26,6 +26,7 @@
             <input type="hidden" name="surname" id="hiddensurname" value="">
             <input type="hidden" name="qid" id="hiddenemployeeQID" value="">
             <input type="hidden"  name="datevalue" id="datevalue" value="{{datess.date2}}" >
+             <input type="hidden" name="salarystatus" id="hiddenesalarystatus" value="open">
       
 
 
@@ -235,9 +236,9 @@
                 
             </fieldset>
             <div class=" card-body ">
-                <button type="button" class="btn btn-primary" onclick="previousEmployee()">Back</button>
+                
                 <button type="button" id="submits"  class="btn  btn-primary text-end">submit</button>
-                <button type="button"  onclick="nextEmployee()" class="btn  btn-primary text-end">Next</button>
+       
 
             </div>
 
@@ -255,7 +256,7 @@
                            </div>
                               </div>
                                  </div>
-<script>
+ <script>
 var employeetype;
     var employees = JSON.parse('{{{employees}}}');
     var currentIndex = 0;
@@ -271,10 +272,16 @@ var employeetype;
     for (var i = 0; i < radioButtons.length; i++) {
         radioButtons[i].addEventListener("click", handleRadioButtonClick);
     }
+    var submittedEmployeeIds = [];
 
 
     function displayEmployee() {
         var employee = employees[currentIndex];
+        var employeeId = employee._id;
+        if (submittedEmployeeIds.includes(employeeId)) {
+            nextEmployee(); // Skip to the next employee
+            return;
+        }else{
  
     
          document.getElementById("employeeNames").textContent = employee.surname;
@@ -286,7 +293,7 @@ var employeetype;
         
         employeetype = employee.employeeType
           handleRadioButtonClick()
-   
+   }
     }
     
 
@@ -468,6 +475,7 @@ var employeetype;
             workhour4: $("#workhour4").val(),
             projectname5: $("#projectname5").val(),
             workhour5: $("#workhour5").val(),
+            salarystatus: $("#hiddenesalarystatus").val(),
         }
 
         $.ajax({
@@ -486,7 +494,7 @@ var employeetype;
         })
            
           var employeeId = $("#employee_id").val();
- 
+    submittedEmployeeIds.push(employeeId);
     nextEmployee();
     })
 

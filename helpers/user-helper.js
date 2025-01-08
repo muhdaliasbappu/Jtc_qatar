@@ -377,7 +377,8 @@ module.exports = {
                 reject(error);
             });
         });
-    },updateWorkingHourForDate: (targetDate, newWorkingHour, callback) => {
+    },
+    updateWorkingHourForDate: (targetDate, newWorkingHour, callback) => {
         const startOfDay= new Date(targetDate);
         const endOfDay= new Date(targetDate);
         endOfDay.setHours(23, 59, 59, 999);
@@ -430,6 +431,8 @@ module.exports = {
         const [year, monthNumber] = month.split('-');
         const firstDayOfMonth = new Date(year, monthNumber - 1, 1);
         const lastDayOfMonth = new Date(year, monthNumber, 0, 23, 59, 59, 999);
+        console.log(employeeType,'1')
+        
 
         db.get().collection('datasheet').find({
             $and: [
@@ -452,8 +455,8 @@ module.exports = {
                                 { employee_id: id },
                                 { workinghour: '0' },
                                 { todaystatus: 'Working' },
-                                { employeeType: employeeType }
-                              
+                                { employeeType: employeeType },
+                                { employeeType: { $nin: ['Own Staff (Projects)', 'Hired Staff (Projects)'] } }  // Condition for x not equal to y or z
                             ]
                         }
                     ]
@@ -522,27 +525,7 @@ getDatabByMonthofPaidLeaveoperation: (month, id) => {
                                 { date: { $gte: firstDayOfMonth } },
                                 { date: { $lte: lastDayOfMonth } },
                                 { employee_id: id },
-                                { workinghour: '0' },
-                                { todaystatus: 'Working' },
-                                { employeeType: 'Own Staff (Operations)' }
-                            ]
-                        },
-                        { 
-                            $and: [
-                                { date: { $gte: firstDayOfMonth } },
-                                { date: { $lte: lastDayOfMonth } },
-                                { employee_id: id },
                                 { todaystatus: 'Paid Leave' },
-                                { employeeType: 'Hired Staff (Operations)' }
-                            ]
-                        },
-                        { 
-                            $and: [
-                                { date: { $gte: firstDayOfMonth } },
-                                { date: { $lte: lastDayOfMonth } },
-                                { employee_id: id },
-                                { workinghour: '0' },
-                                { todaystatus: 'Working' },
                                 { employeeType: 'Hired Staff (Operations)' }
                             ]
                         }
@@ -558,8 +541,352 @@ getDatabByMonthofPaidLeaveoperation: (month, id) => {
                 reject(error);
             });
     });
-}
+},
+getDatabByMonthofPaidLeaveoperationdtd: (month, id) => {
+    return new Promise((resolve, reject) => {
+        
+        const firstDayOfMonth = new Date(month.startDate);
+        firstDayOfMonth.setHours(0, 0, 0, 0); // Set time to 12:00 AM
+        
+        const lastDayOfMonth = new Date(month.endDate);
+        lastDayOfMonth.setHours(23, 59, 59, 999); // Set time to 11:59:59 PM
+
+        db.get().collection('datasheet').find({
+            $and: [
+                {
+                    $or: [
+                        { 
+                            $and: [
+                                { date: { $gte: firstDayOfMonth } },
+                                { date: { $lte: lastDayOfMonth } },
+                                { employee_id: id },
+                                { todaystatus: 'Paid Leave' },
+                                { employeeType: 'Own Staff (Operations)' }
+                            ]
+                        },
+                        { 
+                            $and: [
+                                { date: { $gte: firstDayOfMonth } },
+                                { date: { $lte: lastDayOfMonth } },
+                                { employee_id: id },
+                                { todaystatus: 'Paid Leave' },
+                                { employeeType: 'Hired Staff (Operations)' }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }).toArray()
+            .then((response) => {
+                resolve(response);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                reject(error);
+            });
+    });
+},
+
+
+gettimesheetbydatevalue: ( datevalue ) => {
+        
+    return new Promise((resolve, reject) => {
+            db.get().collection('datasheet').find({
+            $and: [
+                { datevalue: datevalue } ,               
+            ]
+            
+            
+        }).toArray()
+        .then((response) => {
+            resolve(response);
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+            reject(error);
+        });
+    });
+},
+getDatabByproject1dtd: ( month, projectname , employeeType) => {
+        
+    return new Promise((resolve, reject) => {
+        const firstDayOfMonth = new Date(month.date1);
+        firstDayOfMonth.setHours(0, 0, 0, 0); // Set time to 12:00 AM
+        
+        const lastDayOfMonth = new Date(month.date2);
+        lastDayOfMonth.setHours(23, 59, 59, 999); // Set time to 11:59:59 PM
+        
+        db.get().collection('datasheet').find({
+            $and: [
+                { date: { $gte: firstDayOfMonth } },
+                { date: { $lte: lastDayOfMonth } },
+                { projectname1: projectname } ,
+                { employeeType: employeeType } ,
+                { todaystatus: 'Working'},
+                // Adjust the field name based on your actual schema
+            ]
+            
+            
+        }).toArray()
+        .then((response) => {
+            resolve(response);
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+            reject(error);
+        });
+    });
+},
+getDatabByproject2dtd: ( month, projectname , employeeType) => {
+    
+    return new Promise((resolve, reject) => {
+        const firstDayOfMonth = new Date(month.date1);
+firstDayOfMonth.setHours(0, 0, 0, 0); // Set time to 12:00 AM
+
+const lastDayOfMonth = new Date(month.date2);
+lastDayOfMonth.setHours(23, 59, 59, 999); // Set time to 11:59:59 PM
+
+        db.get().collection('datasheet').find({
+            $and: [
+                { date: { $gte: firstDayOfMonth } },
+                { date: { $lte: lastDayOfMonth } },
+                { projectname2: projectname } ,
+                { employeeType: employeeType } ,
+                { todaystatus: 'Working'},
+                // Adjust the field name based on your actual schema
+            ]
+            
+            
+        }).toArray()
+        .then((response) => {
+            resolve(response);
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+            reject(error);
+        });
+    });
+}, getDatabByproject3dtd: ( month, projectname , employeeType) => {
+    
+    return new Promise((resolve, reject) => {
+        const firstDayOfMonth = new Date(month.date1);
+firstDayOfMonth.setHours(0, 0, 0, 0); // Set time to 12:00 AM
+
+const lastDayOfMonth = new Date(month.date2);
+lastDayOfMonth.setHours(23, 59, 59, 999); // Set time to 11:59:59 PM
+  
+        db.get().collection('datasheet').find({
+            $and: [
+                { date: { $gte: firstDayOfMonth } },
+                { date: { $lte: lastDayOfMonth } },
+                { projectname3: projectname } ,
+                { employeeType: employeeType } ,
+                { todaystatus: 'Working'},
+                // Adjust the field name based on your actual schema
+            ]
+            
+            
+        }).toArray()
+        .then((response) => {
+            resolve(response);
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+            reject(error);
+        });
+    });
+}, getDatabByproject4dtd: ( month, projectname , employeeType) => {
+    
+    return new Promise((resolve, reject) => {
+        const firstDayOfMonth = new Date(month.date1);
+firstDayOfMonth.setHours(0, 0, 0, 0); // Set time to 12:00 AM
+
+const lastDayOfMonth = new Date(month.date2);
+lastDayOfMonth.setHours(23, 59, 59, 999); // Set time to 11:59:59 PM
+
+      db.get().collection('datasheet').find({
+            $and: [
+                { date: { $gte: firstDayOfMonth } },
+                { date: { $lte: lastDayOfMonth } },
+                { projectname4: projectname } ,
+                { employeeType: employeeType } ,
+                { todaystatus: 'Working'},
+                // Adjust the field name based on your actual schema
+            ]
+            
+            
+        }).toArray()
+        .then((response) => {
+            resolve(response);
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+            reject(error);
+        });
+    });
+}, getDatabByproject5dtd: ( month, projectname , employeeType) => {
+    
+    return new Promise((resolve, reject) => {
+        const firstDayOfMonth = new Date(month.date1);
+firstDayOfMonth.setHours(0, 0, 0, 0); // Set time to 12:00 AM
+
+const lastDayOfMonth = new Date(month.date2);
+lastDayOfMonth.setHours(23, 59, 59, 999); // Set time to 11:59:59 PM
+
+        db.get().collection('datasheet').find({
+            $and: [
+                { date: { $gte: firstDayOfMonth } },
+                { date: { $lte: lastDayOfMonth } },
+                { projectname5: projectname } ,
+                { employeeType: employeeType } ,
+                { todaystatus: 'Working'},
+                // Adjust the field name based on your actual schema
+            ]
+            
+            
+        }).toArray()
+        .then((response) => {
+            resolve(response);
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+            reject(error);
+        });
+    });
+},
+
+getDatabByMonthofPaidLeavedtd: (month, id , employeeType) => {
+
+    return new Promise((resolve, reject) => {
+        const firstDayOfMonth = new Date(month.startDate);
+        firstDayOfMonth.setHours(0, 0, 0, 0); // Set time to 12:00 AM
+        
+        const lastDayOfMonth = new Date(month.endDate);
+        lastDayOfMonth.setHours(23, 59, 59, 999); // Set time to 11:59:59 PM
+       
+        
+        db.get().collection('datasheet').find({
+            $and: [
+                {
+                    $or: [
+                        { 
+                            $and: [
+                                { date: { $gte: firstDayOfMonth } },
+                                { date: { $lte: lastDayOfMonth } },
+                                { employee_id: id },
+                                { todaystatus: 'Paid Leave' },
+                                { employeeType: employeeType }
+                                
+                            ]
+                        },
+                        { 
+                            $and: [
+                                { date: { $gte: firstDayOfMonth } },
+                                { date: { $lte: lastDayOfMonth } },
+                                { employee_id: id },
+                                { workinghour: '0' },
+                                { todaystatus: 'Working' },
+                                { employeeType: employeeType },
+                                { employeeType: { $nin: ['Own Staff (Projects)', 'Hired Staff (Projects)'] } }  // Condition for x not equal to y or z
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }).toArray()
+            .then((response) => {
+                resolve(response);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                reject(error);
+            });
+    });
+},
+getLeaveAndVacationCountdtd: (month, employeeId) => {
+    return new Promise((resolve, reject) => {
+        const firstDayOfMonth = new Date(month.startDate);
+        firstDayOfMonth.setHours(0, 0, 0, 0); // Set time to 12:00 AM
+        
+        const lastDayOfMonth = new Date(month.endDate);
+        lastDayOfMonth.setHours(23, 59, 59, 999); // Set time to 11:59:59 PM
+        db.get().collection('datasheet').find({
+            $and: [
+                { date: { $gte: firstDayOfMonth } },
+                { date: { $lte: lastDayOfMonth } },
+                { employee_id: employeeId },
+                { $or: [
+                    { todaystatus: 'Unpaid Leave' },
+                    { todaystatus: 'On Vacation' }
+                ] }
+            ]
+        }).toArray()
+        .then((response) => {
+            const leaveCount = response.filter(entry => entry.todaystatus === 'Unpaid Leave').length;
+            const vacationCount = response.filter(entry => entry.todaystatus === 'On Vacation').length;
+            const totalCount = leaveCount + vacationCount;
+            resolve(totalCount);
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+            reject(error);
+        });
+    });
+},
+ getallworkingoperationdata : (month) => {
+    return new Promise((resolve, reject) => {
+        const firstDayOfMonth = new Date(month.startdate);
+        firstDayOfMonth.setHours(0, 0, 0, 0); // Set time to 12:00 AM
+        
+        const lastDayOfMonth = new Date(month.enddate);
+        lastDayOfMonth.setHours(23, 59, 59, 999); // Set time to 11:59:59 PM
+        
+        db.get().collection('datasheet').find({
+            $and: [
+                { date: { $gte: firstDayOfMonth } },
+                { date: { $lte: lastDayOfMonth } },
+                { todaystatus: 'Working' },
+                { employeeType: { $in: ['Own Staff (Operations)', 'Hired Staff (Operations)'] } }
+            ]
+        }).toArray()
+            .then((response) => {
+                resolve(response);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                reject(error);
+            });
+    });
+},
+
+
+ closeSalaryStatusForMonth :(yearMonth) => {
+    return new Promise((resolve, reject) => {
+        // Extract year and month from the input string 'YYYY-MM'
+        const [year, month] = yearMonth.split('-').map(Number);
+        const startDate = new Date(year, month - 1, 1); // First day of the month
+        const endDate = new Date(year, month, 1); // First day of the next month
+
+        db.get()
+            .collection('datasheet')
+            .updateMany(
+                { date: { $gte: startDate, $lt: endDate } }, // Filter documents within the month
+                { $set: { salarystatus: 'close' } } // Set the field
+            )
+            .then((response) => {
+                if (response.matchedCount === 0) {
+                    return reject(new Error('No documents found for the specified month.'));
+                }
+                resolve(`Updated ${response.modifiedCount} documents to salarystatus: 'close'`);
+            })
+            .catch((err) => {
+                reject(err);
+            });
+    });
+},
+
+
+
 
     
 }
-

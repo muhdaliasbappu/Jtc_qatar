@@ -1,19 +1,29 @@
-<h1 class=" h2 mb-3 fw-normal text-center mt-5">Edit User</h1>
 
-<div class="col d-flex justify-content-center mt-5 ">
-    <div class=" card" style="width: 18rem;">
+<div class="account-pages pt-2 pt-sm-5 pb-4 pb-sm-5 position-relative">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-xxl-4 col-lg-5">
+                <div class="card">
+                    <div class="card-body p-4">
+                        <!-- Header Section -->
+                        <div class="text-center w-75 m-auto">
+                            <h4 class="text-dark-50 text-center pb-0 fw-bold">Edit User</h4>
+                        </div>
+                        <!-- Form Section -->
+                        <form action="/admin/edit-user/{{suser._id}}" method="post">
 
-        <form action="/admin/edit-user/{{suser._id}}" method="post">
-
-            <input class="form-control " name="usernames" value="{{suser.usernames}}" placeholder="Username">
-            <input class="form-control mt-3" name="passwords" value="{{suser.passwords}}" placeholder="Password">
-            <div class="card-body mt-3">
-                <button class="btn btn-primary" onclick="history.back()">Go Back</button>
-                <button type="submit" class="btn btn-success">Confirm</button>
-                <a href="/admin/delete-user/{{suser._id}}" class="btn btn-danger "
-                    onclick="return confirm('Are you sure you want to delete user {{suser.usernames}}')">Delete</a>
-
-            </div>
-        </form>
-    </div>
+                            <input class="form-control " name="usernames" value="{{suser.usernames}}" placeholder="Username" >
+                            <input class="form-control mt-3" name="passwords" value="{{suser.passwords}}" placeholder="Password">
+                            <div class="card-body mt-3">
+                                <button class="btn btn-primary" onclick="history.back()">Go Back</button>
+                                <button type="submit" class="btn btn-success">Confirm</button>
+                                <a href="/admin/delete-user/{{suser._id}}" class="btn btn-danger "
+                                onclick="return confirm('Are you sure you want to delete user {{suser.usernames}}')">Delete</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div> <!-- end col -->
+        </div> <!-- end row -->
+    </div> <!-- end container -->
 </div>

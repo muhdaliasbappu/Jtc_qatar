@@ -57,6 +57,63 @@ module.exports = {
                 resolve(response)
             })
         })
-    }
+    },
+    getWorkingEmployeeCount: () => {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const count = await db.get()
+                    .collection('employee')
+                    .countDocuments({ Employeestatus: "Working" }); // Filter by Employeestatus "Working"
+                
+                resolve(count); // Return the count
+            } catch (error) {
+                console.error("Error fetching working employee count:", error);
+                reject(error); // Reject the promise if there’s an error
+            }
+        });
+    },
+    getEmployeeTypeCounts: async () => {
+        try {
+            const employeeTypes = [
+                "Own Labour",
+                "Own Staff (Operations)",
+                "Own Staff (Projects)",
+                "Hired Labour (Hourly)",
+                "Hired Labour (Monthly)",
+                "Hired Staff (Operations)",
+                "Hired Staff (Projects)"
+            ];
+    
+            const counts = await db.get()
+                .collection('employee')
+                .aggregate([
+                    { $match: { Employeestatus: "Working" } },
+                    { 
+                        $group: { 
+                            _id: "$employeeType", 
+                            count: { $sum: 1 } 
+                        } 
+                    }
+                ])
+                .toArray();
+    
+            const countsMap = counts.reduce((acc, curr) => {
+                acc[curr._id] = curr.count;
+                return acc;
+            }, {});
+    
+            const result = employeeTypes.reduce((acc, type) => {
+                acc[type] = countsMap[type] || 0;
+                return acc;
+            }, {});
+    
+            return result;
+        } catch (error) {
+            console.error("Error fetching employee type counts:", error);
+            throw error;
+        }
+    },
+    
+    
 
 }

@@ -1,28 +1,49 @@
-<h1 class=" h2 mb-3 fw-normal text-center mt-5">Edit Employee</h1>
+<div class="account-pages pt-2 pt-sm-5 pb-4 pb-sm-5 position-relative">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-xxl-4 col-lg-5">
+                <div class="card">
+                    <div class="card-body p-4">
+                        <!-- Header Section -->
+                        <div class="text-center w-75 m-auto">
+                            <h4 class="text-dark-50 text-center pb-0 fw-bold">Edit Project</h4>
+                        </div>
 
-<div class="col d-flex justify-content-center mt-5 ">
-    <div class=" card" style="width: 18rem;">
-        <ul class="list-group list-group-flush">
-            <li class="list-group-item">Project Name: {{sproject.projectname}}</li>
-            <li class="list-group-item">Project Code: {{sproject.projectcode}}</li>
+                        <!-- Project Details -->
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">Project Name: {{sproject.projectname}}</li>
+                            <li class="list-group-item">Project Code: {{sproject.projectcode}}</li>
+                        </ul>
 
-        </ul>
-        <form action="/admin/edit-project/{{sproject._id}}" method="post">
-            <select class="form-select " name="projectstatus" aria-label=" Default select example">
-                <option value="{{sproject.projectstatus}}">Project Status: {{sproject.projectstatus}}</option>
-                <option value="Ongoing">Ongoing</option>
-                <option value="OnHold">OnHold</option>
-                <option value="Completed">Completed</option>
-            </select>
+                        <!-- Form Section -->
+                        <form action="/admin/edit-project/{{sproject._id}}" method="post">
+                            <!-- Hidden Inputs -->
+                            <input type="hidden" value="{{sproject.projectname}}" name="projectname">
+                            <input type="hidden" value="{{sproject.projectstatus}}" name="oldstatus">
+                            
+                            <!-- Status Dropdown -->
+                            <div class="mb-3 pt-2">
+                             
+                                <select class="form-select" name="projectstatus" id="projectstatus" aria-label="Default select example">
+                                    <option value="{{sproject.projectstatus}}">Project Status: {{sproject.projectstatus}}</option>
+                                    <option value="Ongoing">Ongoing</option>
+                                    <option value="OnHold">On Hold</option>
+                                    <option value="Completed">Completed</option>
+                                </select>
+                            </div>
 
-
-            <div class="card-body">
-                <button class="btn btn-primary" onclick="history.back()">Go Back</button>
-                <button type="submit" class="btn btn-success">Confirm</button>
-                <a href="/admin/delete-project/{{sproject._id}}" class="btn btn-danger "
-                    onclick="return confirm('Are you sure you want to delete Project {{sproject.projectname}}')">Delete</a>
-
-            </div>
-        </form>
-    </div>
+                            <!-- Action Buttons -->
+                            <div class="text-center pt-4">
+                                <button class="btn btn-primary" type="button" onclick="history.back()">Go Back</button>
+                                <button type="submit" class="btn btn-success">Confirm</button>
+                                <a href="/admin/delete-project/{{sproject._id}}" 
+                                   class="btn btn-danger" 
+                                   onclick="return confirm('Are you sure you want to delete Project {{sproject.projectname}}?')">Delete</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div> <!-- end col -->
+        </div> <!-- end row -->
+    </div> <!-- end container -->
 </div>

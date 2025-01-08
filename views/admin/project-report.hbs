@@ -1,13 +1,13 @@
- <style>
-    .table th:first-child,
-    .table td:first-child {
-      width: 80px; /* Adjust the width as needed for the first column */
-    }
+<style>
+  .table th:first-child,
+  .table td:first-child {
+    width: 80px; /* Adjust the width as needed for the first column */
+  }
 
-    .consistent-width {
-      width: 100px; /* Set a fixed width for the columns other than the first one */
-    }
-  </style>
+  .consistent-width {
+    width: 100px; /* Set a fixed width for the columns other than the first one */
+  }
+</style>
 
 <div class="content-page">
   <div class="content">
@@ -17,20 +17,23 @@
         <div class="col-12">
           <div class="page-title-box">
             <div class="page-title-right">
-                                    <form action="/admin/printprojectreport" method="POST" >
-                                <div class="input-group">
-                                    <input type="hidden" name="searchdate" value="{{sumemployeetype.reqdate}}">
-             
-                                    <button class="input-group-text btn btn-primary" type="submit">Download</button>
-                                </div>
-                                   </form>
-                                    
-                                    </div>
-            <h4 class="page-title">Project Expense</h4>
-          </div>
-          
-        </div>
+              <form action="/admin/printprojectreport" method="POST">
+                <div class="input-group">
+                  <input type="hidden" name="searchdate" value="{{sumemployeetype.reqdate}}">
 
+                  <!-- Hidden input for sumemployeetype object -->
+                  <input type="hidden" name="sumemployeetype" value='{{json sumemployeetype}}'>
+
+                  <!-- Hidden input for projectimesheets array -->
+                  <input type="hidden" name="projectimesheets" value='{{json projectimesheets}}'>
+
+                  <button class="input-group-text btn btn-primary" type="submit">Download</button>
+                </div>
+              </form>
+            </div>
+            <h4 class="page-title">Project Expense {{sumemployeetype.reqmonth}}</h4>
+          </div>
+        </div>
       </div>
       <!-- end page title -->
 
@@ -41,6 +44,19 @@
               <div class="tab-content">
                 <div class="tab-pane show active" id="scroll-horizontal-preview">
                   <div class="board">
+                    <!-- Display warnings if any -->
+                    {{#if failedMonths}}
+                      <div class="alert alert-warning">
+                        <strong>Warning:</strong> Failed to generate reports for the following month(s): {{failedMonths.join ", "}}.
+                      </div>
+                    {{/if}}
+
+                    {{#if skippedProjects}}
+                      <div class="alert alert-info">
+                        <strong>Note:</strong> The following project(s) were skipped due to incomplete data: {{skippedProjects.join ", "}}.
+                      </div>
+                    {{/if}}
+
                     <table class="table table-bordered table-centered mb-0">
                       <thead>
                         <tr>
@@ -74,24 +90,20 @@
                           </tr>
                         {{/each}}
                       </tbody>
-                      <tbody>
-                        
-                          <tr>
-                            <th scope="row" colspan="2">Total</th>
-                          
-                            <td>{{sumemployeetype.totalownlaboursalary}}</td>
-                            <td>{{sumemployeetype.totalhiredlabourmsalary}}</td>
-                            <td>{{sumemployeetype.totalhiredstaffhourly}}</td>
-                            <td>{{sumemployeetype.totalownstaffsalary}}</td>
-                            <td>{{sumemployeetype.totalhiredstaffsalary}}</td>
-                            <td>{{sumemployeetype.totaloperationcost}}</td>
-                            <td>{{sumemployeetype.totaloverheadcost}}</td>
-                            <th scope="row" colspan="2">QAR {{sumemployeetype.total}}</th>
-                          </tr>
-                        
-                      </tbody>
+                      <tfoot>
+                        <tr>
+                          <th scope="row" colspan="2">Total</th>
+                          <td>{{sumemployeetype.totalownlaboursalary}}</td>
+                          <td>{{sumemployeetype.totalhiredlabourmsalary}}</td>
+                          <td>{{sumemployeetype.totalhiredstaffhourly}}</td>
+                          <td>{{sumemployeetype.totalownstaffsalary}}</td>
+                          <td>{{sumemployeetype.totalhiredstaffsalary}}</td>
+                          <td>{{sumemployeetype.totaloperationcost}}</td>
+                          <td>{{sumemployeetype.totaloverheadcost}}</td>
+                          <th scope="row" colspan="2">QAR {{sumemployeetype.total}}</th>
+                        </tr>
+                      </tfoot>
                     </table>
-                
                   </div>
                 </div> <!-- end preview-->
               </div> <!-- end tab-content-->
@@ -99,6 +111,6 @@
           </div> <!-- end card -->
         </div><!-- end col-->
       </div> <!-- end row-->
-    </div> 
-  </div> 
+    </div>
+  </div>
 </div>
