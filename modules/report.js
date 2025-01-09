@@ -19,7 +19,8 @@ module.exports = {
 salaryreportlabour: (timesheet)=>{
     return new Promise((resolve, reject) => {
 let workday =0;
-let leavedays = 0
+let leaveDays = 0
+let paidL = 0
 let othours =0;
 let report = {}
 let otsalary = 0
@@ -169,7 +170,7 @@ for(i=0;i<timesheet.length;i++){
         }
     }
     else if(timesheet[i].todaystatus === 'Paid Leave'){
-        workday++;
+        paidL++;
                 if(day === 5){
                     switch (date){
                         case 1:
@@ -370,7 +371,7 @@ for(i=0;i<timesheet.length;i++){
             
             }
   }else if(timesheet[i].todaystatus === 'Unpaid Leave'){
-    leavedays++;
+    leaveDays++;
         switch (date){
             case 1:
                 report.d1wh = 'L';
@@ -469,7 +470,7 @@ for(i=0;i<timesheet.length;i++){
         }
 
     }else if(timesheet[i].todaystatus === 'On Vacation'){
-        leavedays++
+        leaveDays++
         switch (date){
             case 1:
                 report.d1wh = 'V';
@@ -571,36 +572,31 @@ for(i=0;i<timesheet.length;i++){
 }
 let month = getDaysInMonth(dd)
 let tempwd = 0
-if ((month === 28 && workday === 28) || (month === 29 && workday === 29)) {
-    // 28/29 day logic
-    report.workdays = month;
-    tempwd = 30;
-  
-  } else if (month === 30 || month === 31) {
-    const maxWorkdays = 30;
-    
-    if (workday > maxWorkdays) {
-      // cap at 30 if someone claims more than 30 worked days
-      report.workdays = maxWorkdays;
-      tempwd = maxWorkdays;
-      
-    } else if (leavedays > maxWorkdays && workday === 0) {
-      // if they took more than 30 days leave and worked 0
-      report.workdays = 0;
-      tempwd = 0;
-      
-    } else {
-      // old default
-      let computedWorkdays = maxWorkdays - leavedays;
-      // NEW: ensure it's not below reported workday
-      computedWorkdays = Math.max(computedWorkdays, workday);
-  
-      // optionally, ensure we never exceed 30
-      report.workdays = Math.min(computedWorkdays, maxWorkdays);
-      tempwd = report.workdays;
+const totalPaid = workday + paidL;       
+if(month === 29 && totalPaid === 29){
+    report.workdays = 29
+    tempwd = 30
+}else if(month === 28  && totalPaid === 28){
+    report.workdays = 28
+    tempwd = 30
+}
+else {      
+ tempwd = totalPaid;
+if (month > 30) {
+    const difference = month - 30;
+    // "Special" cutoff: only subtract difference if totalPaid >= 3
+    if (totalPaid >= 3) {
+        tempwd = totalPaid - difference;
+        // Optionally ensure finalWorkdays >= 1
+        if (tempwd < 1) {
+            tempwd = 1;
+        }
     }
-  }
-  
+}
+}
+
+// finalWorkdays now matches your scenario-based requirements
+
 basicsalary = tempwd*timesheet[0].sbasic/30
 allowance = tempwd*timesheet[0].sallowance/30
 bonus = tempwd*timesheet[0].sbonus/30
