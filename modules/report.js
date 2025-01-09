@@ -19,8 +19,6 @@ module.exports = {
 salaryreportlabour: (timesheet)=>{
     return new Promise((resolve, reject) => {
 let workday =0;
-let leaveDays = 0
-let paidL = 0
 let othours =0;
 let report = {}
 let otsalary = 0
@@ -170,7 +168,7 @@ for(i=0;i<timesheet.length;i++){
         }
     }
     else if(timesheet[i].todaystatus === 'Paid Leave'){
-        paidL++;
+        workday++;
                 if(day === 5){
                     switch (date){
                         case 1:
@@ -371,7 +369,6 @@ for(i=0;i<timesheet.length;i++){
             
             }
   }else if(timesheet[i].todaystatus === 'Unpaid Leave'){
-    leaveDays++;
         switch (date){
             case 1:
                 report.d1wh = 'L';
@@ -470,7 +467,7 @@ for(i=0;i<timesheet.length;i++){
         }
 
     }else if(timesheet[i].todaystatus === 'On Vacation'){
-        leaveDays++
+       
         switch (date){
             case 1:
                 report.d1wh = 'V';
@@ -571,24 +568,23 @@ for(i=0;i<timesheet.length;i++){
     
 }
 let month = getDaysInMonth(dd)
-let tempwd = 0
-const totalPaid = workday + paidL;       
-if(month === 29 && totalPaid === 29){
+let tempwd = 0   
+if(month === 29 && workday === 29){
     report.workdays = 29
     tempwd = 30
-}else if(month === 28  && totalPaid === 28){
+}else if(month === 28  && workday === 28){
     report.workdays = 28
     tempwd = 30
 }
 else {     
 
- tempwd = totalPaid;
+ tempwd = workday;
  
 if (month > 30) {
     const difference = month - 30;
     // "Special" cutoff: only subtract difference if totalPaid >= 3
-    if (totalPaid >= 3) {
-        tempwd = totalPaid - difference;
+    if (workday >= 3) {
+        tempwd = workday - difference;
         // Optionally ensure finalWorkdays >= 1
         if (tempwd < 1) {
             tempwd = 1;
@@ -1452,21 +1448,30 @@ for(i=0;i<timesheet.length;i++){
     }
 }
 let month = getDaysInMonth(dd)
-let tempwd = 0
+let tempwd = 0   
 if(month === 29 && workday === 29){
     report.workdays = 29
     tempwd = 30
 }else if(month === 28  && workday === 28){
     report.workdays = 28
     tempwd = 30
-
 }
-else if( workday > 30 ){
-    report.workdays = 30
-    tempwd = 30
-}else{
-    report.workdays = workday
-    tempwd = workday
+else {     
+
+ tempwd = workday;
+ 
+if (month > 30) {
+    const difference = month - 30;
+    // "Special" cutoff: only subtract difference if totalPaid >= 3
+    if (workday >= 3) {
+        tempwd = workday - difference;
+        // Optionally ensure finalWorkdays >= 1
+        if (tempwd < 1) {
+            tempwd = 1;
+        }
+    }
+}
+report.workdays = tempwd
 }
 basicsalary = tempwd*timesheet[0].sbasic/30
 allowance = tempwd*timesheet[0].sallowance/30
