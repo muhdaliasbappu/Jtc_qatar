@@ -567,32 +567,34 @@ for(i=0;i<timesheet.length;i++){
     }
     
 }
-let month = getDaysInMonth(dd)
-let tempwd = 0   
-if(month === 29 && workday === 29){
-    report.workdays = 29
-    tempwd = 30
-}else if(month === 28  && workday === 28){
-    report.workdays = 28
-    tempwd = 30
-}
-else {     
+let month = getDaysInMonth(dd);
+let tempwd = 0;
 
- tempwd = workday;
- 
-if (month > 30) {
-    const difference = month - 30;
-    // "Special" cutoff: only subtract difference if totalPaid >= 3
-    if (workday >= 3) {
-        tempwd = workday - difference;
-        // Optionally ensure finalWorkdays >= 1
-        if (tempwd < 1) {
-            tempwd = 1;
-        }
-    }
+// Handle special February cases:
+if (month === 29 && workday === 29) {
+  report.workdays = 29;
+  tempwd = 30;
 }
-report.workdays = tempwd
+else if (month === 28 && workday === 28) {
+  report.workdays = 28;
+  tempwd = 30;
 }
+else {
+  // For months >= 30, default to workday
+  tempwd = workday;
+
+  // If it's a 31-day month:
+  if (month === 31) {
+    // If the employee's workday is literally 31, force final = 30
+    if (workday === 31) {
+      tempwd = 30;
+    } 
+    // otherwise, keep tempwd = workday
+  }
+
+  report.workdays = tempwd;
+}
+
 
 // finalWorkdays now matches your scenario-based requirements
 
@@ -1447,32 +1449,35 @@ for(i=0;i<timesheet.length;i++){
         }
     }
 }
-let month = getDaysInMonth(dd)
-let tempwd = 0   
-if(month === 29 && workday === 29){
-    report.workdays = 29
-    tempwd = 30
-}else if(month === 28  && workday === 28){
-    report.workdays = 28
-    tempwd = 30
-}
-else {     
+let month = getDaysInMonth(dd);
+let tempwd = 0;
 
- tempwd = workday;
- 
-if (month > 30) {
-    const difference = month - 30;
-    // "Special" cutoff: only subtract difference if totalPaid >= 3
-    if (workday >= 3) {
-        tempwd = workday - difference;
-        // Optionally ensure finalWorkdays >= 1
-        if (tempwd < 1) {
-            tempwd = 1;
-        }
-    }
+// Handle special February cases:
+if (month === 29 && workday === 29) {
+  report.workdays = 29;
+  tempwd = 30;
 }
-report.workdays = tempwd
+else if (month === 28 && workday === 28) {
+  report.workdays = 28;
+  tempwd = 30;
 }
+else {
+  // For months >= 30, default to workday
+  tempwd = workday;
+
+  // If it's a 31-day month:
+  if (month === 31) {
+    // If the employee's workday is literally 31, force final = 30
+    if (workday === 31) {
+      tempwd = 30;
+    } 
+    // otherwise, keep tempwd = workday
+  }
+
+  report.workdays = tempwd;
+}
+
+
 basicsalary = tempwd*timesheet[0].sbasic/30
 allowance = tempwd*timesheet[0].sallowance/30
 bonus = tempwd*timesheet[0].sbonus/30
