@@ -580,8 +580,10 @@ if(month === 29 && totalPaid === 29){
     report.workdays = 28
     tempwd = 30
 }
-else {      
+else {     
+
  tempwd = totalPaid;
+ 
 if (month > 30) {
     const difference = month - 30;
     // "Special" cutoff: only subtract difference if totalPaid >= 3
@@ -593,6 +595,7 @@ if (month > 30) {
         }
     }
 }
+report.workdays = tempwd
 }
 
 // finalWorkdays now matches your scenario-based requirements
