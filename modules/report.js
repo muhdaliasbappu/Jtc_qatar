@@ -586,9 +586,20 @@ else {
   // If it's a 31-day month:
   if (month === 31) {
     // If the employee's workday is literally 31, force final = 30
-    if (workday === 31) {
-      tempwd = 30;
-    } 
+    if (month === 31) {
+        // If the employee's workday is literally 31, force final = 30
+        if (workday+paidL === 31) {
+          tempwd = 30;
+        }else{
+            if(leave > paidL){
+                tempwd= workday+paidL
+            }else if (paidL > 0){
+                paidL=paidL-1
+                tempw=workday+paidL
+            }
+        } 
+        // otherwise, keep tempwd = workday
+      }
     // otherwise, keep tempwd = workday
   }
 
@@ -934,6 +945,8 @@ salaryreportlabourhourly: (timesheet)=>{
 salaryreportoperations: (timesheet)=>{
     return new Promise((resolve, reject) => {
 var workday = 0
+let leave = 0
+let paidL = 0
 let othours = 0
 let report = {}
 let otsalary = 0
@@ -1049,7 +1062,7 @@ for(i=0;i<timesheet.length;i++){
                 
         }
     }else if(timesheet[i].todaystatus === 'Paid Leave'){
-        workday++;
+        paidL++;
        
                 if(day === 5){
                     switch (date){
@@ -1253,6 +1266,7 @@ for(i=0;i<timesheet.length;i++){
             
             }
   }else if(timesheet[i].todaystatus === 'Unpaid Leave'){
+    leave++
         switch (date){
             case 1:
                 report.d1wh = 'L';
@@ -1351,6 +1365,7 @@ for(i=0;i<timesheet.length;i++){
         }
 
     }else if(timesheet[i].todaystatus === 'On Vacation'){
+        leave++
         switch (date){
             case 1:
                 report.d1wh = 'V';
@@ -1453,23 +1468,30 @@ let month = getDaysInMonth(dd);
 let tempwd = 0;
 
 // Handle special February cases:
-if (month === 29 && workday === 29) {
+if (month === 29 && workday+paidL === 29) {
   report.workdays = 29;
   tempwd = 30;
 }
-else if (month === 28 && workday === 28) {
+else if (month === 28 && workday+paidL === 28) {
   report.workdays = 28;
   tempwd = 30;
 }
 else {
   // For months >= 30, default to workday
-  tempwd = workday;
+  tempwd = workday+paidL;
 
   // If it's a 31-day month:
   if (month === 31) {
     // If the employee's workday is literally 31, force final = 30
-    if (workday === 31) {
+    if (workday+paidL === 31) {
       tempwd = 30;
+    }else{
+        if(leave > paidL){
+            tempwd= workday+paidL
+        }else if (paidL > 0){
+            paidL=paidL-1
+            tempw=workday+paidL
+        }
     } 
     // otherwise, keep tempwd = workday
   }
