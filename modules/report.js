@@ -19,6 +19,8 @@ module.exports = {
 salaryreportlabour: (timesheet)=>{
     return new Promise((resolve, reject) => {
 let workday =0;
+let leave = 0
+let paidL = 0
 let othours =0;
 let report = {}
 let otsalary = 0
@@ -168,7 +170,7 @@ for(i=0;i<timesheet.length;i++){
         }
     }
     else if(timesheet[i].todaystatus === 'Paid Leave'){
-        workday++;
+        paidL++;
                 if(day === 5){
                     switch (date){
                         case 1:
@@ -369,6 +371,7 @@ for(i=0;i<timesheet.length;i++){
             
             }
   }else if(timesheet[i].todaystatus === 'Unpaid Leave'){
+    leave++
         switch (date){
             case 1:
                 report.d1wh = 'L';
@@ -467,7 +470,7 @@ for(i=0;i<timesheet.length;i++){
         }
 
     }else if(timesheet[i].todaystatus === 'On Vacation'){
-       
+       leave++
         switch (date){
             case 1:
                 report.d1wh = 'V';
@@ -595,7 +598,7 @@ else {
                 tempwd= workday+paidL
             }else if (paidL > 0){
                 paidL=paidL-1
-                tempw=workday+paidL
+                tempwd=workday+paidL
             }
         } 
         // otherwise, keep tempwd = workday
@@ -1490,7 +1493,7 @@ else {
             tempwd= workday+paidL
         }else if (paidL > 0){
             paidL=paidL-1
-            tempw=workday+paidL
+            tempwd=workday+paidL
         }
     } 
     // otherwise, keep tempwd = workday
