@@ -29,7 +29,9 @@ module.exports = {
             db.get().collection('employee').updateOne({ _id: new ObjectId(empId) }, {
                 $set: {
                     Employeestatus: empDetails.Employeestatus,
-                    Employeeasigned: empDetails.Employeeasigned
+                    Employeeasigned: empDetails.Employeeasigned,
+                    employeeBank: empDetails.employeeBank,
+                    employeeAccountN: empDetails.employeeAccountN
                 }
             }).then((response) => {
                 resolve()
@@ -117,3 +119,4 @@ module.exports = {
     
 
 }
+
