@@ -67,6 +67,23 @@
                                                     </div>
                                                 </div>
                                                  <form action="/admin/edit-employee/{{semployee._id}}" method="post">
+                                                 <div class="row">
+                                                    <div class="col-lg-6">
+                                                        <!-- Date Range -->
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Employee Bank</label>
+                                                            <input class="form-control" value="{{semployee.employeeBank}}" name="employeeBank"  placeholder="{{semployee.employeeBank}}" >                  
+                                                        </div>
+                                                    </div>
+        
+                                                    <div class="col-lg-6">
+                                                       
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Account Number</label>
+                                                            <input class="form-control" value="{{semployee.employeeAccountN}}" name="employeeAccountN"  placeholder="{{semployee.employeeAccountN}}" >                 
+                                                        </div>
+                                                    </div>
+                                                </div>
                                                 <div class="row">
                                                     <div class="col-lg-6">
                                                         <!-- Date Range -->
