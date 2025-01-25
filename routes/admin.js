@@ -6,6 +6,7 @@ var adminHelpers = require("../helpers/admin-helper");
 var userHelpers = require("../helpers/user-helper");
 var reportHelpers = require("../helpers/report-helpers");
 var logHelpers = require("../helpers/logger-helper");
+var WPSHelpers = require('../modules/wps')
 const { response } = require("../app");
 const async = require("hbs/lib/async");
 const { search } = require("./users");
@@ -105,14 +106,8 @@ router.get("/dashboard", async (req, res) => {
      const counts = await ProjectReport.getCounts();
      let projectbar = await ProjectReport.getMultiCategoryReports();
     let PPerformance = await ProjectReport.getProjectsPerformanceReport();
-    let typeCounts = await employeHelpers.getEmployeeTypeCounts()
-   
-   
-    
+    let typeCounts = await employeHelpers.getEmployeeTypeCounts()    
     let projectNames = PPerformance.projectNames
-
-
-
 
     res.render("./admin/dashboard", {
       admin: true,
@@ -163,12 +158,26 @@ router.get("/projects", function (req, res, next) {
 
 //add employee
 
-router.get("/add-employee", function (req, res, next) {
+router.get("/add-employee", async function (req, res, next) {
 
     userHelpers.getAlluser().then((users) => {
 
       res.render("./admin/add-employee", { admin: true, users });
     });
+  //   try {
+  //     // Wait for the CSV file to be generated and get the file path
+  //     const filePath = await WPSHelpers.generateCSV()
+
+  //     // Send the file to the client for download
+  //     res.download(filePath, 'salaries.csv', (err) => {
+  //         if (err) {
+  //             console.error('Error sending file:', err);
+  //         }
+  //     });
+  // } catch (error) {
+  //     console.error('Error generating CSV:', error);
+  //     res.status(500).send('An error occurred while generating the CSV file.');
+  // }
   
 });
 
@@ -1177,6 +1186,43 @@ router.post('/printprojectreport', async (req, res) => {
         res.status(500).json({ error: "Server error during salary closure." });
       }
     });
+
+    router.get("/createGroup", async function (req, res) {
+      const employeeTypesOwn = [
+        "Own Labour",
+        "Own Staff (Operations)",
+        "Own Staff (Projects)"
+    ];
+    const employeeTypesHired = [
+      "Hired Labour (Hourly)",
+      "Hired Labour (Monthly)",
+      "Hired Staff (Operations)",
+      "Hired Staff (Projects)"
+    ];
+    const employeeTypesHourly = [
+      "Hired Labour (Hourly)",
+    ];
+      let ownEmployees = await employeHelpers.getEmployeesByType(employeeTypesOwn)
+      let hiredEmployees = await employeHelpers.getEmployeesByType(employeeTypesHired)
+      let hiredHourly = await employeHelpers.getEmployeesByType(employeeTypesHourly)
+       res.render("./admin/creategroup", { admin: true , ownEmployees, hiredEmployees, hiredHourly });
+     
+   }); 
+   router.post("/createGroup", async function (req, res) {
+    let groupedEmployees = {}
+    groupedEmployees.groupName = req.body.groupName
+    groupedEmployees.selectedEmployees = JSON.parse(req.body.selectedEmployees);
+    employeHelpers.addGroup(groupedEmployees)
+    res.redirect("/admin/dashboard");
+    // for(i = 0; i<selectedEmployees.length; i++){
+    //   let semployee = await employeHelpers.getEmployeeDetails(selectedEmployees[i].id);
+    //   groupedEmployees.push(semployee)
+    // }
+
+}); 
+
+
+
     const getMonthsInRange = (startMonth, endMonth) => {
       const start = dayjs(startMonth, 'YYYY-MM', true);
       const end = dayjs(endMonth, 'YYYY-MM', true);
