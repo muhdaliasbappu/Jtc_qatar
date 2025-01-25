@@ -115,8 +115,40 @@ module.exports = {
             throw error;
         }
     },
+    getEmployeesByType: async (employeeTypes) => {
+        try {
+            
+    
+            // If you only want active (e.g. "Working") employees, include "Employeestatus: 'Working'" in the $match.
+            // For example:
+            // { $match: { employeeType: { $in: employeeTypes }, Employeestatus: "Working" } }
+    
+            const employees = await db.get()
+                .collection('employee')
+                .aggregate([
+                    { 
+                        $match: { 
+                            employeeType: { $in: employeeTypes } 
+                            // Uncomment the line below if you want only "Working" employees
+                            // Employeestatus: "Working"
+                        } 
+                    }
+                ])
+                .toArray();
+    
+            return employees;
+        } catch (error) {
+            console.error("Error fetching employees by type:", error);
+            throw error;
+        }
+    },
+    addGroup: (group ) => {
+
+        db.get().collection('employeeGroup').insertOne(group).then((data) => {
+            
+        })
+    },
     
     
 
 }
-
