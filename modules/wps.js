@@ -3,9 +3,15 @@ const path = require('path');
 const employeHelpers = require('../helpers/employee-helpers');
 const allsalaryreport = require('../modules/report');
 
-const WPSemployeeData = async (searchdate) => {
+const WPSemployeeData = async (searchdate,selectedgroup) => {
     let employeeData = [];
-    const employees = await employeHelpers.getAllemployee();
+    let employees = [];
+    let selectedEmployees = await employeHelpers.getGroupbyGroupName(selectedgroup)
+    for(let i = 0; i<selectedEmployees.selectedEmployees.length; i++){
+      let semployee = await employeHelpers.getEmployeeDetails(selectedEmployees.selectedEmployees[i].id);
+      employees.push(semployee)
+    }
+
 
     for (let i = 0; i < 3; i++) {
         let thedata;
@@ -50,14 +56,34 @@ const WPSemployeeData = async (searchdate) => {
     return employeeData;
 };
 
-const generateCSV = async () => {
+const generateCSV = async (searchdate,selectedgroup) => {
     const header = [
         "Employer EID", "File Creation Date", "File Creation Time", "Payer EID", "Payer QID",
         "Payer Bank Short Name", "Payer IBAN", "Salary Year and Month", "Total Salaries",
         "Total Records", "SIF Version"
     ];
+    const now = new Date();
+
+  // Extract date parts
+  const year = now.getFullYear();
+  // getMonth() returns 0-11, so add 1 and pad with '0' if needed
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+
+  // Extract time parts
+  const hours = String(now.getHours()).padStart(2, '0');
+  const minutes = String(now.getMinutes()).padStart(2, '0');
+  let [syear, smonth] = searchdate.split('-');
+  
+  // Ensure the month is 2 digits (e.g., "08" instead of "8")
+  smonth = smonth.padStart(2, '0');
+  
+  // Concatenate year and month
+
+
+
     const records = [
-        ["10711301", "20240610", "1430", "10711301", "", "MAR", "QA02MAFR000000000009114716001", "202406", "75674", "28", "1"]
+        ["10711301", `${year}${month}${day}`, `${hours}${minutes}`, "10711301", "", "MAR", "QA02MAFR000000000009114716001", `${syear+smonth}`, "75674", "28", "1"]
     ];
     const employeeHeader = [
         "Record Sequence", "Employee QID", "Employee Visa ID", "Employee Name", "Employee Bank Short Name",
@@ -67,7 +93,7 @@ const generateCSV = async () => {
         "Extra Field 1", "Extra Field 2"
     ];
 
-    const employeeDatas = await WPSemployeeData('2024-08'); // Fetch employee data dynamically
+    const employeeDatas = await WPSemployeeData(searchdate,selectedgroup); // Fetch employee data dynamically
 
     const csvData = [
         header,
@@ -93,6 +119,7 @@ const generateCSV = async () => {
     console.log(`Generated CSV file at: ${filePath}`); // Log the correct file path
     return filePath;
 };
+
 
 module.exports = {
     generateCSV,
