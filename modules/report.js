@@ -1,5 +1,5 @@
-const { report } = require("../app")
-var DayView =  require('./DayView')
+
+var userHelpers = require("../helpers/user-helper");
 function getDaysInMonth(dateString) {
     // Parse the input date string
     const dateObject = new Date(dateString);
@@ -31,7 +31,7 @@ let dd
 
   
 
-for(i=0;i<timesheet.length;i++){
+for(let i=0;i<timesheet.length;i++){
     
     dd = new Date(timesheet[i].datevalue);
     let date = dd.getDate();
@@ -1513,6 +1513,244 @@ report.otsalary =  Math.round(otsalary)
 
 report.othours = othours
 report.totalsalary =  Math.round(basicsalary+allowance+bonus+otsalary)
+resolve(report)
+})
+
+},
+
+salaryreportlabourWPS: (searchdate,EmployeeID)=>{
+    return new Promise(async (resolve, reject) => {
+ var timesheet = await userHelpers.getDatabByMonthAndEmployee(searchdate,EmployeeID);  
+ 
+let workday =0;
+let leave = 0
+let paidL = 0
+let othours =0;
+let report = {}
+let otsalary = 0
+let basicsalary =0
+let allowance = 0
+let bonus = 0
+let dd
+
+  
+
+for(i=0;i<timesheet.length;i++){
+    
+    dd = new Date(timesheet[i].datevalue);
+    let date = dd.getDate();
+    let day = dd.getDay();
+    if(timesheet[i].todaystatus === 'Working'){
+        workday++;
+        let tempot = 0;
+        let tempwhto = 0;
+        let tempotsal = 0 ;
+        
+        if(timesheet[i].workinghour === 0){
+            
+            tempwhto =
+            Number(timesheet[i].workhour1) +
+            Number(timesheet[i].workhour2) +
+            Number(timesheet[i].workhour3) +
+            Number(timesheet[i].workhour4) +
+            Number(timesheet[i].workhour5);
+            tempotsal = tempwhto*timesheet[i].sbasic/240;          
+            othours = othours+tempwhto
+            otsalary = otsalary+tempotsal         
+        }else {
+            tempwhto =
+            Number(timesheet[i].workhour1) +
+            Number(timesheet[i].workhour2) +
+            Number(timesheet[i].workhour3) +
+            Number(timesheet[i].workhour4) +
+            Number(timesheet[i].workhour5);
+
+            if(tempwhto > timesheet[i].workinghour){
+                tempot = tempwhto-timesheet[i].workinghour;
+                othours = othours+tempot
+                tempotsal = tempot*timesheet[i].sbasic/240;         
+                otsalary = otsalary+tempotsal
+                tempwhto = tempwhto-timesheet[i].workinghour;
+            }else{
+               
+                tempwhto = tempwhto-tempwhto
+            }
+        }
+       
+    }
+    else if(timesheet[i].todaystatus === 'Paid Leave'){
+        paidL++;
+             
+  }else if(timesheet[i].todaystatus === 'Unpaid Leave'){
+    leave++
+     
+
+    }else if(timesheet[i].todaystatus === 'On Vacation'){
+       leave++
+      
+    }
+    
+}
+let month = getDaysInMonth(dd);
+let tempwd = 0;
+
+// Handle special February cases:
+if (month === 29 && workday === 29) {
+  report.workdays = 29;
+  tempwd = 30;
+}
+else if (month === 28 && workday === 28) {
+  report.workdays = 28;
+  tempwd = 30;
+}
+else {
+  // For months >= 30, default to workday
+  tempwd = workday;
+
+  // If it's a 31-day month:
+  if (month === 31) {
+    // If the employee's workday is literally 31, force final = 30
+    if (month === 31) {
+        // If the employee's workday is literally 31, force final = 30
+        if (workday+paidL === 31) {
+          tempwd = 30;
+        }else{
+            if(leave > paidL){
+                tempwd= workday+paidL
+            }else if (paidL > 0){
+                paidL=paidL-1
+                tempwd=workday+paidL
+            }
+        } 
+        // otherwise, keep tempwd = workday
+      }
+    // otherwise, keep tempwd = workday
+  }
+
+  report.workdays = tempwd;
+}
+
+
+// finalWorkdays now matches your scenario-based requirements
+
+basicsalary = tempwd*timesheet[0].sbasic/30
+allowance = tempwd*timesheet[0].sallowance/30
+bonus = tempwd*timesheet[0].sbonus/30
+report.basicsalary = Math.round(timesheet[0].sbasic)
+report.extraincome =  Math.round(otsalary+allowance+bonus)
+report.othours = othours
+report.totalsalary =  Math.round(basicsalary+allowance+bonus+otsalary)
+report.deduction = Math.round(timesheet[0].sbasic-basicsalary)
+if(leave === month){
+    report.paymentType= 'VACATION' 
+}else{
+    report.paymentType= 'Monthly Salary and allowance' 
+}
+resolve(report)
+})
+
+},
+
+salaryreportOperationsWPS: (searchdate,EmployeeID)=>{
+    return new Promise(async (resolve, reject) => {
+ var timesheet = await userHelpers.getDatabByMonthAndEmployee(searchdate,EmployeeID);  
+let workday =0;
+let leave = 0
+let paidL = 0
+let othours =0;
+let report = {}
+let otsalary = 0
+let basicsalary =0
+let allowance = 0
+let bonus = 0
+let dd
+
+  
+
+for(i=0;i<timesheet.length;i++){
+    
+    dd = new Date(timesheet[i].datevalue);
+    let date = dd.getDate();
+    let day = dd.getDay();
+    if(timesheet[i].todaystatus === 'Working'){
+        workday++;
+ 
+       
+    }
+    else if(timesheet[i].todaystatus === 'Paid Leave'){
+        paidL++;
+             
+  }else if(timesheet[i].todaystatus === 'Unpaid Leave'){
+    leave++
+     
+
+    }else if(timesheet[i].todaystatus === 'On Vacation'){
+       leave++
+      
+    }
+    
+}
+let month = getDaysInMonth(dd);
+let tempwd = 0;
+
+// Handle special February cases:
+if (month === 29 && workday === 29) {
+  report.workdays = 29;
+  tempwd = 30;
+}
+else if (month === 28 && workday === 28) {
+  report.workdays = 28;
+  tempwd = 30;
+}
+else {
+  // For months >= 30, default to workday
+  tempwd = workday;
+
+  // If it's a 31-day month:
+  if (month === 31) {
+    // If the employee's workday is literally 31, force final = 30
+    if (month === 31) {
+        // If the employee's workday is literally 31, force final = 30
+        if (workday+paidL === 31) {
+          tempwd = 30;
+        }else{
+            if(leave > paidL){
+                tempwd= workday+paidL
+            }else if (paidL > 0){
+                paidL=paidL-1
+                tempwd=workday+paidL
+            }
+        } 
+        // otherwise, keep tempwd = workday
+      }
+    // otherwise, keep tempwd = workday
+  }
+
+  report.workdays = tempwd;
+}
+
+
+// finalWorkdays now matches your scenario-based requirements
+
+basicsalary = tempwd*timesheet[0].sbasic/30
+allowance = tempwd*timesheet[0].sallowance/30
+bonus = tempwd*timesheet[0].sbonus/30
+report.basicsalary = Math.round(timesheet[0].sbasic)
+report.extraincome =  Math.round(otsalary+allowance+bonus)
+report.othours = othours
+report.totalsalary =  Math.round(basicsalary+allowance+bonus+otsalary)
+report.deduction = Math.round(timesheet[0].sbasic-basicsalary)
+if(leave === month){
+    report.paymentType= 'VACATION' 
+}else{
+    report.paymentType= 'Monthly Salary and allowance' 
+}
+if(report.deduction > 0){
+    report.deductionRC = 4
+}else
+{
+    report.deductionRC = 0
+}
 resolve(report)
 })
 
