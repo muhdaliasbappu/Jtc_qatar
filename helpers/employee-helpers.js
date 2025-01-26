@@ -148,6 +148,20 @@ module.exports = {
             
         })
     },
+    getAllgroups: () => {
+        return new Promise(async (resolve, reject) => {
+            let groups = await db.get().collection('employeeGroup').find().toArray()
+           
+            resolve(groups)
+        })
+    },
+    getGroupbyGroupName: (groupName) => {
+        return new Promise((resolve, reject) => {
+            db.get().collection('employeeGroup').findOne({ groupName: groupName }).then((group) => {
+                resolve(group)
+            })
+        })
+    },
     
     
 
