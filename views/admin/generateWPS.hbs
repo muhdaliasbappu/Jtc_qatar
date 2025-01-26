@@ -1,0 +1,36 @@
+<div class="content-page">
+    <div class="content">         
+        <div class="container-fluid">
+             <div class="row">
+                 <div class="col-12">
+                    <div class="page-title-box">                                                                       
+                        <h4 class="page-title">Create WPS</h4>
+                    </div>
+                 </div>
+            </div>
+            <div class="row mb-2 justify-content-center">
+                <div class="col-md-4">
+                        <div class="card">
+                        <div class="card-body">
+                            <form id="employeeForm" action="/admin/generateWPS" method="POST">
+                             <div class="form-group" style="margin-bottom: 20px;">
+                                <label for="searchdate" style="font-weight: bold;">Select Month:</label>
+                                <input type="month" id="searchdate" name="searchdate" class="form-control"  >
+                            </div>
+                            <div class="form-group" style="margin-bottom: 20px;">
+                                <label  style="font-weight: bold;">Select Group:</label>
+                                <select class="form-select mt-2" name="selectedgroup"  aria-label=" Default select example" required>
+                                    {{#each groupNames}}
+                                    <option value=""></option>
+                                 <option value="{{this}}">{{this}}</option>  
+                                 {{/each}}
+                                  </select>
+                            </div>
+                                 <button type="submit" id="submits" class="btn btn-primary" >Create</button>
+                            </form>   
+                        </div>          
+                        </div> <!-- end card-->
+                </div>                     
+            </div>
+        </div>
+</div>
