@@ -164,20 +164,7 @@ router.get("/add-employee", async function (req, res, next) {
 
       res.render("./admin/add-employee", { admin: true, users });
     });
-  //   try {
-  //     // Wait for the CSV file to be generated and get the file path
-  //     const filePath = await WPSHelpers.generateCSV()
-
-  //     // Send the file to the client for download
-  //     res.download(filePath, 'salaries.csv', (err) => {
-  //         if (err) {
-  //             console.error('Error sending file:', err);
-  //         }
-  //     });
-  // } catch (error) {
-  //     console.error('Error generating CSV:', error);
-  //     res.status(500).send('An error occurred while generating the CSV file.');
-  // }
+  
   
 });
 
@@ -1214,12 +1201,36 @@ router.post('/printprojectreport', async (req, res) => {
     groupedEmployees.selectedEmployees = JSON.parse(req.body.selectedEmployees);
     employeHelpers.addGroup(groupedEmployees)
     res.redirect("/admin/dashboard");
-    // for(i = 0; i<selectedEmployees.length; i++){
-    //   let semployee = await employeHelpers.getEmployeeDetails(selectedEmployees[i].id);
-    //   groupedEmployees.push(semployee)
-    // }
-
 }); 
+router.get("/generateWPS", async function (req, res) {
+  let groups = await employeHelpers.getAllgroups()
+  let groupNames = []
+  for(let i = 0; i<groups.length; i++){ 
+    if(groups[i].selectedEmployees[0].category === 'own'){
+      groupNames[i] = groups[i].groupName
+    }
+  }
+
+  res.render("./admin/generateWPS", { admin: true , groupNames});
+})
+router.post("/generateWPS", async function (req, res) {
+
+    try {
+      // Wait for the CSV file to be generated and get the file path
+      const filePath = await WPSHelpers.generateCSV(req.body.searchdate, req.body.selectedgroup)
+
+      // Send the file to the client for download
+      res.download(filePath, 'salaries.csv', (err) => {
+          if (err) {
+              console.error('Error sending file:', err);
+          }
+      });
+  } catch (error) {
+      console.error('Error generating CSV:', error);
+      res.status(500).send('An error occurred while generating the CSV file.');
+  }
+  res.render("./admin/generateWPS", { admin: true });
+})
 
 
 
