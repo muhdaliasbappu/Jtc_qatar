@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const employeHelpers = require('../helpers/employee-helpers');
 const allsalaryreport = require('../modules/report');
-
+let overallT = 0
 const WPSemployeeData = async (searchdate,selectedgroup) => {
     let employeeData = [];
     let employees = [];
@@ -11,7 +11,7 @@ const WPSemployeeData = async (searchdate,selectedgroup) => {
       let semployee = await employeHelpers.getEmployeeDetails(selectedEmployees.selectedEmployees[i].id);
       employees.push(semployee)
     }
-    let overallT = 0
+    
     for (let i = 0; i < 3; i++) {
         let thedata;
 
