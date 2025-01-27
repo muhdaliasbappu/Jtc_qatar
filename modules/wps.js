@@ -41,11 +41,11 @@ const WPSemployeeData = async (searchdate,selectedgroup) => {
                 String(thedata.extraincome),                   // Extra Income
                 String(thedata.deduction),                     // Deductions
                 String(thedata.paymentType),                   // Payment Type
+                String(0),                                     // Notes/Comments
                 String(0),                                     // Housing Allowance
                 String(0),                                     // Food Allowance
                 String(0),                                     // Transportation Allowance
                 String(0),                                     // Over Time Allowance
-                String(0),                                     // Deduction Reason Code
                 String(thedata.deductionRC),                   // Deduction Reason Code
                 String(0),                                     // Extra Field 1
                 String(0)                                      // Extra Field 2
