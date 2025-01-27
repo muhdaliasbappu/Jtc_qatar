@@ -2,14 +2,17 @@ const fs = require('fs');
 const path = require('path');
 const employeHelpers = require('../helpers/employee-helpers');
 const allsalaryreport = require('../modules/report');
-let overallT = 0
+
 const WPSemployeeData = async (searchdate,selectedgroup) => {
     let employeeData = [];
     let employees = [];
+    let overallT = 0
+    let Tselected = 0
     let selectedEmployees = await employeHelpers.getGroupbyGroupName(selectedgroup)
     for(let i = 0; i<selectedEmployees.selectedEmployees.length; i++){
       let semployee = await employeHelpers.getEmployeeDetails(selectedEmployees.selectedEmployees[i].id);
       employees.push(semployee)
+      Tselected++
     }
     
     for (let i = 0; i < 3; i++) {
@@ -52,12 +55,12 @@ const WPSemployeeData = async (searchdate,selectedgroup) => {
             ]);
         }
     }
+      return { employeeData, overallT, Tselected };
 
-    return employeeData;
 };
 
 const generateCSV = async (searchdate,selectedgroup) => {
-    let Tselected = selectedgroup?.selectedEmployees?.length || 0;
+    
 
     const header = [
         "Employer EID", "File Creation Date", "File Creation Time", "Payer EID", "Payer QID",
@@ -82,8 +85,9 @@ const generateCSV = async (searchdate,selectedgroup) => {
   
   // Concatenate year and month
 
+  const { employeeData, overallT, Tselected } = await WPSemployeeData(searchdate, selectedgroup);
 
-
+   
     const records = [
         ["10711301", `${year}${month}${day}`, `${hours}${minutes}`, "10711301", "", "MAR", "QA02MAFR000000000009114716001", `${syear+smonth}`,`${overallT}` , `${Tselected}`, "1"]
     ];
@@ -95,13 +99,14 @@ const generateCSV = async (searchdate,selectedgroup) => {
         "Extra Field 1", "Extra Field 2"
     ];
 
-    const employeeDatas = await WPSemployeeData(searchdate,selectedgroup); // Fetch employee data dynamically
+    
+
 
     const csvData = [
         header,
         ...records,
         employeeHeader,
-        ...employeeDatas.map((row) => row) // No need to re-index; data is already indexed
+        ...employeeData.map((row) => row) // No need to re-index; data is already indexed
     ]
         .map(row => row.join(',')) // Join each row with commas
         .join('\n'); // Join all rows with newlines
