@@ -1,4 +1,5 @@
 
+const { report } = require("../app");
 var userHelpers = require("../helpers/user-helper");
 function getDaysInMonth(dateString) {
     // Parse the input date string
@@ -1646,8 +1647,16 @@ if(leave === month){
 }else{
     report.paymentType= 'Monthly Salary and allowance' 
 }
+if(report.deduction>0){
+    report.deductionRC = '4'
+}else{
+    report.deductionRC = '0'
+}
 resolve(report)
 })
+if(report.deduction>0){
+    report.deductionRC = '0'
+}
 
 },
 
