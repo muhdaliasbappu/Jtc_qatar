@@ -15,7 +15,7 @@ const WPSemployeeData = async (searchdate,selectedgroup) => {
       Tselected++
     }
     
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < employees.length; i++) {
         let thedata;
 
         if (employees[i].employeeType === 'Own Labour') {
