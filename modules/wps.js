@@ -83,7 +83,7 @@ const generateCSV = async (searchdate,selectedgroup) => {
 
 
     const records = [
-        ["10711301", `${year}${month}${day}`, `${hours}${minutes}`, "10711301", "", "MAR", "QA02MAFR000000000009114716001", `${syear+smonth}`,`${overallT}` , `${selectedEmployees.selectedEmployees.length}`, "1"]
+        ["10711301", `${year}${month}${day}`, `${hours}${minutes}`, "10711301", "", "MAR", "QA02MAFR000000000009114716001", `${syear+smonth}`,`${overallT}` , `${selectedgroup.selectedEmployees.length}`, "1"]
     ];
     const employeeHeader = [
         "Record Sequence", "Employee QID", "Employee Visa ID", "Employee Name", "Employee Bank Short Name",
