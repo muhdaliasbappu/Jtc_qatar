@@ -11,8 +11,7 @@ const WPSemployeeData = async (searchdate,selectedgroup) => {
       let semployee = await employeHelpers.getEmployeeDetails(selectedEmployees.selectedEmployees[i].id);
       employees.push(semployee)
     }
-
-
+    let overallT = 0
     for (let i = 0; i < 3; i++) {
         let thedata;
 
@@ -24,6 +23,7 @@ const WPSemployeeData = async (searchdate,selectedgroup) => {
         ) {
             thedata = await allsalaryreport.salaryreportOperationsWPS(searchdate, employees[i]._id.toString());
         }
+        overallT = overallT + thedata.totalsalary
 
         if (thedata) {
             employeeData.push([
@@ -83,7 +83,7 @@ const generateCSV = async (searchdate,selectedgroup) => {
 
 
     const records = [
-        ["10711301", `${year}${month}${day}`, `${hours}${minutes}`, "10711301", "", "MAR", "QA02MAFR000000000009114716001", `${syear+smonth}`, "75674", "28", "1"]
+        ["10711301", `${year}${month}${day}`, `${hours}${minutes}`, "10711301", "", "MAR", "QA02MAFR000000000009114716001", `${syear+smonth}`,`${overallT}` , `${selectedEmployees.selectedEmployees.length}`, "1"]
     ];
     const employeeHeader = [
         "Record Sequence", "Employee QID", "Employee Visa ID", "Employee Name", "Employee Bank Short Name",
