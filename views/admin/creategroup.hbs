@@ -39,7 +39,7 @@
                 <div class="tab-pane show active" id="ownL">
                   <div class="row">
                     <div class="col">
-                      <div class="card-body py-0 mb-3" data-simplebar style="max-height: 546px">
+                      <div class="card-body py-0 mb-3" data-simplebar style="max-height: 500px">
                         {{#each ownEmployees}}
                         <a
                           href="javascript:void(0);"
@@ -202,110 +202,131 @@
 </div>
 
 <script>
-  document.addEventListener('DOMContentLoaded', function () {
-    // Track selected employees
-    const selectedEmployees = [];
+document.addEventListener('DOMContentLoaded', function () {
+  // Track selected employees
+  const selectedEmployees = [];
 
-    // Keep track of which category is currently locked ('own', 'others', or null)
-    let lockedCategory = null;
+  // Keep track of which category is currently locked ('own', 'others', or null)
+  let lockedCategory = null;
 
-    // 1. Handle clicks on employee items
-    const employeeItems = document.querySelectorAll('.employee-item');
-    employeeItems.forEach((item) => {
-      item.addEventListener('click', function () {
-        const empId = this.dataset.empId;
-        const empName = this.dataset.empName;
-        const empCategory = this.dataset.empCategory; // 'own' or 'others'
+  // 1. Handle clicks on employee items
+  const employeeItems = document.querySelectorAll('.employee-item');
+  console.log('Found .employee-item count:', employeeItems.length);
 
-        // Check if employee is already selected
-        const isSelected = selectedEmployees.some((emp) => emp.id === empId);
-        if (isSelected) {
-          // Already in the list, do nothing
-          return;
-        }
+  employeeItems.forEach((item) => {
+    item.addEventListener('click', function (e) {
+      // Prevent default anchor behavior:
+      e.preventDefault();
 
-        // If no category locked yet and no one is selected, lock the current one
-        if (!lockedCategory && selectedEmployees.length === 0) {
-          lockedCategory = empCategory; 
-        }
+      const empId = this.dataset.empId;
+      const empName = this.dataset.empName;
+      const empCategory = this.dataset.empCategory; // 'own' or 'others'
 
-        // If there's a locked category, enforce the rule
-        if (lockedCategory && lockedCategory !== empCategory) {
-          alert(
-            "You cannot select employees from another category. " +
-            "Please remove all selected employees if you want to switch."
-          );
-          return; 
-        }
+      console.log(`Clicked on employee: ID=${empId}, Name=${empName}, Category=${empCategory}`);
 
-        // Otherwise, proceed with adding the employee
-        selectedEmployees.push({ id: empId, name: empName, category: empCategory });
-        renderSelectedEmployees();
-      });
-    });
-
-    // 2. Render selected employees side-by-side
-    function renderSelectedEmployees() {
-      const listEl = document.getElementById('selectedEmployeesList');
-      listEl.innerHTML = ''; // clear old items
-
-      selectedEmployees.forEach((emp) => {
-        const li = document.createElement('li');
-        li.className = 'd-inline-block';
-        li.innerHTML = `
-          <a
-            class="btn btn-sm btn-light remove-employee-btn"
-            data-emp-id="${emp.id}"
-            style="margin-bottom:5px;"
-          >
-            ${emp.name}
-          </a>
-        `;
-        listEl.appendChild(li);
-      });
-
-      // Attach remove event
-      const removeButtons = listEl.querySelectorAll('.remove-employee-btn');
-      removeButtons.forEach((btn) => {
-        btn.addEventListener('click', function () {
-          const removeId = this.dataset.empId;
-          const index = selectedEmployees.findIndex((emp) => emp.id === removeId);
-          if (index !== -1) {
-            selectedEmployees.splice(index, 1);
-          }
-          renderSelectedEmployees();
-
-          // If no employees left, unlock the category
-          if (selectedEmployees.length === 0) {
-            lockedCategory = null;
-          }
-        });
-      });
-    }
-
-    // 3. Before form submission, validate & set hidden input
-    const form = document.getElementById('chat-form');
-    form.addEventListener('submit', function (event) {
-      const groupName = document.getElementById('groupName').value.trim();
-
-      // If groupName is empty, or no employees selected, block submission
-      if (!groupName) {
-        event.preventDefault();
-        alert('Please enter a group name.');
-        return;
-      }
-      if (selectedEmployees.length === 0) {
-        event.preventDefault();
-        alert('Please select at least one employee.');
+      // Check if employee is already selected
+      const isSelected = selectedEmployees.some((emp) => emp.id === empId);
+      if (isSelected) {
+        console.log('Employee already selected, ignoring');
         return;
       }
 
-      // If validation passes, store the selected employees in the hidden input
-      const hiddenInput = document.getElementById('selectedEmployeesHidden');
-      hiddenInput.value = JSON.stringify(selectedEmployees);
-      // The form will now submit with:
-      //   groupName: the text input
-      //   selectedEmployees: JSON string in hidden input
+      // If no category locked yet and no one is selected, lock the current one
+      if (!lockedCategory && selectedEmployees.length === 0) {
+        lockedCategory = empCategory;
+      }
+
+      // If there's a locked category, enforce the rule
+      if (lockedCategory && lockedCategory !== empCategory) {
+        alert(
+          "You cannot select employees from another category. " +
+          "Please remove all selected employees if you want to switch."
+        );
+        return;
+      }
+
+      // Otherwise, proceed with adding the employee
+      selectedEmployees.push({ id: empId, name: empName, category: empCategory });
+
+      // Hide selected employee from the list
+      this.style.display = 'none';
+
+      renderSelectedEmployees();
     });
   });
+
+  // 2. Render selected employees side-by-side
+  function renderSelectedEmployees() {
+    const listEl = document.getElementById('selectedEmployeesList');
+    listEl.innerHTML = ''; // clear old items
+
+    selectedEmployees.forEach((emp) => {
+      const li = document.createElement('li');
+      li.className = 'd-inline-block';
+      li.innerHTML = `
+        <a
+          class="btn btn-sm btn-light remove-employee-btn"
+          data-emp-id="${emp.id}"
+          style="margin-bottom:5px; cursor: pointer;"
+        >
+          ${emp.name}
+        </a>
+      `;
+      listEl.appendChild(li);
+    });
+
+    // Attach remove event
+    const removeButtons = listEl.querySelectorAll('.remove-employee-btn');
+    removeButtons.forEach((btn) => {
+      btn.addEventListener('click', function (e) {
+        e.preventDefault();
+
+        const removeId = this.dataset.empId;
+        console.log('Removing employee with ID:', removeId);
+
+        const index = selectedEmployees.findIndex((emp) => emp.id === removeId);
+        if (index !== -1) {
+          selectedEmployees.splice(index, 1);
+
+          // Show employee back in the list
+          const employeeItem = document.querySelector(`.employee-item[data-emp-id="${removeId}"]`);
+          if (employeeItem) {
+            employeeItem.style.display = '';
+          }
+        }
+
+        renderSelectedEmployees();
+
+        // If no employees left, unlock the category
+        if (selectedEmployees.length === 0) {
+          lockedCategory = null;
+        }
+      });
+    });
+  }
+
+  // 3. Before form submission, validate & set hidden input
+  const form = document.getElementById('chat-form');
+  form.addEventListener('submit', function (event) {
+    const groupName = document.getElementById('groupName').value.trim();
+
+    // If groupName is empty, or no employees selected, block submission
+    if (!groupName) {
+      event.preventDefault();
+      alert('Please enter a group name.');
+      return;
+    }
+    if (selectedEmployees.length === 0) {
+      event.preventDefault();
+      alert('Please select at least one employee.');
+      return;
+    }
+
+    // If validation passes, store the selected employees in the hidden input
+    const hiddenInput = document.getElementById('selectedEmployeesHidden');
+    hiddenInput.value = JSON.stringify(selectedEmployees);
+    console.log('Form submit -> selectedEmployees:', hiddenInput.value);
+  });
+});
 </script>
+
