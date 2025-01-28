@@ -128,8 +128,10 @@ module.exports = {
                 .aggregate([
                     { 
                         $match: { 
-                            employeeType: { $in: employeeTypes }, 
-                            Employeestatus: { $ne: "Dismissed" } 
+                            $and: [
+                                { employeeType: { $in: employeeTypes } },
+                                { Employeestatus: { $ne: "Dismissed" } }
+                            ]
                         } 
                     }
                 ])
@@ -165,3 +167,4 @@ module.exports = {
     
 
 }
+
