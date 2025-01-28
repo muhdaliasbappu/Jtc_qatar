@@ -1181,7 +1181,6 @@ router.post('/printprojectreport', async (req, res) => {
         "Own Staff (Projects)"
     ];
     const employeeTypesHired = [
-      "Hired Labour (Hourly)",
       "Hired Labour (Monthly)",
       "Hired Staff (Operations)",
       "Hired Staff (Projects)"
