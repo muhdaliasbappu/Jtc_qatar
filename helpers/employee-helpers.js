@@ -128,9 +128,8 @@ module.exports = {
                 .aggregate([
                     { 
                         $match: { 
-                            employeeType: { $in: employeeTypes } 
-                            // Uncomment the line below if you want only "Working" employees
-                            // Employeestatus: "Working"
+                            employeeType: { $in: employeeTypes }, 
+                            Employeestatus: { $ne: "Dismissed" } 
                         } 
                     }
                 ])
