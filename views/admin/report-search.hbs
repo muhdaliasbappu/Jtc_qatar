@@ -18,9 +18,10 @@
                                 <input type="month" id="searchdate" name="searchdate" class="form-control"  >
                             </div>
                             <div class="form-group" style="margin-bottom: 20px;">
-                                <label for="searchdate" style="font-weight: bold;">Select EmployeeType:</label>
+                                <label for="searchdate" style="font-weight: bold;">Select Report Type:</label>
                                 <select class="form-select mt-2" name="employeeType" id="employeeType" aria-label=" Default select example" required>
                                  <option value=""></option>
+                                 <optgroup label="EmployeeTypes">
                                  <option value="Own Labour">Own Labour</option>
                                  <option value="Own Staff (Operations)">Own Staff (Operations)</option>
                                   <option value="Own Staff (Projects)">Own Staff (Projects)</option>
@@ -29,6 +30,13 @@
                                  <option value="Hired Staff (Operations)">Hired Staff (Operations)</option>            
                                  <option value="Hired Staff (Projects)">Hired Staff (Projects)</option>      
                                  <option value="All">All</option>      
+                                 </optgroup>
+                                  <optgroup label="Groups">
+                                    {{#each groupNames}}
+                                     <option value="{{this}}">{{this}}</option>  
+                                    {{/each}}
+                                  </optgroup>
+
                                   </select>
                             </div>
                                  <button type="submit" id="submits" class="btn btn-primary" >Submit</button>
