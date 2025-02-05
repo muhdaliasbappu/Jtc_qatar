@@ -1,370 +1,254 @@
-<h1 class="h2 mb-3 fw-normal text-center mt-1">Add Employee Data</h1>
-
-<div class="col d-flex justify-content-center mt-5">
-    <div class="card" style="width: 18rem;">
-        <ul class="list-group list-group-flush">
-            <li class="list-group-item">Name: {{person.givenName}}</li>
-                    <li class="list-group-item">QID: {{person.qid}}</li> 
-        </ul>
-        <form id="employeeForm" action="/admin/add-datasheet" method="POST">
-   <div class="mt-2">
-                <label class="p-3">Select Date: </label> 
-                 <input type="date" name="datevalue" required>
-
+<div class="content-page">
+    <div class="content">
+        <!-- Start Content-->
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="page-title-box">                                                                       
+                        <h4 class="page-title">Add Timesheet</h4>
+                    </div>
+                </div>
             </div>
-
-          <input type="hidden" name="givenName"  value="{{person.givenName}}">
-         <input type="hidden" name="employee_id" id="employee_id" value="{{person._id}}">
-            <input type="hidden" name="qid"  value="{{person.qid}}">
-    
-            <div class="p-3">
-              <select class="form-select" name="todaystatus" id="todaystatus" aria-label="Default select example" onchange="toggleProjectFieldset()"required>
-                <option value="">Working Status</option>
-                <option value="Paid Leave">Paid Leave</option>
-                <option value="Unpaid Leave">Unpaid Leave</option>
-                <option value="Working">Working</option>
-             </select>
-
-
-            </div>
-            <fieldset id="projectFieldset" style="display: block;">
-                <h5 class=" mt-1 text-center">PROJECT</h5>
-                <fieldset>
-                    <select class="form-select mt-2" name="projectname1" id="projectname1"
-                        aria-label="Default select example">
-                        <option value="">Project Name: </option>
-                        {{#each activeProjects}}
-                        <option value="{{this.projectname}}">{{this.projectname}}</option>
-                        {{/each}}
-                    </select>
-                   
-                    <select class="form-select mt-2" id="workhour1" name="workhour1"
-                        aria-label="Default select example">
-                        <option value="">Work Hour: </option>
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                        <option value="5">5</option>
-                        <option value="6">6</option>
-                        <option value="7">7</option>
-                        <option value="8">8</option>
-                        <option value="9">9</option>
-                        <option value="10">10</option>
-                        <option value="11">11</option>
-                        <option value="12">12</option>
-                        <option value="13">13</option>
-                        <option value="14">14</option>
-                        <option value="15">15</option>
-                        <option value="16">16</option>
-                        <option value="17">17</option>
-                        <option value="18">18</option>
-                        <option value="12">19</option>
-                        <option value="13">20</option>
-                        <option value="13">21</option>
-                        <option value="13">22</option>
-                        <option value="13">23</option>
-                        <option value="13">24</option>
-                    </select>
-                </fieldset>
-          
-                <script>
-                let c=1;
-                 
-                </script>
-             
- 
-               
-                <fieldset id="project2" style="display: block;">
-                    <select class="form-select mt-4" name="projectname2" id="projectname2"
-                        aria-label="Default select example">
-                        <option value="">Project Name: </option>
-                        {{#each activeProjects}}
-                        <option value="{{this.projectname}}">{{this.projectname}}</option>
-                        {{/each}}
-                    </select>
-                    <select class="form-select mt-2" id="workhour2" name="workhour2"
-                        aria-label="Default select example">
-                        <option value="">Work Hour:</option>
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                        <option value="5">5</option>
-                        <option value="6">6</option>
-                        <option value="7">7</option>
-                        <option value="8">8</option>
-                        <option value="9">9</option>
-                        <option value="10">10</option>
-                        <option value="11">11</option>
-                        <option value="12">12</option>
-                        <option value="13">13</option>
-                        <option value="14">14</option>
-                        <option value="15">15</option>
-                        <option value="16">16</option>
-                        <option value="17">17</option>
-                        <option value="18">18</option>
-                        <option value="12">19</option>
-                        <option value="13">20</option>
-                        <option value="13">21</option>
-                        <option value="13">22</option>
-                        <option value="13">23</option>
-                        <option value="13">24</option>
-                    </select>
-                </fieldset>
-                
-       
-   
-           
-                <fieldset id="project3" style="display: block;">
-                    <select class="form-select mt-4" name="projectname3" id="projectname3"
-                        aria-label="Default select example">
-                        <option value="">Project Name: </option>
-                        {{#each activeProjects}}
-                        <option value="{{this.projectname}}">{{this.projectname}}</option>
-                        {{/each}}
-                    </select>
-                    <select class="form-select mt-2" id="workhour3" name="workhour3"
-                        aria-label="Default select example">
-                        <option value="">Work Hour:</option>
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                        <option value="5">5</option>
-                        <option value="6">6</option>
-                        <option value="7">7</option>
-                        <option value="8">8</option>
-                        <option value="9">9</option>
-                        <option value="10">10</option>
-                        <option value="11">11</option>
-                        <option value="12">12</option>
-                        <option value="13">13</option>
-                        <option value="14">14</option>
-                        <option value="15">15</option>
-                        <option value="16">16</option>
-                        <option value="17">17</option>
-                        <option value="18">18</option>
-                        <option value="12">19</option>
-                        <option value="13">20</option>
-                        <option value="13">21</option>
-                        <option value="13">22</option>
-                        <option value="13">23</option>
-                        <option value="13">24</option>
-                    </select>
-                </fieldset>
-                
-               
-     
-          
-                <fieldset id="project4" style="display: block;">
-                    <select class="form-select mt-4" name="projectname4" id="projectname4"
-                        aria-label="Default select example">
-                        <option value="">Project Name: </option>
-                        {{#each activeProjects}}
-                        <option value="{{this.projectname}}">{{this.projectname}}</option>
-                        {{/each}}
-                    </select>
-                    <select class="form-select mt-2" id="workhour4" name="workhour4"
-                        aria-label="Default select example">
-                        <option value="">Work Hour:</option>
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                        <option value="5">5</option>
-                        <option value="6">6</option>
-                        <option value="7">7</option>
-                        <option value="8">8</option>
-                        <option value="9">9</option>
-                        <option value="10">10</option>
-                        <option value="11">11</option>
-                        <option value="12">12</option>
-                        <option value="13">13</option>
-                        <option value="14">14</option>
-                        <option value="15">15</option>
-                        <option value="16">16</option>
-                        <option value="17">17</option>
-                        <option value="18">18</option>
-                        <option value="12">19</option>
-                        <option value="13">20</option>
-                        <option value="13">21</option>
-                        <option value="13">22</option>
-                        <option value="13">23</option>
-                        <option value="13">24</option>
-                    </select>
-                </fieldset>
-              
-               
-             
-       
-                <fieldset id="project5" style="display: block;">
-                    <select class=" form-select mt-4" name="projectname5" id="projectname5"
-                        aria-label="Default select example">
-                        <option value="">Project Name: </option>
-                        {{#each activeProjects}}
-                        <option value="{{this.projectname}}">{{this.projectname}}</option>
-                        {{/each}}
-                    </select>
-                    <select class="form-select mt-2" id="workhour5" name="workhour5"
-                        aria-label="Default select example">
-                        <option value="">Work Hour:</option>
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                        <option value="5">5</option>
-                        <option value="6">6</option>
-                        <option value="7">7</option>
-                        <option value="8">8</option>
-                        <option value="9">9</option>
-                        <option value="10">10</option>
-                        <option value="11">11</option>
-                        <option value="12">12</option>
-                        <option value="13">13</option>
-                        <option value="14">14</option>
-                        <option value="15">15</option>
-                        <option value="16">16</option>
-                        <option value="17">17</option>
-                        <option value="18">18</option>
-                        <option value="12">19</option>
-                        <option value="13">20</option>
-                        <option value="13">21</option>
-                        <option value="13">22</option>
-                        <option value="13">23</option>
-                        <option value="13">24</option>
-                    </select>
-                </fieldset>
-             
-      
             
-             <div class="card-body">
-                 <button type="button" class="btn btn-outline-secondary mt-2" onclick="addProject()">Add Project</button>
-                 <button type="button" class="btn btn-outline-secondary mt-2" onclick="removeProject()">Remove</button>
-            </div>
+            <div class="row mb-2 justify-content-center">
+                <div class="col-md-4">
+                    <div class="card">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">Name: {{person.givenName}}</li>
+                            <li class="list-group-item">QID: {{person.qid}}</li> 
+                        </ul>
+                        
+                        <!-- Give the form an ID so we can submit it from JS -->
+                        <form action="/admin/add-datasheet/" method="POST" id="employeeForm">
+                            <label class="p-3">Select Date: </label>
+                            <input type="date" name="datevalue" id="dateInput" required>
+                            
+                            <input type="hidden" name="employee_id" id="employee_id" value="{{person._id}}">
+                            <input type="hidden" name="surname"  value="{{person.surname}}">
+                            <input type="hidden" name="givenName"  value="{{person.givenName}}">
+                            <input type="hidden" name="employeeType"  value="{{person.employeeType}}">
+                            <input type="hidden" name="sbasic"  value="{{person.sbasic}}">
+                            <input type="hidden" name="sallowance"  value="{{person.sallowance}}">
+                            <input type="hidden" name="sbonus"  value="{{person.sbouns}}">
+                            <input type="hidden" name="srateph"  value="{{person.srateph}}">
+                            <input type="hidden" name="workinghour"  value="8">
+                            <input type="hidden" name="salarystatus"  value="close">
 
-            </fieldset>
-            <div class=" card-body">
-                <button type="submit" id="submits" class="btn btn-secondary text-end">submit</button>
-            </div>
+                            <select class="form-select mt-2" name="todaystatus" id="todaystatus" required>
+                                <option value="">Working Status</option>
+                                <option value="Working">Working</option>
+                                <option value="Paid Leave">Paid Leave</option>
+                                <option value="Unpaid Leave">Unpaid Leave</option>
+                            </select>
 
-        </form>
-    </div>
-</div>
+                            <!-- PROJECT FIELDSET WRAPPER -->
+                            <fieldset id="projectFieldset">
+                                <h5 class="mt-1 text-center">PROJECT</h5>
 
-{{!-- <script>
-    var employeeType = "{{person.employeeType}}";
+                                <!-- Project 1 (always the first; we don't hide this if the user must fill at least one project) -->
+                                <fieldset id="project1">
+                                    <select class="form-select mt-2" name="projectname1" id="projectname1">
+                                        <option value="">Project Name:</option>
+                                        {{#each activeProjects}}
+                                        <option value="{{this.projectname}}">{{this.projectname}}</option>
+                                        {{/each}}
+                                    </select>
+                                    <select class="form-select mt-2" id="workhour1" name="workhour1">
+                                        <option value="0">Work Hour:</option>
+                                        {{#each  (range 1 24)}}
+                                          <option value="{{this}}">{{this}}</option>
+                                        {{/each}}
+                                    </select>
+                                </fieldset>
 
+                                <!-- Project 2 -->
+                                <fieldset id="project2">
+                                    <select class="form-select mt-4" name="projectname2" id="projectname2">
+                                        <option value="">Project Name:</option>
+                                        {{#each activeProjects}}
+                                        <option value="{{this.projectname}}">{{this.projectname}}</option>
+                                        {{/each}}
+                                    </select>
+                                    <select class="form-select mt-2" id="workhour2" name="workhour2">
+                                        <option value="0">Work Hour:</option>
+                                        {{#each  (range 1 24)}}
+                                          <option value="{{this}}">{{this}}</option>
+                                        {{/each}}
+                                    </select>
+                                </fieldset>
 
-    if(c === 2){
-         var projectField22 = document.getElementById("project2");
-        projectField22.style.display = "block";  
-    }else if(c === 3 ){
-         var projectField22 = document.getElementById("project2");
-        projectField22.style.display = "block";  
-        var projectField33 = document.getElementById("project3");
-        projectField33.style.display = "block"; 
-    }else if(c === 4){
-         var projectField22 = document.getElementById("project2");
-        projectField22.style.display = "block";  
-        var projectField33 = document.getElementById("project3");
-        projectField33.style.display = "block"; 
-            var projectField44 = document.getElementById("project4");
-        projectField44.style.display = "block";  
-    }else if(c === 5){
-                var projectField22 = document.getElementById("project2");
-        projectField22.style.display = "block";  
-        var projectField33 = document.getElementById("project3");
-        projectField33.style.display = "block"; 
-            var projectField44 = document.getElementById("project4");
-        projectField44.style.display = "block";  
-           var projectField55 = document.getElementById("project5");
-        projectField55.style.display = "block";  
-    }
-   
-var dis
-dis=c+1;
-function addProject(){
-    if(dis === 2){
-        dis++
-       
-        var projectField22 = document.getElementById("project2");
-        projectField22.style.display = "block";  
-    }else if(dis === 3){
-        dis++
-      
-        var projectField33 = document.getElementById("project3");
-        projectField33.style.display = "block";  
-    }else if(dis === 4){
-        dis++
-        
-        var projectField44 = document.getElementById("project4");
-        projectField44.style.display = "block";  
-    }else if(dis === 5){
-        dis=6
-       
-        var projectField55 = document.getElementById("project5");
-        projectField55.style.display = "block";  
-    }
-}
-function removeProject(){
-if(dis === 6){
-    dis--
-   
-     var projectField55 = document.getElementById("project5");
-        projectField55.style.display = "none";  
-         var projectNameInput5 = document.getElementById("projectname5");
-            var workHourInput5 = document.getElementById("workhour5");
-            projectNameInput5.value = '';
-            workHourInput5.value = '';
+                                <!-- Project 3 -->
+                                <fieldset id="project3">
+                                    <select class="form-select mt-4" name="projectname3" id="projectname3">
+                                        <option value="">Project Name:</option>
+                                        {{#each activeProjects}}
+                                        <option value="{{this.projectname}}">{{this.projectname}}</option>
+                                        {{/each}}
+                                    </select>
+                                    <select class="form-select mt-2" id="workhour3" name="workhour3">
+                                        <option value="0">Work Hour:</option>
+                                        {{#each  (range 1 24)}}
+                                          <option value="{{this}}">{{this}}</option>
+                                        {{/each}}
+                                    </select>
+                                </fieldset>
 
-}else if(dis === 5){
-    dis--
-     var projectField44 = document.getElementById("project4");
-        projectField44.style.display = "none";  
-         var projectNameInput4 = document.getElementById("projectname4");
-            var workHourInput4 = document.getElementById("workhour4");
-            projectNameInput4.value = '';
-            workHourInput4.value = '';
-}else if(dis === 4){
-    dis--
-        var projectField33 = document.getElementById("project3");
-        projectField33.style.display = "none";  
-         var projectNameInput3 = document.getElementById("projectname3");
-            var workHourInput3 = document.getElementById("workhour3");
-            projectNameInput3.value = '';
-            workHourInput3.value = '';
-}else if(dis === 3){
-    dis--
-       var projectField22 = document.getElementById("project2");
-        projectField22.style.display = "none";  
-         var projectNameInput2 = document.getElementById("projectname2");
-            var workHourInput2 = document.getElementById("workhour2");
-            projectNameInput2.value = '';
-            workHourInput2.value = '';
-}
-}
+                                <!-- Project 4 -->
+                                <fieldset id="project4">
+                                    <select class="form-select mt-4" name="projectname4" id="projectname4">
+                                        <option value="">Project Name:</option>
+                                        {{#each activeProjects}}
+                                        <option value="{{this.projectname}}">{{this.projectname}}</option>
+                                        {{/each}}
+                                    </select>
+                                    <select class="form-select mt-2" id="workhour4" name="workhour4">
+                                        <option value="0">Work Hour:</option>
+                                        {{#each  (range 1 24)}}
+                                          <option value="{{this}}">{{this}}</option>
+                                        {{/each}}
+                                    </select>
+                                </fieldset>
 
+                                <!-- Project 5 -->
+                                <fieldset id="project5">
+                                    <select class=" form-select mt-4" name="projectname5" id="projectname5">
+                                        <option value="">Project Name:</option>
+                                        {{#each activeProjects}}
+                                        <option value="{{this.projectname}}">{{this.projectname}}</option>
+                                        {{/each}}
+                                    </select>
+                                    <select class="form-select mt-2" id="workhour5" name="workhour5">
+                                        <option value="0">Work Hour:</option>
+                                        {{#each  (range 1 24)}}
+                                          <option value="{{this}}">{{this}}</option>
+                                        {{/each}}
+                                    </select>
+                                </fieldset>
+
+                                <div class="card-body">
+                                    <button type="button" class="btn btn-outline-primary mt-2" onclick="addproject()">Add Project</button>
+                                    <button type="button" class="btn btn-outline-primary mt-2" onclick="removeproject()">Remove</button>
+                                </div>
+                            </fieldset>
+
+                            <div class="card-body">
+                                <button type="button" id="submits" class="btn btn-primary text-end">Submit</button>
+                            </div>
+                        </form>
+                    </div><!-- end card -->
+                </div><!-- end col -->
+            </div><!-- end row -->
+        </div><!-- container -->
+    </div><!-- content -->
+</div><!-- content-page -->
+
+<script>
+    // Track how many project fieldsets are visible
+    let dis = 1;
+    const employeeType = "{{person.employeeType}}";
+
+    // Date constraints: allow from 10 days ago up to today
+    const today = new Date();
+    const tenDaysAgo = new Date();
+    tenDaysAgo.setDate(today.getDate() - 10);
+    document.getElementById("dateInput").min = tenDaysAgo.toISOString().split('T')[0];
+    document.getElementById("dateInput").max = today.toISOString().split('T')[0];
+
+    // Hide project2..project5 by default
+    document.getElementById("project2").style.display = "none";
+    document.getElementById("project3").style.display = "none";
+    document.getElementById("project4").style.display = "none";
+    document.getElementById("project5").style.display = "none";
+
+    // Show/hide the entire project fieldset depending on employee type AND status
     function toggleProjectFieldset() {
-        var todayStatusSelect = document.getElementById("todaystatus");
-        var projectFieldset = document.getElementById("projectFieldset");
+        const status = document.getElementById("todaystatus").value;
+        const projectFieldset = document.getElementById("projectFieldset");
 
-        // Clear the data from the input fields in the projectFieldset
-        var projectInputs = projectFieldset.getElementsByTagName("select");
-        for (var i = 0; i < projectInputs.length; i++) {
-            projectInputs[i].value = "";
-        }
-
-        if (todayStatusSelect.value === "working") {
-      if(employeeType === 'Own Staff' || employeeType === 'Hired Staff_operations'){
-        projectFieldset.style.display = "none";
-        }else
+        // If status == "Working" AND NOT one of the operations staff
+        if (
+            status === "Working" && 
+            !["Own Staff (Operations)", "Hired Staff (Operations)"].includes(employeeType)
+        ) {
             projectFieldset.style.display = "block";
-            
         } else {
+            // Otherwise hide the entire fieldset
             projectFieldset.style.display = "none";
+            
+            // Reset everything except project1's layout
+            for (let i = 2; i <= 5; i++) {
+                document.getElementById(`project${i}`).style.display = "none";
+                document.getElementById(`projectname${i}`).value = "";
+                document.getElementById(`workhour${i}`).value = "0";
+            }
+            dis = 1; // reset the visible project count to 1
         }
     }
 
+    // Add the next project fieldset (up to 5)
+    function addproject() {
+        // Only allow up to 5
+        if (dis < 5) {
+            dis++;
+            document.getElementById(`project${dis}`).style.display = "block";
+        }
+    }
 
-</script> --}}
+    // Remove the latest visible project fieldset (but never remove the first one)
+    function removeproject() {
+        if (dis > 1) {
+            document.getElementById(`projectname${dis}`).value = "";
+            document.getElementById(`workhour${dis}`).value = "0";
+            document.getElementById(`project${dis}`).style.display = "none";
+            dis--;
+        }
+    }
+
+    // Handle final form validation and submission
+    document.getElementById("submits").addEventListener("click", function(e) {
+        e.preventDefault();
+        let isValid = true;
+
+        const status = document.getElementById("todaystatus").value;
+        const dateValue = document.getElementById("dateInput").value;
+
+        // Simple required checks
+        if (!dateValue) {
+            alert("Please select a date");
+            isValid = false;
+        }
+
+        // If "Working" and not operations staff => check the project fields
+        if (
+            status === "Working" && 
+            !["Own Staff (Operations)", "Hired Staff (Operations)"].includes(employeeType)
+        ) {
+            // Check each visible project
+            for (let i = 1; i <= dis; i++) {
+                const project = document.getElementById(`projectname${i}`).value;
+                const hours   = document.getElementById(`workhour${i}`).value;
+
+                if (!project) {
+                    alert(`Please select a project for Project ${i}`);
+                    isValid = false;
+                    break;
+                }
+                if (hours === "0") {
+                    alert(`Please enter work hours for Project ${i}`);
+                    isValid = false;
+                    break;
+                }
+            }
+        }
+
+        if (isValid) {
+            document.getElementById("employeeForm").submit();
+        }
+    });
+
+    // When the status changes, re-check whether we should show/hide projects
+    document.getElementById("todaystatus").addEventListener("change", toggleProjectFieldset);
+
+    // Initial check on page load
+    toggleProjectFieldset();
+</script>
