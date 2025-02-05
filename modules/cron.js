@@ -1,7 +1,7 @@
 var express = require('express');
 
 const bodyParser = require('body-parser');
-
+var logHelpers = require("../helpers/logger-helper");
 var router = express.Router();
 var employeHelpers = require('../helpers/employee-helpers')
 var projectHelpers = require('../helpers/project-helpers')
@@ -65,7 +65,6 @@ cronfriday:  async() => {
          tempobj1.projectname5 = ''
          tempobj1.workhour5 = ''
          tempobj1.workinghour = '0'
-
          tempobj1.date= dateObj2
          tempobj1.employeeType = employee[i].employeeType
          if(employee[i].employeeType === 'Hired Labour (Hourly)'){
@@ -75,6 +74,7 @@ cronfriday:  async() => {
          tempobj1.sallowance = employee[i].sallowance
          tempobj1.sbonus = employee[i].sbonus
         }
+        tempobj1.salarystatus = 'open'
          userHelpers.addDatasheet(tempobj1, (result) => {
           
       
@@ -90,7 +90,11 @@ cronfriday:  async() => {
             tempobj2.givenName = employee[i].givenName
             tempobj2.surname = employee[i].surname
             tempobj2.datevalue = date2
-            tempobj2.todaystatus =  'Paid Leave'
+            if(employee[i].employeeType === 'Hired Labour (Hourly)'){
+              tempobj2.todaystatus =  'Unpaid Leave'
+               }else{
+                tempobj2.todaystatus =  'Paid Leave'
+               }
             tempobj2.projectname1 = ''
             tempobj2.workhour1 = ''
             tempobj2.projectname2 = ''
@@ -112,6 +116,7 @@ cronfriday:  async() => {
                 tempobj2.sbonus = employee[i].sbonus
                 
             }
+            tempobj2.salarystatus = 'open'
             userHelpers.addDatasheet(tempobj2, (result) => {
              
                 })
@@ -167,6 +172,7 @@ cronfriday:  async() => {
                tempobj1.sallowance = employee[i].sallowance
                tempobj1.sbonus = employee[i].sbonus
               }
+              tempobj1.salarystatus = 'open'
                userHelpers.addDatasheet(tempobj1, (result) => {
            
             
@@ -204,6 +210,7 @@ cronfriday:  async() => {
                       tempobj2.sbonus = employee[i].sbonus
                       
                   }
+                  tempobj2.salarystatus = 'open'
                   userHelpers.addDatasheet(tempobj2, (result) => {
                      
                       })
@@ -280,6 +287,7 @@ cronfriday:  async() => {
                tempobj1.sallowance = employee[i].sallowance
                tempobj1.sbonus = employee[i].sbonus
               }
+              tempobj1.salarystatus = 'open'
                userHelpers.addDatasheet(tempobj1, (result) => {
                 
             
@@ -317,7 +325,11 @@ cronfriday:  async() => {
                       tempobj2.sbonus = employee[i].sbonus
                       
                   }
-                  userHelpers.addDatasheet(tempobj2, (result) => {
+                  tempobj2.salarystatus = 'open'
+                  userHelpers.addDatasheet(tempobj2, async (result) => {
+                    const logMessage = `${employee[i].surname} ${employee[i].givenName}'s timesheet for ${date2}, was not submitted.`;
+                    await logHelpers.addlog(logMessage)
+
                      
                       })
                   resolve()
@@ -373,6 +385,7 @@ cronfriday:  async() => {
                      tempobj1.sallowance = employee[i].sallowance
                      tempobj1.sbonus = employee[i].sbonus
                     }
+                    tempobj1.salarystatus = 'open'
                      userHelpers.addDatasheet(tempobj1, (result) => {
                       
                   
@@ -410,7 +423,10 @@ cronfriday:  async() => {
                             tempobj2.sbonus = employee[i].sbonus
                             
                         }
-                        userHelpers.addDatasheet(tempobj2, (result) => {
+                        tempobj2.salarystatus = 'open'
+                        userHelpers.addDatasheet(tempobj2, async(result) => {
+                          const logMessage = `${employee[i].surname} ${employee[i].givenName}'s timesheet for ${date2}, was not submitted.`;
+                          await logHelpers.addlog(logMessage)
                             
                             })
                         resolve()
