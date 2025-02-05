@@ -995,61 +995,58 @@ router.get("/project-search/",  (req, res) => {
   }
 });
 
-router.post( "/project-search", async (req, res) => {
- 
-    try {
-      const { searchdate } = req.body;
+router.post("/project-search", async (req, res) => {
+  try {
+    const { searchdate } = req.body;
 
-      // Fetch the existing projectreport document using the helper
-      const existingReport = await reportHelpers.getProjectReportByDate(searchdate);
+    // Attempt to fetch an existing report from the database.
+    const existingReport = await reportHelpers.getProjectReportByDate(searchdate);
 
-      if (!existingReport) {
-        return res.status(404).send(`No project report found for date: ${searchdate}`);
-      }
-
-      if (existingReport.salarystatus.toLowerCase() === 'close') {
-        const { projectimesheets, sumemployeetype } = existingReport;
-
-        if (!projectimesheets || !sumemployeetype) {
-          return res.status(500).send("Incomplete report data in the database.");
-        }
-
-        return res.render("./admin/project-report", { 
-          admin: true, 
-          projectimesheets, 
-          sumemployeetype 
-        });
-      }
-
-      // Proceed to generate and update the report as before
-      const report = await ProjectReport.ProjectReport(searchdate);
-      const { projectimesheets, sumemployeetype } = report;
+    // If an existing report is found and it is closed, render it directly.
+    if (existingReport && existingReport.salarystatus.toLowerCase() === "close") {
+      const { projectimesheets, sumemployeetype } = existingReport;
 
       if (!projectimesheets || !sumemployeetype) {
-        return res.status(500).send("Invalid report data generated.");
+        return res.status(500).send("Incomplete report data in the database.");
       }
 
-      try {
-        await reportHelpers.addProjectReportDataIfOpen(
-          searchdate,
-          projectimesheets,
-          sumemployeetype
-        );
-      } catch (updateError) {
-        return res.status(400).send(updateError.message);
-      }
-
-      res.render("./admin/project-report", { 
-        admin: true, 
-        projectimesheets, 
-        sumemployeetype 
+      return res.render("./admin/project-report", {
+        admin: true,
+        projectimesheets,
+        sumemployeetype,
       });
-    } catch (error) {
-      console.error("Error generating project report:", error);
-      res.status(500).send("Internal Server Error");
     }
+
+    // If no report is found, or the found report is not closed, proceed to generate a new report.
+    const report = await ProjectReport.ProjectReport(searchdate);
+    const { projectimesheets, sumemployeetype } = report;
+
+    if (!projectimesheets || !sumemployeetype) {
+      return res.status(500).send("Invalid report data generated.");
+    }
+
+    // Update the report data in the database if it's open (or if it did not exist before).
+    try {
+      await reportHelpers.addProjectReportDataIfOpen(
+        searchdate,
+        projectimesheets,
+        sumemployeetype
+      );
+    } catch (updateError) {
+      return res.status(400).send(updateError.message);
+    }
+
+    // Render the view with the newly generated report data.
+    res.render("./admin/project-report", {
+      admin: true,
+      projectimesheets,
+      sumemployeetype,
+    });
+  } catch (error) {
+    console.error("Error generating project report:", error);
+    res.status(500).send("Internal Server Error");
   }
-);
+});
 
 
 router.post('/printprojectreport', async (req, res) => {
@@ -1242,7 +1239,7 @@ router.get("/viewGroup", async function (req, res) {
     
   }
   console.log(groupedEmployees)
-  res.render("./admin/view-groups", { admin: true , groupedEmployees });
+  res.render("admin/view-groups", { admin: true , groupedEmployees });
 })
 router.get("/generateWPS", async function (req, res) {
   let groups = await employeHelpers.getAllgroups()
@@ -1519,8 +1516,9 @@ router.post("/generateWPS", async function (req, res) {
     })
 
     // Schedule Monthly Cron Job
-    cron.schedule('05 0 1 * *', async () => {
+    cron.schedule('34 16 5 * *', async () => {
       try {
+        console.log("cron worked")
         await reportHelpers.closemonthlysalaryreportforcron(); // Close salary report for the previous month
         await reportHelpers.monthlyprojectreportforcron(); // Generate the project report for the new month
       } catch (error) {
