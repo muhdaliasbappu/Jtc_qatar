@@ -20,12 +20,12 @@ const cron = require('node-cron')
 const dayjs = require('dayjs'); // For date manipulations
 const customParseFormat = require('dayjs/plugin/customParseFormat');
 dayjs.extend(customParseFormat);
-router.get("/create", function (req, res, next) {
+// router.get("/create", function (req, res, next) {
   
-  res.render('admin/create');
+//   res.render('admin/create');
 
 
-});
+// });
 
 // router.post("/create", async (req, res) => {
 //   try {
@@ -1140,7 +1140,9 @@ router.post('/printprojectreport', async (req, res) => {
           return res.status(400).json({ error: "No open salary report found for the given date." });
         }
     
-        console.log(`Salary report for ${searchdate} closed successfully.`);
+        const logMessage = `Salary report for ${searchdate} closed successfully.`;
+        await logHelpers.addlog(logMessage, 'Employee')
+        
     
         // 6. Respond to the client with success and warning if any
         const response = { success: true };
@@ -1201,6 +1203,21 @@ router.post('/printprojectreport', async (req, res) => {
     employeHelpers.addGroup(groupedEmployees)
     res.redirect("/admin/dashboard");
 }); 
+router.get("/viewGroup", async function (req, res) {
+  let groups = await employeHelpers.getAllgroups()
+  let groupedEmployees = [];
+  for(let i = 0; i<groups.length; i++){ 
+    let semployee = []
+    for(let j=0; j<groups[i].selectedEmployees.length; j++){
+      let temp = await employeHelpers.getEmployeeDetails(groups[i].selectedEmployees[j].id);
+      semployee.push(temp)
+    }
+    groupedEmployees.push(semployee)
+    
+  }
+  console.log(groupedEmployees)
+  res.render("./admin/view-groups", { admin: true , groupedEmployees });
+})
 router.get("/generateWPS", async function (req, res) {
   let groups = await employeHelpers.getAllgroups()
   let groupNames = []
@@ -1500,7 +1517,56 @@ router.post("/generateWPS", async function (req, res) {
      
     
   });
-  
+
+
+  router.get("/add-datasheet/:id", async (req, res) => {
+    let person = await employeHelpers.getEmployeeDetails(req.params.id);
+    let projects = await projectHelpers.getAllproject();
+      
+      // Filter active projects
+      let activeProjects = projects.filter(project => project.projectstatus === 'Ongoing');
+      res.render("admin/add-datasheet", { admin: true, person, activeProjects });
+
+  });
+  router.post("/add-datasheet/", (req, res)=>{
+    
+    
+    let date = new Date(req.body.datevalue);
+    date.setHours(23, 59, 0, 0);
+    req.body.date = date
+    const originalDate = req.body.datevalue; 
+    const [year, month, day] = originalDate.split("-");
+    const formatted = `${parseInt(year, 10)}-${parseInt(month, 10)}-${parseInt(day, 10)}`;
+    req.body.datevalue = formatted;
+    userHelpers.getTimesheet(req.body.datevalue , req.body.employee_id).then( async function (edatasheets) {
+      if(edatasheets.length === 0){
+        userHelpers.addDatasheet(req.body, (result) => {
+
+       })
+       const logMessage = `Admin added the timesheet of ${originalDate} for ${req.body.surname} ${req.body.givenName} `;
+        await logHelpers.addlog(logMessage, 'Employee')
+       res.send(`
+        <script>
+          alert('Timesheet added successfully!');
+          // Optionally redirect or go back
+          window.history.back();
+          //window.location.href = '/some-redirect-url';
+        </script>
+      `);
+      }
+      else{
+        res.send(`
+          <script>
+            alert('Timesheet for this employee already exists on this date!');
+            // Optionally redirect or go back
+            window.history.back();
+          </script>
+        `);
+      }
+      })
+      
+    
+  })
 
 
 
