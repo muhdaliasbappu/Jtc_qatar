@@ -1,0 +1,105 @@
+<div class="content-page">
+  <div class="content">
+    <div class="container-fluid">
+      <!-- start page title -->
+      <div class="row">
+        <div class="col-12">
+          <div class="page-title-box">
+            <div style="float: right; margin-top: 20px;">
+               <a href="/admin/creategroup" class="btn btn-primary rounded-pill mb-3"><i class="mdi mdi-plus"></i> Create Group</a>
+ 
+                                    </div>
+            <h4 class="page-title">Groups</h4>
+          </div>
+        </div>
+      </div>
+      <!-- end page title -->
+
+      <div class="row">
+        {{#each groupedEmployees}}
+          <div class="col-lg-4">
+            <div class="card">
+              <!-- Card body with custom scrollbar and fixed header -->
+              <div class="card-body" data-simplebar style="max-height: 500px; min-height: 500px; padding: 0;">
+                
+                <!-- Sticky group header with edit button -->
+                <div class="group-header" style="
+                  position: sticky;
+                  top: 0;
+                  background: #fff;
+                  z-index: 1;
+                  padding: 20px;
+                  border-bottom: 1px solid #ddd;
+                  display: flex;
+                  justify-content: space-between;
+                  align-items: center;">
+                  <h4 class="header-title mb-0">Group Name: {{groupName}}</h4>
+                  <!-- Adjust the href to the appropriate route or action. If you have a group identifier, you can pass it here. -->
+                  <a href="/admin/editGroup/{{groupId}}"> <i class=" ri-pencil-fill"></i>  </a>
+                </div>
+                
+                
+                <!-- Employee list -->
+                <div class="employee-list">
+                  {{#each employees}}
+                    <div class="employee-item" style="
+                      padding: 0px;
+                      padding-left: 20px;
+                      border-bottom: 1px solid #eee;
+                      cursor: pointer;
+                      transition: background-color 0.3s;">
+                      <h5>{{this.givenName}} {{this.surname}}</h5>
+                      <p>QID: {{this.qid}}</p>
+                    </div>
+                  {{/each}}
+                </div>
+                
+              </div>
+            </div>
+          </div> <!-- end col -->
+        {{/each}}
+      </div>
+      <!-- end row -->
+    </div> <!-- container -->
+  </div> <!-- content -->
+</div>
+
+<style>
+  /* Sticky header for group name */
+.group-header {
+  position: sticky;
+  top: 0;
+  background: #fff;
+  z-index: 1;
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Style for the edit button (uses Bootstrap classes here) */
+.edit-btn {
+  /* Additional styling if needed */
+}
+
+/* Employee item styles with hover effect */
+.employee-item {
+    padding: 0px;
+    padding-left: 20px;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.employee-item:hover {
+  background-color: #f0f0f0;
+}
+
+/* Remove extra padding in card-body if desired */
+.card-body {
+  padding: 0;
+}
+
+ 
+</style>
