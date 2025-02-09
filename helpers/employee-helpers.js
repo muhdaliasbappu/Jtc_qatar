@@ -24,6 +24,15 @@ module.exports = {
             })
         })
     },
+    getEmployeeDetailswithQID: (QID) => {
+
+        return new Promise((resolve, reject) => {
+            db.get().collection('employee').findOne({ qid: QID }).then((employee) => {
+                resolve(employee)
+            })
+        })
+    },
+    
     updateEmployee: (empId, empDetails) => {
         return new Promise((resolve, reject) => {
             db.get().collection('employee').updateOne({ _id: new ObjectId(empId) }, {
@@ -163,8 +172,26 @@ module.exports = {
             })
         })
     },
+    addEmployeeToGroup: (groupName, newEmployee) => {
+        return new Promise((resolve, reject) => {
+          db.get().collection('employeeGroup')
+            .updateOne(
+              { groupName: groupName },              // Query to find the correct group document
+              { $push: { selectedEmployees: newEmployee } }  // Push new employee object into the array
+            )
+            .then(result => resolve(result))
+            .catch(error => reject(error));
+        });
+      },
+      getGroupDetailswithID: (groupID) => {
+        return new Promise((resolve, reject) => {
+            db.get().collection('employeeGroup').findOne({ _id: new ObjectId(groupID) }).then((group) => {
+                resolve(group)
+            })
+        })
+    },
+      
     
     
 
 }
-
