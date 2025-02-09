@@ -19,6 +19,7 @@ var salarycalc = require('../modules/salarycalc')
 const cron = require('node-cron')
 const dayjs = require('dayjs'); // For date manipulations
 const customParseFormat = require('dayjs/plugin/customParseFormat');
+const { stringify } = require("csv-stringify");
 dayjs.extend(customParseFormat);
 // router.get("/create", function (req, res, next) {
   
@@ -159,10 +160,11 @@ router.get("/projects", function (req, res, next) {
 //add employee
 
 router.get("/add-employee", async function (req, res, next) {
+   let groups = await employeHelpers.getAllgroups()
 
     userHelpers.getAlluser().then((users) => {
 
-      res.render("./admin/add-employee", { admin: true, users });
+      res.render("./admin/add-employee", { admin: true, users, groups });
     });
   
   
@@ -209,6 +211,24 @@ router.post("/add-employee", function async (req, res) {
         if (success) {
           const logMessage = `New Employee ${req.body.surname} ${req.body.givenName} was added.`;
           await logHelpers.addlog(logMessage, 'Employee')
+          let employee = await employeHelpers.getEmployeeDetailswithQID(req.body.qid)
+          if(req.body.groupname){
+          let groupedEmployee = {}
+          groupedEmployee.id = employee._id.toString();
+          groupedEmployee.name = employee.givenName
+          if (req.body.employeeType === "Own Labour" || req.body.employeeType === "Own Staff (Operations)" || req.body.employeeType === "Own Staff (Projects)" ) {
+            groupedEmployee.category  = 'own'
+          }else{
+            groupedEmployee.category  = 'hired'
+          }
+          employeHelpers.addEmployeeToGroup(req.body.groupname, groupedEmployee).then(result => {
+        
+          })
+          .catch(error => {
+            console.error("Error adding employee:", error);
+          });
+          }
+
           res.redirect("/admin/add-employee?success=employeeAdded");
         } else {
           res.redirect("/admin/add-employee?error=addFailed");
@@ -1227,20 +1247,86 @@ router.post('/printprojectreport', async (req, res) => {
     res.redirect("/admin/dashboard");
 }); 
 router.get("/viewGroup", async function (req, res) {
-  let groups = await employeHelpers.getAllgroups()
+  let groups = await employeHelpers.getAllgroups();
   let groupedEmployees = [];
-  for(let i = 0; i<groups.length; i++){ 
-    let semployee = []
-    for(let j=0; j<groups[i].selectedEmployees.length; j++){
-      let temp = await employeHelpers.getEmployeeDetails(groups[i].selectedEmployees[j].id);
-      semployee.push(temp)
+
+  for (let i = 0; i < groups.length; i++) {
+    // Retrieve the group name. Use a default value if it doesn't exist.
+    let groupId = groups[i]._id
+    let groupName = groups[i].groupName || `Group ${i + 1}`;
+
+    // Create an array for the employees in this group.
+    let employees = [];
+    for (let j = 0; j < groups[i].selectedEmployees.length; j++) {
+      let employeeId = groups[i].selectedEmployees[j].id;
+      let temp = await employeHelpers.getEmployeeDetails(employeeId);
+      employees.push(temp);
     }
-    groupedEmployees.push(semployee)
-    
+
+    // Instead of pushing just the employee array, push an object with both group name and employees.
+    groupedEmployees.push({
+      groupId: groupId,
+      groupName: groupName,
+      employees: employees,
+    });
   }
-  console.log(groupedEmployees)
-  res.render("admin/view-groups", { admin: true , groupedEmployees });
-})
+
+  console.log(groupedEmployees);
+  res.render("admin/view-groups", { admin: true, groupedEmployees });
+});
+// GET: Render the Edit Group page
+router.get("/editGroup/:groupId", async function (req, res) {
+  const groupId = req.params.groupId;
+  // Retrieve the group details (should include groupName and selectedEmployees array)
+  let groupDetails = await employeHelpers.getGroupDetailswithID(groupId);
+  // Assume groupDetails.selectedEmployees is an array of employee objects
+  // Also assume each employee object has at least: _id, givenName, surname, qid, and category.
+  // (If not, you can add a property “category” based on the employee type.)
+
+  // Get lists of employees (by type) as in your createGroup route.
+  const employeeTypesOwn = [
+    "Own Labour",
+    "Own Staff (Operations)",
+    "Own Staff (Projects)"
+  ];
+  const employeeTypesHired = [
+    "Hired Labour (Monthly)",
+    "Hired Staff (Operations)",
+    "Hired Staff (Projects)"
+  ];
+  const employeeTypesHourly = ["Hired Labour (Hourly)"];
+
+  let ownEmployees = await employeHelpers.getEmployeesByType(employeeTypesOwn);
+  let hiredEmployees = await employeHelpers.getEmployeesByType(employeeTypesHired);
+  let hiredHourly = await employeHelpers.getEmployeesByType(employeeTypesHourly);
+
+  // Remove employees that are already in the group from the left-side lists.
+  const groupEmpIds = groupDetails.selectedEmployees.map(emp => emp.id);
+  ownEmployees = ownEmployees.filter(emp => !groupEmpIds.includes(emp._id.toString()));
+  hiredEmployees = hiredEmployees.filter(emp => !groupEmpIds.includes(emp._id.toString()));
+  hiredHourly = hiredHourly.filter(emp => !groupEmpIds.includes(emp._id.toString()));
+
+
+  res.render("./admin/editgroup", { 
+    admin: true, 
+    groupDetails, 
+    ownEmployees, 
+    hiredEmployees, 
+    hiredHourly 
+  });
+});
+
+// POST: Save the edited group
+router.post("/editGroup/:groupId", async function (req, res) {
+  const groupId = req.params.groupId;
+  let groupedEmployees = {};
+  groupedEmployees.groupName = req.body.groupName;
+  // Parse the JSON array of selected employees (each with id, name and category)
+  groupedEmployees.selectedEmployees = JSON.parse(req.body.selectedEmployees);
+  await employeHelpers.updateGroup(groupId, groupedEmployees);
+  res.redirect("/admin/dashboard");
+});
+
 router.get("/generateWPS", async function (req, res) {
   let groups = await employeHelpers.getAllgroups()
   let groupNames = []
@@ -1516,9 +1602,8 @@ router.post("/generateWPS", async function (req, res) {
     })
 
     // Schedule Monthly Cron Job
-    cron.schedule('34 16 5 * *', async () => {
+    cron.schedule('00 01 2 * *', async () => {
       try {
-        console.log("cron worked")
         await reportHelpers.closemonthlysalaryreportforcron(); // Close salary report for the previous month
         await reportHelpers.monthlyprojectreportforcron(); // Generate the project report for the new month
       } catch (error) {
@@ -1595,4 +1680,3 @@ router.post("/generateWPS", async function (req, res) {
 
 
 module.exports = router;
-
