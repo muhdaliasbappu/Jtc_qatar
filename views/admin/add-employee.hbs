@@ -272,11 +272,11 @@
                 <option value="">Employee Type</option>
                 <option value="Own Labour">Own Labour</option>
                 <option value="Own Staff (Operations)">Own Staff (Operations)</option>
-                      <option value="Own Staff (Projects)">Own Staff (Projects)</option>
+                <option value="Own Staff (Projects)">Own Staff (Projects)</option>
                 <option value="Hired Labour (Hourly)">Hired Labour (Hourly)</option>
                  <option value="Hired Labour (Monthly)">Hired Labour (Monthly)</option>
                 <option value="Hired Staff (Operations)">Hired Staff (Operations)</option>            
-                      <option value="Hired Staff (Projects)">Hired Staff (Projects)</option>      
+                <option value="Hired Staff (Projects)">Hired Staff (Projects)</option>      
         </select>
         
         <fieldset id="own" style="display:none;">
@@ -291,6 +291,12 @@
             <option value="">Assign To</option>
             {{#each users}}
             <option value="{{this.usernames}}">{{this.usernames}}</option>
+            {{/each}}
+        </select>
+        <select class="form-select mt-3" name="groupname" aria-label=" Default select example" >
+            <option value="">Select Group</option>
+            {{#each groups}}
+            <option value="{{this.groupName}}">{{this.groupName}}</option>
             {{/each}}
         </select>
         <input type="hidden" name="Employeestatus" value="Working">
