@@ -595,7 +595,7 @@ else {
         if (workday+paidL === 31) {
           tempwd = 30;
         }else{
-            if(leave > paidL){
+            if(leave > paidL || leave + paidL + workday !== 31) {
                 tempwd= workday+paidL
             }else if (paidL > 0){
                 paidL=paidL-1
@@ -1490,7 +1490,7 @@ else {
     if (workday+paidL === 31) {
       tempwd = 30;
     }else{
-        if(leave > paidL){
+        if(leave > paidL || leave + paidL + workday !== 31) {
             tempwd= workday+paidL
         }else if (paidL > 0){
             paidL=paidL-1
@@ -1616,7 +1616,7 @@ else {
         if (workday+paidL === 31) {
           tempwd = 30;
         }else{
-            if(leave > paidL){
+            if(leave > paidL || leave + paidL + workday !== 31) {
                 tempwd= workday+paidL
             }else if (paidL > 0){
                 paidL=paidL-1
@@ -1723,7 +1723,7 @@ else {
         if (workday+paidL === 31) {
           tempwd = 30;
         }else{
-            if(leave > paidL){
+            if(leave > paidL || leave + paidL + workday !== 31) {
                 tempwd= workday+paidL
             }else if (paidL > 0){
                 paidL=paidL-1
