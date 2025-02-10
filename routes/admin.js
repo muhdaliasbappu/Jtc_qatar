@@ -920,7 +920,28 @@ router.post('/printreport', async (req, res) => {
     let searchdata = {}
     let totalsum = {}
     searchdata.searchdate = req.body.searchdate
-    const result = await salarycalc.salarycalculate(req.body.searchdate , req.body.employeeType)
+    const validEmployeeTypes = [
+      "Own Labour",
+      "Own Staff (Operations)",
+      "Own Staff (Projects)",
+      "Hired Labour (Hourly)",
+      "Hired Labour (Monthly)",
+      "Hired Staff (Operations)",
+      "Hired Staff (Projects)",
+      "All"
+    ];
+    let result;
+    // Assume req.body.employeeType comes from your form submission
+    const employeeType = req.body.employeeType;
+    if (validEmployeeTypes.includes(employeeType)) {
+    result = await salarycalc.salarycalculate(req.body.searchdate , req.body.employeeType)
+    } 
+    // Otherwise, the value is not recognized as valid
+    else {
+     result = await salarycalc.salarycalculateforgroup(req.body.searchdate , req.body.employeeType)
+    }
+    
+    
    let employeereport = result.employeereport
    totalsum.sum = result.sum
 
