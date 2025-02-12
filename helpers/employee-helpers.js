@@ -191,6 +191,24 @@ module.exports = {
         })
     },
       
+   
+      updateGroup: (groupId, groupedEmployees, groupName) => {
+        return new Promise((resolve, reject) => {
+          db.get().collection('employeeGroup')
+            .updateOne(
+              { _id: new ObjectId(groupId) },
+              {
+                $set: {
+                  groupName: groupName,
+                  selectedEmployees: groupedEmployees.selectedEmployees  // Set the array directly
+                }
+              }
+            )
+            .then(result => resolve(result))
+            .catch(error => reject(error));
+        });
+      }
+      
     
     
 
