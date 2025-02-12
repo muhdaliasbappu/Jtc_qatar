@@ -150,7 +150,7 @@
     // Date constraints: allow from 10 days ago up to today
     const today = new Date();
     const tenDaysAgo = new Date();
-    tenDaysAgo.setDate(today.getDate() - 10);
+    tenDaysAgo.setDate(today.getDate() - 15);
     document.getElementById("dateInput").min = tenDaysAgo.toISOString().split('T')[0];
     document.getElementById("dateInput").max = today.toISOString().split('T')[0];
 
