@@ -29,7 +29,7 @@ let basicsalary =0
 let allowance = 0
 let bonus = 0
 let dd
-
+let totalhours= 0
   
 
 for(let i=0;i<timesheet.length;i++){
@@ -51,9 +51,11 @@ for(let i=0;i<timesheet.length;i++){
             Number(timesheet[i].workhour3) +
             Number(timesheet[i].workhour4) +
             Number(timesheet[i].workhour5);
+            totalhours=totalhours+tempwhto
             tempotsal = tempwhto*timesheet[i].sbasic/240;          
             othours = othours+tempwhto
-            otsalary = otsalary+tempotsal         
+            otsalary = otsalary+tempotsal  
+
         }else {
             tempwhto =
             Number(timesheet[i].workhour1) +
@@ -61,6 +63,7 @@ for(let i=0;i<timesheet.length;i++){
             Number(timesheet[i].workhour3) +
             Number(timesheet[i].workhour4) +
             Number(timesheet[i].workhour5);
+            totalhours=totalhours+tempwhto
 
             if(tempwhto > timesheet[i].workinghour){
                 tempot = tempwhto-timesheet[i].workinghour;
@@ -612,7 +615,7 @@ else {
 
 
 // finalWorkdays now matches your scenario-based requirements
-
+report.totalhours = totalhours
 basicsalary = tempwd*timesheet[0].sbasic/30
 allowance = tempwd*timesheet[0].sallowance/30
 bonus = tempwd*timesheet[0].sbonus/30
@@ -630,6 +633,7 @@ salaryreportlabourhourly: (timesheet)=>{
     return new Promise((resolve, reject) => {
     let workday=0;
     let totalsalary =  0;
+    let totalhours = 0
     let report = { }
     for(i=0;i<timesheet.length;i++){
         const dd = new Date(timesheet[i].datevalue);
@@ -643,6 +647,7 @@ salaryreportlabourhourly: (timesheet)=>{
             Number(timesheet[i].workhour3) +
             Number(timesheet[i].workhour4) +
             Number(timesheet[i].workhour5);
+            totalhours=totalhours+tempwhto
             totalsalary = totalsalary + tempwhto*timesheet[i].srateph
             switch (date){
                 case 1:
@@ -939,6 +944,7 @@ salaryreportlabourhourly: (timesheet)=>{
 
 
     }
+    report.totalhours = totalhours
     report.workdays = workday
     report.totalsalary =totalsalary
    
@@ -959,6 +965,7 @@ let allowance = 0
 let bonus = 0
 let monlen = 0
 let dd
+
 for(i=0;i<timesheet.length;i++){
   dd = new Date(timesheet[i].datevalue);
     let day = dd.getDay();
