@@ -1,0 +1,375 @@
+<div class="content-page">
+  <div class="content">
+    <div class="container-fluid">
+      <!-- Page Title -->
+      <div class="row">
+        <div class="col-12">
+          <div class="page-title-box">
+            <h4 class="page-title">Edit Group</h4>
+          </div>
+        </div>
+      </div>
+      <!-- Main Row -->
+      <div class="row">
+        <!-- LEFT: Available Employees List -->
+        <div class="col-xxl-4 col-xl-6 order-xl-1">
+          <div class="card">
+            <div class="card-body p-0">
+              <ul class="nav nav-tabs nav-bordered">
+                <li class="nav-item">
+                  <a href="#ownL" data-bs-toggle="tab" class="nav-link py-2" id="tab-own">
+                    Own
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="#HiredL" data-bs-toggle="tab" class="nav-link py-2" id="tab-hired">
+                    Hired
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="#HiredH" data-bs-toggle="tab" class="nav-link py-2" id="tab-manpower">
+                    Man Power
+                  </a>
+                </li>
+              </ul>
+              <div class="tab-content">
+                <!-- "Own" tab -->
+                <div class="tab-pane" id="ownL">
+                  <div class="row">
+                    <div class="col">
+                      <div class="card-body py-0 mb-3" data-simplebar style="max-height: 500px">
+                        {{#each ownEmployees}}
+                          <a
+                            href="javascript:void(0);"
+                            class="text-body employee-item-left"
+                            data-emp-id="{{this._id}}"
+                            data-emp-name="{{this.givenName}} {{this.surname}}"
+                            data-emp-category="own"
+                            data-emp-source="ownL"
+                          >
+                            <div class="d-flex align-items-start mt-1 p-2">
+                              <div class="w-100 overflow-hidden">
+                                <h5 class="mt-0 mb-0 font-14">{{this.givenName}} {{this.surname}}</h5>
+                                <p class="mt-1 mb-0 text-muted font-14">
+                                  <span class="w-75">QID: {{this.qid}}</span>
+                                </p>
+                              </div>
+                            </div>
+                          </a>
+                        {{/each}}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- "Hired" tab -->
+                <div class="tab-pane" id="HiredL">
+                  <div class="row">
+                    <div class="col">
+                      <div class="card-body py-0 mb-3" data-simplebar style="max-height: 546px">
+                        {{#each hiredEmployees}}
+                          <a
+                            href="javascript:void(0);"
+                            class="text-body employee-item-left"
+                            data-emp-id="{{this._id}}"
+                            data-emp-name="{{this.givenName}} {{this.surname}}"
+                            data-emp-category="others"
+                            data-emp-source="HiredL"
+                          >
+                            <div class="d-flex align-items-start mt-1 p-2">
+                              <div class="w-100 overflow-hidden">
+                                <h5 class="mt-0 mb-0 font-14">{{this.givenName}} {{this.surname}}</h5>
+                                <p class="mt-1 mb-0 text-muted font-14">
+                                  <span class="w-75">QID: {{this.qid}}</span>
+                                </p>
+                              </div>
+                            </div>
+                          </a>
+                        {{/each}}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- "Man Power" tab -->
+                <div class="tab-pane" id="HiredH">
+                  <div class="row">
+                    <div class="col">
+                      <div class="card-body py-0 mb-3" data-simplebar style="max-height: 546px">
+                        {{#each hiredHourly}}
+                          <a
+                            href="javascript:void(0);"
+                            class="text-body employee-item-left"
+                            data-emp-id="{{this._id}}"
+                            data-emp-name="{{this.givenName}} {{this.surname}}"
+                            data-emp-category="others"
+                            data-emp-source="HiredH"
+                          >
+                            <div class="d-flex align-items-start mt-1 p-2">
+                              <div class="w-100 overflow-hidden">
+                                <h5 class="mt-0 mb-0 font-14">{{this.givenName}} {{this.surname}}</h5>
+                                <p class="mt-1 mb-0 text-muted font-14">
+                                  <span class="w-75">QID: {{this.qid}}</span>
+                                </p>
+                              </div>
+                            </div>
+                          </a>
+                        {{/each}}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div> <!-- end tab content -->
+            </div> <!-- end card-body -->
+          </div> <!-- end card -->
+        </div>
+        <!-- RIGHT: Group (Selected) Employees and Form -->
+        <div class="col-xxl-8 col-xl-12 order-xl-2">
+          <div class="card">
+            <div class="card-body p-0">
+              <div class="row">
+                <div class="col">
+                  <div class="mt-2 p-3">
+                    <form
+                      class="needs-validation"
+                      novalidate
+                      name="editGroupForm"
+                      id="editGroupForm"
+                      action="/admin/editGroup/{{groupDetails._id}}"
+                      method="POST"
+                    >
+                      <div class="row">
+                        <div class="col mb-2 mb-sm-0">
+                          <input
+                            type="text"
+                            class="form-control border-1"
+                            id="groupName"
+                            name="groupName"
+                            placeholder="Enter Group Name"
+                            value="{{groupDetails.groupName}}"
+                            required
+                          />
+                          <div class="invalid-feedback">Enter Group Name</div>
+                        </div>
+                        <!-- Hidden input to store selected employees as JSON -->
+                        <input
+                          type="hidden"
+                          id="selectedEmployeesHidden"
+                          name="selectedEmployees"
+                        />
+                        <div class="col-sm-auto">
+                          <div class="btn-group">
+                            <div class="d-grid">
+                              <button type="submit" class="btn btn-success" id="editGroupBtn">
+                                Update
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div> <!-- end row -->
+                    </form>
+                  </div>
+                </div>
+              </div>
+              <!-- Pre-populated selected employees are shown here -->
+              <div class="card-body px-2 pb-0">
+                <ul
+                  id="selectedEmployeesList"
+                  class="d-flex flex-wrap align-items-center gap-2 p-2"
+                  style="list-style: none; max-height: 100%; overflow: auto;"
+                >
+                  {{#each groupDetails.selectedEmployees}}
+                    <li class="d-inline-block">
+                        <a
+                            class="btn btn-sm btn-light remove-employee-btn"
+                            data-emp-id="{{this.id}}"
+                            data-emp-name="{{this.name}}"
+                            data-emp-category="{{this.category}}"
+                            data-emp-source="{{this.sourceTab}}"
+                            style="margin-bottom:5px; cursor: pointer;"
+                         >
+                        {{this.name}}
+                        </a>
+                    </li>
+                  {{/each}}
+                </ul>
+              </div> <!-- end card-body -->
+            </div> <!-- end card-body -->
+          </div> <!-- end card -->
+        </div>
+      </div> <!-- end row-->
+    </div> <!-- end container -->
+  </div> <!-- end content -->
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  // Build the list of pre-selected employees from the right side.
+  let selectedEmployees = [];
+  // groupCategory will be 'own' or 'others'; if empty, null.
+  let groupCategory = null;
+  const selectedEmpButtons = document.querySelectorAll('#selectedEmployeesList .remove-employee-btn');
+  selectedEmpButtons.forEach(btn => {
+    const empId    = btn.getAttribute('data-emp-id');
+    const empName  = btn.getAttribute('data-emp-name');
+    const empCat   = btn.getAttribute('data-emp-category');
+    const empSource= btn.getAttribute('data-emp-source') || (empCat === 'own' ? 'ownL' : 'HiredL');
+    selectedEmployees.push({ id: empId, name: empName, category: empCat, sourceTab: empSource });
+  });
+  if (selectedEmployees.length > 0) {
+    groupCategory = selectedEmployees[0].category; // assume all are consistent
+  }
+  updateLeftTabsVisibility();
+
+  // Attach click listeners to left-side employees.
+  function attachLeftEmployeeListener(item) {
+    item.addEventListener('click', function (e) {
+      e.preventDefault();
+      const empId     = this.dataset.empId;
+      const empName   = this.dataset.empName;
+      const empCat    = this.dataset.empCategory;
+      const empSource = this.dataset.empSource;
+      
+      // Only allow selection if the employee's category matches the group (if any)
+      if (groupCategory && empCat !== groupCategory) {
+        alert('Cannot add employee of a different type. Current group accepts only ' +
+              (groupCategory === 'own' ? 'Own' : 'Hired/Man Power') + ' employees.');
+        return;
+      }
+      
+      // If no employee has been selected yet, set the groupCategory.
+      if (!groupCategory) {
+        groupCategory = empCat;
+        updateLeftTabsVisibility();
+      }
+      
+      // Prevent duplicates.
+      if (selectedEmployees.some(emp => emp.id === empId)) return;
+      
+      selectedEmployees.push({ id: empId, name: empName, category: empCat, sourceTab: empSource });
+      this.remove();  // remove from left list
+      renderSelectedEmployees();
+    });
+  }
+  document.querySelectorAll('.employee-item-left').forEach(item => {
+    attachLeftEmployeeListener(item);
+  });
+  
+  // Show/hide left tabs based on groupCategory.
+  function updateLeftTabsVisibility() {
+    if (groupCategory === 'own') {
+      // Hide Hired and Man Power tabs
+      document.getElementById('tab-hired').style.display = 'none';
+      document.getElementById('tab-manpower').style.display = 'none';
+      document.getElementById('HiredL').style.display = 'none';
+      document.getElementById('HiredH').style.display = 'none';
+      // Make sure Own tab is shown
+      document.getElementById('tab-own').style.display = '';
+      document.getElementById('ownL').style.display = '';
+      // Switch active tab if needed.
+      if (!document.querySelector('a[href="#ownL"]').classList.contains('active')) {
+        document.querySelector('a[href="#ownL"]').click();
+      }
+    } else if (groupCategory === 'others') {
+      // Hide Own tab.
+      document.getElementById('tab-own').style.display = 'none';
+      document.getElementById('ownL').style.display = 'none';
+      // Show Hired and Man Power tabs.
+      document.getElementById('tab-hired').style.display = '';
+      document.getElementById('HiredL').style.display = '';
+      document.getElementById('tab-manpower').style.display = '';
+      document.getElementById('HiredH').style.display = '';
+      if (document.querySelector('a[href="#ownL"]').classList.contains('active')) {
+        document.querySelector('a[href="#HiredL"]').click();
+      }
+    } else {
+      // No restriction: show all tabs.
+      document.getElementById('tab-own').style.display = '';
+      document.getElementById('ownL').style.display = '';
+      document.getElementById('tab-hired').style.display = '';
+      document.getElementById('HiredL').style.display = '';
+      document.getElementById('tab-manpower').style.display = '';
+      document.getElementById('HiredH').style.display = '';
+    }
+  }
+  
+  // Render the list of selected employees (right side).
+  function renderSelectedEmployees() {
+    const listEl = document.getElementById('selectedEmployeesList');
+    listEl.innerHTML = '';
+    selectedEmployees.forEach(emp => {
+      const li = document.createElement('li');
+      li.className = 'd-inline-block';
+      li.innerHTML = `
+        <a class="btn btn-sm btn-light remove-employee-btn" 
+           data-emp-id="${emp.id}" 
+           data-emp-name="${emp.name}" 
+           data-emp-category="${emp.category}"
+           data-emp-source="${emp.sourceTab}"
+           style="margin-bottom:5px; cursor: pointer;">
+           ${emp.name}
+        </a>
+      `;
+      listEl.appendChild(li);
+    });
+    
+    // Attach event listeners to the remove buttons.
+    document.querySelectorAll('#selectedEmployeesList .remove-employee-btn').forEach(btn => {
+      btn.addEventListener('click', function (e) {
+        e.preventDefault();
+        const remId     = this.dataset.empId;
+        const remCat    = this.dataset.empCategory;
+        const remName   = this.dataset.empName;
+        const remSource = this.dataset.empSource || (remCat === 'own' ? 'ownL' : 'HiredL');
+        // Remove from the selected array.
+        selectedEmployees = selectedEmployees.filter(emp => emp.id !== remId);
+        
+        // Re-add back into the left container from where it came.
+        const container = document.querySelector(`#${remSource} .card-body`);
+        if (container) {
+          const a = document.createElement('a');
+          a.href = "javascript:void(0);";
+          a.className = 'text-body employee-item-left';
+          a.setAttribute('data-emp-id', remId);
+          a.setAttribute('data-emp-name', remName);
+          a.setAttribute('data-emp-category', remCat);
+          a.setAttribute('data-emp-source', remSource);
+          a.innerHTML = `
+            <div class="d-flex align-items-start mt-1 p-2">
+              <div class="w-100 overflow-hidden">
+                <h5 class="mt-0 mb-0 font-14">${remName}</h5>
+                <p class="mt-1 mb-0 text-muted font-14">
+                  <span class="w-75">QID: <!-- Optionally add QID info if available --></span>
+                </p>
+              </div>
+            </div>
+          `;
+          attachLeftEmployeeListener(a);
+          container.appendChild(a);
+        }
+        // If no employees remain, reset restrictions.
+        if (selectedEmployees.length === 0) {
+          groupCategory = null;
+          updateLeftTabsVisibility();
+        }
+        renderSelectedEmployees();
+      });
+    });
+  }
+  
+  // On form submission, make sure a group name is provided and at least one employee is selected.
+  const form = document.getElementById('editGroupForm');
+  form.addEventListener('submit', function (event) {
+    const groupName = document.getElementById('groupName').value.trim();
+    if (!groupName) {
+      event.preventDefault();
+      alert('Please enter a group name.');
+      return;
+    }
+    if (selectedEmployees.length === 0) {
+      event.preventDefault();
+      alert('Please select at least one employee.');
+      return;
+    }
+    document.getElementById('selectedEmployeesHidden').value = JSON.stringify(selectedEmployees);
+  });
+});
+</script>
