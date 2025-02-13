@@ -1265,7 +1265,7 @@ router.post('/printprojectreport', async (req, res) => {
     groupedEmployees.groupName = req.body.groupName
     groupedEmployees.selectedEmployees = JSON.parse(req.body.selectedEmployees);
     employeHelpers.addGroup(groupedEmployees)
-    res.redirect("/admin/dashboard");
+    res.redirect("/admin/viewGroup");
 }); 
 router.get("/viewGroup", async function (req, res) {
   let groups = await employeHelpers.getAllgroups();
@@ -1292,7 +1292,6 @@ router.get("/viewGroup", async function (req, res) {
     });
   }
 
-  console.log(groupedEmployees);
   res.render("admin/view-groups", { admin: true, groupedEmployees });
 });
 // GET: Render the Edit Group page
@@ -1344,7 +1343,7 @@ router.post("/editGroup/:groupId", async function (req, res) {
   // Parse the JSON array of selected employees (each with id, name and category)
   groupedEmployees.selectedEmployees = JSON.parse(req.body.selectedEmployees);
   await employeHelpers.updateGroup(groupId, groupedEmployees,req.body.groupName);
-  res.redirect("/admin/dashboard");
+  res.redirect("/admin/viewGroup");
 });
 
 router.get("/generateWPS", async function (req, res) {
