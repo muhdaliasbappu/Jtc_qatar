@@ -6,6 +6,7 @@ var adminHelpers = require("../helpers/admin-helper");
 var userHelpers = require("../helpers/user-helper");
 var reportHelpers = require("../helpers/report-helpers");
 var logHelpers = require("../helpers/logger-helper");
+var WPSHelpers = require('../modules/wps')
 const { response } = require("../app");
 const async = require("hbs/lib/async");
 const { search } = require("./users");
@@ -18,13 +19,14 @@ var salarycalc = require('../modules/salarycalc')
 const cron = require('node-cron')
 const dayjs = require('dayjs'); // For date manipulations
 const customParseFormat = require('dayjs/plugin/customParseFormat');
+
 dayjs.extend(customParseFormat);
-router.get("/create", function (req, res, next) {
+// router.get("/create", function (req, res, next) {
   
-  res.render('admin/create');
+//   res.render('admin/create');
 
 
-});
+// });
 
 // router.post("/create", async (req, res) => {
 //   try {
@@ -105,14 +107,8 @@ router.get("/dashboard", async (req, res) => {
      const counts = await ProjectReport.getCounts();
      let projectbar = await ProjectReport.getMultiCategoryReports();
     let PPerformance = await ProjectReport.getProjectsPerformanceReport();
-    let typeCounts = await employeHelpers.getEmployeeTypeCounts()
-   
-   
-    
+    let typeCounts = await employeHelpers.getEmployeeTypeCounts()    
     let projectNames = PPerformance.projectNames
-
-
-
 
     res.render("./admin/dashboard", {
       admin: true,
@@ -163,12 +159,14 @@ router.get("/projects", function (req, res, next) {
 
 //add employee
 
-router.get("/add-employee", function (req, res, next) {
+router.get("/add-employee", async function (req, res, next) {
+   let groups = await employeHelpers.getAllgroups()
 
     userHelpers.getAlluser().then((users) => {
 
-      res.render("./admin/add-employee", { admin: true, users });
+      res.render("./admin/add-employee", { admin: true, users, groups });
     });
+  
   
 });
 
@@ -213,6 +211,24 @@ router.post("/add-employee", function async (req, res) {
         if (success) {
           const logMessage = `New Employee ${req.body.surname} ${req.body.givenName} was added.`;
           await logHelpers.addlog(logMessage, 'Employee')
+          let employee = await employeHelpers.getEmployeeDetailswithQID(req.body.qid)
+          if(req.body.groupname){
+          let groupedEmployee = {}
+          groupedEmployee.id = employee._id.toString();
+          groupedEmployee.name = employee.givenName
+          if (req.body.employeeType === "Own Labour" || req.body.employeeType === "Own Staff (Operations)" || req.body.employeeType === "Own Staff (Projects)" ) {
+            groupedEmployee.category  = 'own'
+          }else{
+            groupedEmployee.category  = 'hired'
+          }
+          employeHelpers.addEmployeeToGroup(req.body.groupname, groupedEmployee).then(result => {
+        
+          })
+          .catch(error => {
+            console.error("Error adding employee:", error);
+          });
+          }
+
           res.redirect("/admin/add-employee?success=employeeAdded");
         } else {
           res.redirect("/admin/add-employee?error=addFailed");
@@ -736,12 +752,15 @@ router.post("/edit-searcheddata/:id",async (req, res) => {
 });
 
 
-router.get("/search-report/", function (req, res) {
+router.get("/search-report/", async function (req, res) {
   let admin = req.session.user;
   if (admin) {
-    var iddd = req.params.id;
-
-    res.render("./admin/report-search", { admin: true, iddd });
+    let groups = await employeHelpers.getAllgroups()
+  let groupNames = []
+  for(let i = 0; i<groups.length; i++){ 
+      groupNames[i] = groups[i].groupName    
+  }
+    res.render("./admin/report-search", { admin: true, groupNames});
   }
 });
 
@@ -758,7 +777,30 @@ router.post("/search-report", async (req, res) => {
   searchdata.formattedDate = formattedDate
   searchdata.searchdate = req.body.searchdate
   searchdata.employeeType = req.body.employeeType
-   const result = await salarycalc.salarycalculate(req.body.searchdate , req.body.employeeType)
+  // Define the valid employee type options
+const validEmployeeTypes = [
+  "Own Labour",
+  "Own Staff (Operations)",
+  "Own Staff (Projects)",
+  "Hired Labour (Hourly)",
+  "Hired Labour (Monthly)",
+  "Hired Staff (Operations)",
+  "Hired Staff (Projects)",
+  "All"
+];
+let result;
+// Assume req.body.employeeType comes from your form submission
+const employeeType = req.body.employeeType;
+if (validEmployeeTypes.includes(employeeType)) {
+result = await salarycalc.salarycalculate(req.body.searchdate , req.body.employeeType)
+} 
+// Otherwise, the value is not recognized as valid
+else {
+ result = await salarycalc.salarycalculateforgroup(req.body.searchdate , req.body.employeeType)
+}
+
+  
+   
    result.Fstore.formattedDate = formattedDate
    result.Fstore.ClosedDate = DayView.getCurrentDate()
    let Fstore = result.Fstore
@@ -878,7 +920,28 @@ router.post('/printreport', async (req, res) => {
     let searchdata = {}
     let totalsum = {}
     searchdata.searchdate = req.body.searchdate
-    const result = await salarycalc.salarycalculate(req.body.searchdate , req.body.employeeType)
+    const validEmployeeTypes = [
+      "Own Labour",
+      "Own Staff (Operations)",
+      "Own Staff (Projects)",
+      "Hired Labour (Hourly)",
+      "Hired Labour (Monthly)",
+      "Hired Staff (Operations)",
+      "Hired Staff (Projects)",
+      "All"
+    ];
+    let result;
+    // Assume req.body.employeeType comes from your form submission
+    const employeeType = req.body.employeeType;
+    if (validEmployeeTypes.includes(employeeType)) {
+    result = await salarycalc.salarycalculate(req.body.searchdate , req.body.employeeType)
+    } 
+    // Otherwise, the value is not recognized as valid
+    else {
+     result = await salarycalc.salarycalculateforgroup(req.body.searchdate , req.body.employeeType)
+    }
+    
+    
    let employeereport = result.employeereport
    totalsum.sum = result.sum
 
@@ -973,61 +1036,58 @@ router.get("/project-search/",  (req, res) => {
   }
 });
 
-router.post( "/project-search", async (req, res) => {
- 
-    try {
-      const { searchdate } = req.body;
+router.post("/project-search", async (req, res) => {
+  try {
+    const { searchdate } = req.body;
 
-      // Fetch the existing projectreport document using the helper
-      const existingReport = await reportHelpers.getProjectReportByDate(searchdate);
+    // Attempt to fetch an existing report from the database.
+    const existingReport = await reportHelpers.getProjectReportByDate(searchdate);
 
-      if (!existingReport) {
-        return res.status(404).send(`No project report found for date: ${searchdate}`);
-      }
-
-      if (existingReport.salarystatus.toLowerCase() === 'close') {
-        const { projectimesheets, sumemployeetype } = existingReport;
-
-        if (!projectimesheets || !sumemployeetype) {
-          return res.status(500).send("Incomplete report data in the database.");
-        }
-
-        return res.render("./admin/project-report", { 
-          admin: true, 
-          projectimesheets, 
-          sumemployeetype 
-        });
-      }
-
-      // Proceed to generate and update the report as before
-      const report = await ProjectReport.ProjectReport(searchdate);
-      const { projectimesheets, sumemployeetype } = report;
+    // If an existing report is found and it is closed, render it directly.
+    if (existingReport && existingReport.salarystatus.toLowerCase() === "close") {
+      const { projectimesheets, sumemployeetype } = existingReport;
 
       if (!projectimesheets || !sumemployeetype) {
-        return res.status(500).send("Invalid report data generated.");
+        return res.status(500).send("Incomplete report data in the database.");
       }
 
-      try {
-        await reportHelpers.addProjectReportDataIfOpen(
-          searchdate,
-          projectimesheets,
-          sumemployeetype
-        );
-      } catch (updateError) {
-        return res.status(400).send(updateError.message);
-      }
-
-      res.render("./admin/project-report", { 
-        admin: true, 
-        projectimesheets, 
-        sumemployeetype 
+      return res.render("./admin/project-report", {
+        admin: true,
+        projectimesheets,
+        sumemployeetype,
       });
-    } catch (error) {
-      console.error("Error generating project report:", error);
-      res.status(500).send("Internal Server Error");
     }
+
+    // If no report is found, or the found report is not closed, proceed to generate a new report.
+    const report = await ProjectReport.ProjectReport(searchdate);
+    const { projectimesheets, sumemployeetype } = report;
+
+    if (!projectimesheets || !sumemployeetype) {
+      return res.status(500).send("Invalid report data generated.");
+    }
+
+    // Update the report data in the database if it's open (or if it did not exist before).
+    try {
+      await reportHelpers.addProjectReportDataIfOpen(
+        searchdate,
+        projectimesheets,
+        sumemployeetype
+      );
+    } catch (updateError) {
+      return res.status(400).send(updateError.message);
+    }
+
+    // Render the view with the newly generated report data.
+    res.render("./admin/project-report", {
+      admin: true,
+      projectimesheets,
+      sumemployeetype,
+    });
+  } catch (error) {
+    console.error("Error generating project report:", error);
+    res.status(500).send("Internal Server Error");
   }
-);
+});
 
 
 router.post('/printprojectreport', async (req, res) => {
@@ -1144,7 +1204,9 @@ router.post('/printprojectreport', async (req, res) => {
           return res.status(400).json({ error: "No open salary report found for the given date." });
         }
     
-        console.log(`Salary report for ${searchdate} closed successfully.`);
+        const logMessage = `Salary report for ${searchdate} closed successfully.`;
+        await logHelpers.addlog(logMessage, 'Employee')
+        
     
         // 6. Respond to the client with success and warning if any
         const response = { success: true };
@@ -1177,6 +1239,146 @@ router.post('/printprojectreport', async (req, res) => {
         res.status(500).json({ error: "Server error during salary closure." });
       }
     });
+
+    router.get("/createGroup", async function (req, res) {
+      const employeeTypesOwn = [
+        "Own Labour",
+        "Own Staff (Operations)",
+        "Own Staff (Projects)"
+    ];
+    const employeeTypesHired = [
+      "Hired Labour (Monthly)",
+      "Hired Staff (Operations)",
+      "Hired Staff (Projects)"
+    ];
+    const employeeTypesHourly = [
+      "Hired Labour (Hourly)",
+    ];
+      let ownEmployees = await employeHelpers.getEmployeesByType(employeeTypesOwn)
+      let hiredEmployees = await employeHelpers.getEmployeesByType(employeeTypesHired)
+      let hiredHourly = await employeHelpers.getEmployeesByType(employeeTypesHourly)
+       res.render("./admin/creategroup", { admin: true , ownEmployees, hiredEmployees, hiredHourly });
+     
+   }); 
+   router.post("/createGroup", async function (req, res) {
+    let groupedEmployees = {}
+    groupedEmployees.groupName = req.body.groupName
+    groupedEmployees.selectedEmployees = JSON.parse(req.body.selectedEmployees);
+    employeHelpers.addGroup(groupedEmployees)
+    res.redirect("/admin/dashboard");
+}); 
+router.get("/viewGroup", async function (req, res) {
+  let groups = await employeHelpers.getAllgroups();
+  let groupedEmployees = [];
+
+  for (let i = 0; i < groups.length; i++) {
+    // Retrieve the group name. Use a default value if it doesn't exist.
+    let groupId = groups[i]._id
+    let groupName = groups[i].groupName || `Group ${i + 1}`;
+
+    // Create an array for the employees in this group.
+    let employees = [];
+    for (let j = 0; j < groups[i].selectedEmployees.length; j++) {
+      let employeeId = groups[i].selectedEmployees[j].id;
+      let temp = await employeHelpers.getEmployeeDetails(employeeId);
+      employees.push(temp);
+    }
+
+    // Instead of pushing just the employee array, push an object with both group name and employees.
+    groupedEmployees.push({
+      groupId: groupId,
+      groupName: groupName,
+      employees: employees,
+    });
+  }
+
+  console.log(groupedEmployees);
+  res.render("admin/view-groups", { admin: true, groupedEmployees });
+});
+// GET: Render the Edit Group page
+router.get("/editGroup/:groupId", async function (req, res) {
+  const groupId = req.params.groupId;
+  // Retrieve the group details (should include groupName and selectedEmployees array)
+  let groupDetails = await employeHelpers.getGroupDetailswithID(groupId);
+  // Assume groupDetails.selectedEmployees is an array of employee objects
+  // Also assume each employee object has at least: _id, givenName, surname, qid, and category.
+  // (If not, you can add a property “category” based on the employee type.)
+
+  // Get lists of employees (by type) as in your createGroup route.
+  const employeeTypesOwn = [
+    "Own Labour",
+    "Own Staff (Operations)",
+    "Own Staff (Projects)"
+  ];
+  const employeeTypesHired = [
+    "Hired Labour (Monthly)",
+    "Hired Staff (Operations)",
+    "Hired Staff (Projects)"
+  ];
+  const employeeTypesHourly = ["Hired Labour (Hourly)"];
+
+  let ownEmployees = await employeHelpers.getEmployeesByType(employeeTypesOwn);
+  let hiredEmployees = await employeHelpers.getEmployeesByType(employeeTypesHired);
+  let hiredHourly = await employeHelpers.getEmployeesByType(employeeTypesHourly);
+
+  // Remove employees that are already in the group from the left-side lists.
+  const groupEmpIds = groupDetails.selectedEmployees.map(emp => emp.id);
+  ownEmployees = ownEmployees.filter(emp => !groupEmpIds.includes(emp._id.toString()));
+  hiredEmployees = hiredEmployees.filter(emp => !groupEmpIds.includes(emp._id.toString()));
+  hiredHourly = hiredHourly.filter(emp => !groupEmpIds.includes(emp._id.toString()));
+
+
+  res.render("./admin/editgroup", { 
+    admin: true, 
+    groupDetails, 
+    ownEmployees, 
+    hiredEmployees, 
+    hiredHourly 
+  });
+});
+
+// POST: Save the edited group
+router.post("/editGroup/:groupId", async function (req, res) {
+  const groupId = req.params.groupId;
+  let groupedEmployees = {};
+  // Parse the JSON array of selected employees (each with id, name and category)
+  groupedEmployees.selectedEmployees = JSON.parse(req.body.selectedEmployees);
+  await employeHelpers.updateGroup(groupId, groupedEmployees,req.body.groupName);
+  res.redirect("/admin/dashboard");
+});
+
+router.get("/generateWPS", async function (req, res) {
+  let groups = await employeHelpers.getAllgroups()
+  let groupNames = []
+  for(let i = 0; i<groups.length; i++){ 
+    if(groups[i].selectedEmployees[0].category === 'own'){
+      groupNames[i] = groups[i].groupName
+    }
+  }
+
+  res.render("./admin/generateWPS", { admin: true , groupNames});
+})
+router.post("/generateWPS", async function (req, res) {
+
+    try {
+      // Wait for the CSV file to be generated and get the file path
+      const filePath = await WPSHelpers.generateCSV(req.body.searchdate, req.body.selectedgroup)
+
+      // Send the file to the client for download
+      res.download(filePath, 'salaries.csv', (err) => {
+          if (err) {
+              console.error('Error sending file:', err);
+          }
+      });
+  } catch (error) {
+      console.error('Error generating CSV:', error);
+      res.status(500).send('An error occurred while generating the CSV file.');
+  }
+  res.render("./admin/generateWPS", { admin: true });
+})
+
+
+
     const getMonthsInRange = (startMonth, endMonth) => {
       const start = dayjs(startMonth, 'YYYY-MM', true);
       const end = dayjs(endMonth, 'YYYY-MM', true);
@@ -1420,7 +1622,7 @@ router.post('/printprojectreport', async (req, res) => {
     })
 
     // Schedule Monthly Cron Job
-    cron.schedule('05 0 1 * *', async () => {
+    cron.schedule('00 01 2 * *', async () => {
       try {
         await reportHelpers.closemonthlysalaryreportforcron(); // Close salary report for the previous month
         await reportHelpers.monthlyprojectreportforcron(); // Generate the project report for the new month
@@ -1444,7 +1646,56 @@ router.post('/printprojectreport', async (req, res) => {
      
     
   });
-  
+
+
+  router.get("/add-datasheet/:id", async (req, res) => {
+    let person = await employeHelpers.getEmployeeDetails(req.params.id);
+    let projects = await projectHelpers.getAllproject();
+      
+      // Filter active projects
+      let activeProjects = projects.filter(project => project.projectstatus === 'Ongoing');
+      res.render("admin/add-datasheet", { admin: true, person, activeProjects });
+
+  });
+  router.post("/add-datasheet/", (req, res)=>{
+    
+    
+    let date = new Date(req.body.datevalue);
+    date.setHours(23, 59, 0, 0);
+    req.body.date = date
+    const originalDate = req.body.datevalue; 
+    const [year, month, day] = originalDate.split("-");
+    const formatted = `${parseInt(year, 10)}-${parseInt(month, 10)}-${parseInt(day, 10)}`;
+    req.body.datevalue = formatted;
+    userHelpers.getTimesheet(req.body.datevalue , req.body.employee_id).then( async function (edatasheets) {
+      if(edatasheets.length === 0){
+        userHelpers.addDatasheet(req.body, (result) => {
+
+       })
+       const logMessage = `Admin added the timesheet of ${originalDate} for ${req.body.surname} ${req.body.givenName} `;
+        await logHelpers.addlog(logMessage, 'Employee')
+       res.send(`
+        <script>
+          alert('Timesheet added successfully!');
+          // Optionally redirect or go back
+          window.history.back();
+          //window.location.href = '/some-redirect-url';
+        </script>
+      `);
+      }
+      else{
+        res.send(`
+          <script>
+            alert('Timesheet for this employee already exists on this date!');
+            // Optionally redirect or go back
+            window.history.back();
+          </script>
+        `);
+      }
+      })
+      
+    
+  })
 
 
 
