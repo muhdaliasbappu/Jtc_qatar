@@ -8,8 +8,7 @@
   
     // 'init' will do the fetch from /api/dashboard and store that data in 'this'
     DashboardWallet.prototype.init = async function () {
-      console.log("Initializing Dashboard Wallet...");
-  
+
       try {
         
   
