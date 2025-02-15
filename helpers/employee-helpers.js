@@ -207,7 +207,25 @@ module.exports = {
             .then(result => resolve(result))
             .catch(error => reject(error));
         });
+      },
+      addEmployeeCount: (employeec) => {
+
+        db.get().collection('employeecount').insertOne(employeec)
+    },
+    getEmployeeCount: () => {
+        // Using findOne since we expect only one document
+        return db.get().collection('employeecount').findOne({});
+      },
+    
+
+      updateEmployeeCount: (data) => {
+        return db
+          .get()
+          .collection('employeecount')
+          .updateOne({}, { $set: data }, { upsert: true });
       }
+
+
       
     
     
