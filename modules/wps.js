@@ -125,7 +125,7 @@ const generateCSV = async (searchdate,selectedgroup) => {
     fs.writeFileSync(filePath, csvData, 'utf8');
 
     console.log(`Generated CSV file at: ${filePath}`); // Log the correct file path
-    return filePath;
+    return { filePath, fileName };
 };
 
 
