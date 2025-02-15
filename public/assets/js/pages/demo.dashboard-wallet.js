@@ -25,8 +25,7 @@
       const categories = reportData?.categories || ["Jan", "Feb", "Mar"];
       const data       = reportData?.data       || [0, 0, 0];
   
-      console.log("Fetched Categories:", categories);
-      console.log("Fetched Data:", data);
+    
   
       const chartElement = document.querySelector("#month-balance-chart");
       if (!chartElement) {
