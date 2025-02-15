@@ -1028,6 +1028,7 @@ router.post('/printreport', async (req, res) => {
   }
 });
 
+
 // project report
 router.get("/project-search/",  (req, res) => {
   let admin = req.session.user;
@@ -1361,10 +1362,10 @@ router.post("/generateWPS", async function (req, res) {
 
     try {
       // Wait for the CSV file to be generated and get the file path
-      const filePath = await WPSHelpers.generateCSV(req.body.searchdate, req.body.selectedgroup)
+      const { filePath, fileName } = await WPSHelpers.generateCSV(req.body.searchdate, req.body.selectedgroup);
 
-      // Send the file to the client for download
-      res.download(filePath, 'salaries.csv', (err) => {
+      // Send the file to the client for download using the dynamic file name
+      res.download(filePath, fileName, (err) => {
           if (err) {
               console.error('Error sending file:', err);
           }
