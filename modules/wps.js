@@ -112,8 +112,9 @@ const generateCSV = async (searchdate,selectedgroup) => {
         .join('\n'); // Join all rows with newlines
 
     // Define the file path to save the CSV
+    const fileName = `SIF_10711301_MAR_${year}${month}${day}_${hours}${minutes}.csv`;
     const dirPath = path.join(__dirname, 'public');
-    const filePath = path.join(dirPath, 'salaries.csv');
+    const filePath = path.join(dirPath, fileName);
 
     // Ensure the directory exists
     if (!fs.existsSync(dirPath)) {
