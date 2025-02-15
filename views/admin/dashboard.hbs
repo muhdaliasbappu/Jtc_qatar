@@ -15,24 +15,28 @@
                 <!-- Content Row -->
                 <div class="row">
                     <!-- Left Column -->
+                    
                     <div class="col-xxl-3">
                         <div class="row">
-                            <!-- Card 1: Active Employees -->
                             <div class="col-md-3 col-xxl-12">
-                                <div class="card tilebox-one">
+                                <div class="card">
                                     <div class="card-body">
-                                        <i class='uil uil-users-alt float-end'></i>
-                                        <h6 class="text-uppercase mt-0">Active Employees</h6>
-                                        <h2 class="my-2" id="active-employees-count">{{counts.workingemployees}}</h2>
-                                        <p class="mb-0 text-muted">
-                                            <span class="text-success me-2">
-                                                <span class="mdi mdi-arrow-up-bold"></span> 5.27%
-                                            </span>
-                                            <span class="text-nowrap">Since last month</span>
-                                        </p>
-                                    </div>
-                                    <!-- end card-body-->
-                                </div>
+                                        <div class="row align-items-center">
+                                            <div class="col-6">
+                                                <h6 class="text-uppercase mt-0">Active Employees</h6>
+                                                <h2 class="my-2 py-1">{{counts.workingemployees}}</h2>
+                                                <p class="mb-0 text-muted">
+                                                    <span class="text-danger me-2"><i class="mdi mdi-arrow-down-bold"></i> 5.38%</span>
+                                                </p>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="text-end">
+                                                    <div id="new-leads-chart" data-colors="#0acf97"></div>
+                                                </div>
+                                            </div>
+                                        </div> <!-- end row-->
+                                    </div> <!-- end card-body -->
+                                </div> <!-- end card -->
                             </div>
                             <!-- End Card 1 -->
 
@@ -115,7 +119,7 @@
                         <!-- end Project Cost Overview card -->
 
                         <!-- Card: Project Performance with Line Chart -->
-                        
+                       
                         <div class="card">
                                     <div class="card-header d-flex justify-content-between align-items-center">
                                         <h5 class="header-title mb-0">Project Performance</h5>
@@ -158,6 +162,7 @@
         var projectbar = {{{ json projectbar }}};
         var PPerformance = {{{ json PPerformance }}};
         var typeCounts = {{{ json typeCounts }}};
+        var doc = {{{ json doc}}}
        
         let projectChart; 
     </script>
