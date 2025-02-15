@@ -107,7 +107,8 @@ router.get("/dashboard", async (req, res) => {
      const counts = await ProjectReport.getCounts();
      let projectbar = await ProjectReport.getMultiCategoryReports();
     let PPerformance = await ProjectReport.getProjectsPerformanceReport();
-    let typeCounts = await employeHelpers.getEmployeeTypeCounts()    
+    let typeCounts = await employeHelpers.getEmployeeTypeCounts()   
+    let doc = await employeHelpers.getEmployeeCount(); 
     let projectNames = PPerformance.projectNames
 
     res.render("./admin/dashboard", {
@@ -116,7 +117,8 @@ router.get("/dashboard", async (req, res) => {
       PPerformance,
       projectNames, 
       projectbar,
-      typeCounts
+      typeCounts,
+      doc
       
     });
   } catch (error) {
@@ -1696,6 +1698,37 @@ router.post("/generateWPS", async function (req, res) {
       
     
   })
+
+  cron.schedule('00 32 16 * * *', async () => {
+ 
+      try {
+        // Get the current working employees count
+        const counts =  ProjectReport.getCounts();
+   
+        // Retrieve the existing document (if any)
+        let doc = await employeHelpers.getEmployeeCount();
+        let updatedCounts;
+    
+        if (doc && Array.isArray(doc.counts)) {
+          // If the document exists, add the new count to the existing counts array
+          updatedCounts = doc.counts;
+          updatedCounts.push(counts.workingemployees);
+    
+          // Keep only the latest 12 counts
+          if (updatedCounts.length > 12) {
+            updatedCounts = updatedCounts.slice(updatedCounts.length - 12);
+          }
+        } else {
+          // If no document exists, initialize with 11 zeros and the current count as the 12th entry
+          updatedCounts = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, counts.workingemployees];
+        }
+        // Update the document in the collection (or create one if it doesn't exist)
+        await employeHelpers.updateEmployeeCount({ counts: updatedCounts });
+      } catch (error) {
+        console.error('Error in scheduled tasks:', error);
+      }
+    });
+    
 
 
 
