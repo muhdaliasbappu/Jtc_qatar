@@ -1699,7 +1699,7 @@ router.post("/generateWPS", async function (req, res) {
     
   })
 
-  cron.schedule('00 32 16 * * *', async () => {
+  cron.schedule('00 35 16 * * *', async () => {
  
       try {
         // Get the current working employees count
