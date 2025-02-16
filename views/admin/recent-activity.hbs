@@ -31,13 +31,23 @@
                                                     data-message="{{this.Message}}" 
                                                     data-timestamp="{{this.Timestamp}}"
                                                     data-oldemployeeType="{{this.old.employeeType}}"
+                                                    {{#if this.old.sbasic }}
                                                     data-oldsbasic="{{this.old.sbasic}}"
                                                     data-oldsallowance="{{this.old.sallowance}}"
                                                     data-oldsbonus="{{this.old.sbonus}}"
+                                                    {{/if}}
+                                                    {{#if this.old.srateph}}
+                                                    data-oldsrateph="{{this.old.srateph}}"
+                                                    {{/if}}
                                                     data-newemployeeType="{{this.new.employeeType}}"
+                                                    {{#if this.new.sbasic}}
                                                     data-newsbasic="{{this.new.sbasic}}"
                                                     data-newsallowance="{{this.new.sallowance}}"
                                                     data-newsbonus="{{this.new.sbonus}}"
+                                                    {{/if}}
+                                                    {{#if this.new.srateph}}
+                                                    data-newssrateph="{{this.new.srateph}}"
+                                                    {{/if}}
                                                 >
                                                     {{this.Message}}
                                                 </a>
@@ -77,7 +87,7 @@
                                             {{/if}}
 
                                             <div class="email-content">
-                                                <p style="right: 0; text-align: right; position: absolute;">{{this.Timestamp}}</p>
+                                                <p style="right: 0; text-align: right; position: absolute;">{{this.Timestamp}} {{this.systemDetails.hostname}}</p>
                                             </div>
                                         </div>
                                     </li>
@@ -110,6 +120,7 @@
                         <p><strong>Basic Salary:</strong> <span id="activity-modal-oldsbasic"></span></p>
                         <p><strong>Allowance:</strong> <span id="activity-modal-oldsallowance"></span></p>
                         <p><strong>Bonus:</strong> <span id="activity-modal-oldsbonus"></span></p>
+
                     </div>
                     <div class="col">
                         <h4>Changed To:</h4>
@@ -183,10 +194,12 @@
             const oldSbasic = button.getAttribute('data-oldsbasic');
             const oldSallowance = button.getAttribute('data-oldsallowance');
             const oldSbonus = button.getAttribute('data-oldsbonus');
+            const oldsrateph = button.getAttribute('data-oldsrateph');
             const newEmployeeType = button.getAttribute('data-newemployeeType');
             const newSbasic = button.getAttribute('data-newsbasic');
             const newSallowance = button.getAttribute('data-newsallowance');
             const newSbonus = button.getAttribute('data-newsbonus');
+            const newsrateph = button.getAttribute('data-newsrateph');
 
             // Populate modal content
             document.getElementById('activity-modal-message').textContent = message || 'N/A';
@@ -195,10 +208,12 @@
             document.getElementById('activity-modal-oldsbasic').textContent = oldSbasic || 'N/A';
             document.getElementById('activity-modal-oldsallowance').textContent = oldSallowance || 'N/A';
             document.getElementById('activity-modal-oldsbonus').textContent = oldSbonus || 'N/A';
+            document.getElementById('activity-modal-oldsrateph').textContent = oldsrateph || 'N/A';
             document.getElementById('activity-modal-newemployeeType').textContent = newEmployeeType || 'N/A';
             document.getElementById('activity-modal-newsbasic').textContent = newSbasic || 'N/A';
             document.getElementById('activity-modal-newsallowance').textContent = newSallowance || 'N/A';
             document.getElementById('activity-modal-newsbonus').textContent = newSbonus || 'N/A';
+            document.getElementById('activity-modal-newsrateph').textContent = newsrateph || 'N/A';
         });
 
         // Handler for Timesheet Modal
