@@ -1644,11 +1644,19 @@ else {
 basicsalary = tempwd*timesheet[0].sbasic/30
 allowance = tempwd*timesheet[0].sallowance/30
 bonus = tempwd*timesheet[0].sbonus/30
+let Dbasicsalary = timesheet[0].sbasic-basicsalary
+let extraincome = otsalary+allowance+bonus
+if(extraincome>0 && extraincome>Dbasicsalary){
+    extraincome = extraincome-Dbasicsalary
+}else if(extraincome<Dbasicsalary){
+    Dbasicsalary = Dbasicsalary-extraincome
+    extraincome = 0
+    basicsalary-Dbasicsalary
+}
 report.basicsalary = Math.round(timesheet[0].sbasic)
-report.extraincome =  Math.round(otsalary+allowance+bonus)
+report.extraincome =  Math.round(extraincome)
 report.othours = othours
 report.totalsalary =  Math.round(basicsalary+allowance+bonus+otsalary)
-let Dbasicsalary = timesheet[0].sbasic-basicsalary
 report.deduction = Math.round(Dbasicsalary)
 if(leave === month){
     report.paymentType= 'VACATION' 
@@ -1752,11 +1760,19 @@ else {
 basicsalary = tempwd*timesheet[0].sbasic/30
 allowance = tempwd*timesheet[0].sallowance/30
 bonus = tempwd*timesheet[0].sbonus/30
+let Dbasicsalary = timesheet[0].sbasic-basicsalary
+let extraincome = otsalary+allowance+bonus
+if(extraincome>0 && extraincome>Dbasicsalary){
+    extraincome = extraincome-Dbasicsalary
+}else if(extraincome<Dbasicsalary){
+    Dbasicsalary = Dbasicsalary-extraincome
+    extraincome = 0
+    basicsalary-Dbasicsalary
+}
 report.basicsalary = Math.round(timesheet[0].sbasic)
-report.extraincome =  Math.round(otsalary+allowance+bonus)
+report.extraincome =  Math.round(extraincome)
 report.othours = othours
 report.totalsalary =  Math.round(basicsalary+allowance+bonus+otsalary)
-let Dbasicsalary = timesheet[0].sbasic-basicsalary
 report.deduction = Math.round(Dbasicsalary)
 if(leave === month){
     report.paymentType= 'VACATION' 
