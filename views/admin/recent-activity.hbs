@@ -87,7 +87,10 @@
                                             {{/if}}
 
                                             <div class="email-content">
-                                                <p style="right: 0; text-align: right; position: absolute;">{{this.Timestamp}} {{this.systemDetails.userAgent}}</p>
+                                                <p style="right: 0; text-align: right; position: absolute; max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+  {{this.Timestamp}} {{this.systemDetails.userAgent}}
+</p>
+
                                             </div>
                                         </div>
                                     </li>
