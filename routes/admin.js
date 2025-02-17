@@ -332,7 +332,7 @@ router.get("/edit-user/:id", async (req, res) => {
 router.post("/edit-user/:id", (req, res) => {
   userHelpers.updateuser(req.params.id, req.body).then(async () => {
     const logMessage = `User: ${req.body.usernames} password was changed.`;
-    await logHelpers.addlog(logMessage, 'User')
+    await logHelpers.addlog(req,logMessage, 'User')
     res.redirect("/admin/user-setting");
   });
 });
