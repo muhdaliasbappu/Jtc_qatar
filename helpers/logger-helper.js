@@ -12,6 +12,7 @@ module.exports = {
 addlog :(req, Message, type) => {
     const date = new Date(); // Example: Sat Jan 04 2025 10:29:22 GMT+0300 (Arabian Standard Time)
     const dateStr = date.toString().split(' GMT')[0];
+    
 
     const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 
@@ -51,16 +52,21 @@ addlog :(req, Message, type) => {
             }
         });
     },
-    addlogsalary: (Message, type, sdetails) => {
+    addlogsalary: (req, type, sdetails) => {
         const date = new Date(); // Example: Sat Jan 04 2025 10:29:22 GMT+0300 (Arabian Standard Time)
         const dateStr = date.toString().split(' GMT')[0];
         
+        const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+
+        // Get the user agent from the headers
+        const userAgent = req.headers['user-agent'];
+      
+        // Optionally, include additional client-side details if available
         const systemDetails = {
-          platform: os.platform(),      // e.g., 'win32', 'linux'
-          release: os.release(),        // OS version
-          arch: os.arch(),              // e.g., 'x64', 'arm'
-          hostname: os.hostname(),      // Hostname of the system
-          macAddresses: getMacAddresses() // Array of MAC addresses
+          ip,
+          userAgent,
+          // You might also include any authenticated user details:
+          // userId: req.user ? req.user.id : 'unknown'
         };
         const fstoreObj = {
           Timestamp: dateStr,
@@ -78,15 +84,20 @@ addlog :(req, Message, type) => {
           .collection('logger')
           .insertOne(fstoreObj);
       },
-      addlogtimesheet: (Message, type, forstoring) => {
+      addlogtimesheet: (req, type, forstoring) => {
         const date = new Date(); // Example: Sat Jan 04 2025 10:29:22 GMT+0300 (Arabian Standard Time)
         const dateStr = date.toString().split(' GMT')[0];
+        const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+
+        // Get the user agent from the headers
+        const userAgent = req.headers['user-agent'];
+      
+        // Optionally, include additional client-side details if available
         const systemDetails = {
-          platform: os.platform(),      // e.g., 'win32', 'linux'
-          release: os.release(),        // OS version
-          arch: os.arch(),              // e.g., 'x64', 'arm'
-          hostname: os.hostname(),      // Hostname of the system
-          macAddresses: getMacAddresses() // Array of MAC addresses
+          ip,
+          userAgent,
+          // You might also include any authenticated user details:
+          // userId: req.user ? req.user.id : 'unknown'
         };
         const fstoreObj = {
           Timestamp: dateStr,
