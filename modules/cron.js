@@ -328,7 +328,7 @@ cronfriday:  async() => {
                   tempobj2.salarystatus = 'open'
                   userHelpers.addDatasheet(tempobj2, async (result) => {
                     const logMessage = `${employee[i].surname} ${employee[i].givenName}'s timesheet for ${date2}, was not submitted.`;
-                    await logHelpers.addlog(logMessage)
+                    await logHelpers.addlog(req,logMessage)
 
                      
                       })
@@ -426,7 +426,7 @@ cronfriday:  async() => {
                         tempobj2.salarystatus = 'open'
                         userHelpers.addDatasheet(tempobj2, async(result) => {
                           const logMessage = `${employee[i].surname} ${employee[i].givenName}'s timesheet for ${date2}, was not submitted.`;
-                          await logHelpers.addlog(logMessage)
+                          await logHelpers.addlog(req,logMessage)
                             
                             })
                         resolve()
