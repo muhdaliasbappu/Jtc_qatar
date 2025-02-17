@@ -36,8 +36,16 @@
 </style>
 
 <div style="padding-top:10px;">
+  <div class="row">
+    <div class="clearfix">
+                                            <div class="float-start mb-3">
+                                                <img src="/assets/images/logo-white.png" alt="dark logo" height="22">
+                                            </div>
+                                            
+                                        </div>
   <div class="table-heading">
     SALARY STATEMENT | MONTH OF {{employeereport.date}}
+  </div>
   </div>
   <div class="date">Type: {{employeereport.employeeType}}<br>
   Genarated On: {{employeereport.currentDate}}
@@ -80,7 +88,6 @@
       <th>30</th>
       <th>31</th>
       <th>WD</th>
-      <th>TH</th>
       <th>OT</th>
       <th style="width: 5%;">Basic</th>
       <th style="width: 5%;">Allowance</th>
@@ -126,7 +133,6 @@
       <td>{{this.d30wh}}</td>
        <td>{{this.d31wh}}</td>
       <td>{{this.workdays}}</td>
-      <td>{{this.totalhours}}</td>
       <td>{{this.othours}}</td>
       <td>{{this.basic}}</td>
       <td>{{this.allowance}}</td>
@@ -138,7 +144,7 @@
     </tbody>
      <tbody>
     <tr>
-     <th scope="row" colspan="40" >Total: </th>
+     <th scope="row" colspan="39" >Total: </th>
      <td >QAR {{totalsum.sum}}</td>
     </tr>
   </tbody>
@@ -148,6 +154,3 @@
 
                          
 
-
-
-                         
