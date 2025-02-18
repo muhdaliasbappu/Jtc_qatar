@@ -915,46 +915,25 @@ sdetails[1].srateph = req.body.srateph;
 });
 
 
+const logoPath = path.join(__dirname, 'public/assets/images/logo-white.png');
+const logoBase64 = fs.existsSync(logoPath) ? fs.readFileSync(logoPath).toString('base64') : '';
 router.post('/printreport', async (req, res) => {
   try {
     let searchdata = {};
     let totalsum = {};
     searchdata.searchdate = req.body.searchdate;
 
-    const validEmployeeTypes = [
-      "Own Labour",
-      "Own Staff (Operations)",
-      "Own Staff (Projects)",
-      "Hired Labour (Hourly)",
-      "Hired Labour (Monthly)",
-      "Hired Staff (Operations)",
-      "Hired Staff (Projects)",
-      "All"
-    ];
-    
-    let result;
-    const employeeType = req.body.employeeType;
-    if (validEmployeeTypes.includes(employeeType)) {
-      result = await salarycalc.salarycalculate(req.body.searchdate, req.body.employeeType);
-    } else {
-      result = await salarycalc.salarycalculateforgroup(req.body.searchdate, req.body.employeeType);
-    }
-
+    let result = await salarycalc.salarycalculate(req.body.searchdate, req.body.employeeType);
     let employeereport = result.employeereport;
     totalsum.sum = result.sum;
 
-    const month = parseInt(req.body.searchdate.split('-')[1]);
     const formattedDate = new Date(req.body.searchdate).toLocaleDateString('en-GB', { year: 'numeric', month: 'long' });
 
     employeereport.date = formattedDate;
     employeereport.currentDate = new Date().toLocaleDateString();
     employeereport.employeeType = req.body.employeeType;
 
-    const templatePath = month === 1 || month === 3 || month === 5 || month === 7 || month === 8 || month === 10 || month === 12
-      ? 'reporttemplate'
-      : 'reporttemplate2';
-
-    res.render(templatePath, { employeereport, totalsum }, async (err, html) => {
+    res.render('reporttemplate', { employeereport, totalsum, logoBase64 }, async (err, html) => {
       if (err) {
         return res.status(500).send(err);
       }
