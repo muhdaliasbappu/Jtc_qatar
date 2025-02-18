@@ -52,7 +52,7 @@ addlog :(req, Message, type) => {
             }
         });
     },
-    addlogsalary: (req, type, sdetails) => {
+    addlogsalary: (req,Message, type, sdetails) => {
         const date = new Date(); // Example: Sat Jan 04 2025 10:29:22 GMT+0300 (Arabian Standard Time)
         const dateStr = date.toString().split(' GMT')[0];
         
@@ -84,7 +84,7 @@ addlog :(req, Message, type) => {
           .collection('logger')
           .insertOne(fstoreObj);
       },
-      addlogtimesheet: (req, type, forstoring) => {
+      addlogtimesheet: (req,Message, type, forstoring) => {
         const date = new Date(); // Example: Sat Jan 04 2025 10:29:22 GMT+0300 (Arabian Standard Time)
         const dateStr = date.toString().split(' GMT')[0];
         const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
