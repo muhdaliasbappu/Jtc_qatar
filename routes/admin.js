@@ -916,12 +916,11 @@ sdetails[1].srateph = req.body.srateph;
 
 
 router.post('/printreport', async (req, res) => {
- 
   try {
-    var index = 0
-    let searchdata = {}
-    let totalsum = {}
-    searchdata.searchdate = req.body.searchdate
+    let searchdata = {};
+    let totalsum = {};
+    searchdata.searchdate = req.body.searchdate;
+
     const validEmployeeTypes = [
       "Own Labour",
       "Own Staff (Operations)",
@@ -932,86 +931,51 @@ router.post('/printreport', async (req, res) => {
       "Hired Staff (Projects)",
       "All"
     ];
+    
     let result;
-    // Assume req.body.employeeType comes from your form submission
     const employeeType = req.body.employeeType;
     if (validEmployeeTypes.includes(employeeType)) {
-    result = await salarycalc.salarycalculate(req.body.searchdate , req.body.employeeType)
-    } 
-    // Otherwise, the value is not recognized as valid
-    else {
-     result = await salarycalc.salarycalculateforgroup(req.body.searchdate , req.body.employeeType)
+      result = await salarycalc.salarycalculate(req.body.searchdate, req.body.employeeType);
+    } else {
+      result = await salarycalc.salarycalculateforgroup(req.body.searchdate, req.body.employeeType);
     }
-    
-    
-   let employeereport = result.employeereport
-   totalsum.sum = result.sum
 
-  
-   
-   const month = parseInt(req.body.searchdate.split('-')[1]);
-  var formattedDate = DayView.getMonthAndYear(req.body.searchdate)
-  
-  employeereport.date = formattedDate
-  employeereport.currentDate = DayView.getCurrentDate()
-  employeereport.employeeType = req.body.employeeType
+    let employeereport = result.employeereport;
+    totalsum.sum = result.sum;
 
-   const monthsWith31Days = [1, 3, 5, 7, 8, 10, 12];
-   if (monthsWith31Days.includes(month)) {
-      
-      res.render('reporttemplate', { employeereport, totalsum }, async (err, html) => {
-        if (err) {
-          return res.status(500).send(err);
-        }
-  
-        try {
-          const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox'] });
-          const page = await browser.newPage();
-          await page.setContent(html);
-  
-          const pdfBuffer = await page.pdf({
-            format: 'A4',            
-            width: '1600px',          
-            height: '595px',          
-            landscape: true,      
-            // margin: { top: 20, right: 20, bottom: 20, left: 20 },
-          });
-          
-  
-          res.setHeader('Content-Type', 'application/pdf');
-          
-          res.setHeader('Content-Disposition', `attachment; filename="Salary Statement_${formattedDate}.pdf"`);
-          res.send(pdfBuffer);
-  
-          await browser.close();
-        } catch (error) {
-          console.error('Error generating PDF:', error);
-          res.status(500).send('Internal Server Error');
-        }
-      });
-      
-       
-   } else {
-    res.render('reporttemplate2', { employeereport , totalsum }, async (err, html) => {
+    const month = parseInt(req.body.searchdate.split('-')[1]);
+    const formattedDate = new Date(req.body.searchdate).toLocaleDateString('en-GB', { year: 'numeric', month: 'long' });
+
+    employeereport.date = formattedDate;
+    employeereport.currentDate = new Date().toLocaleDateString();
+    employeereport.employeeType = req.body.employeeType;
+
+    const templatePath = month === 1 || month === 3 || month === 5 || month === 7 || month === 8 || month === 10 || month === 12
+      ? 'reporttemplate'
+      : 'reporttemplate2';
+
+    res.render(templatePath, { employeereport, totalsum }, async (err, html) => {
       if (err) {
         return res.status(500).send(err);
       }
 
       try {
-        const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox'] });
+        const browser = await puppeteer.launch({
+          headless: true,
+          args: ['--no-sandbox', '--disable-setuid-sandbox']
+        });
         const page = await browser.newPage();
-        await page.setContent(html);
+        
+        await page.setContent(html, { waitUntil: 'networkidle0' });
 
         const pdfBuffer = await page.pdf({
           format: 'A4',
           width: '1600px',
           height: '595px',
-          landscape: true,
+          landscape: true
         });
-        
 
         res.setHeader('Content-Type', 'application/pdf');
-       
         res.setHeader('Content-Disposition', `attachment; filename="Salary Statement_${formattedDate}.pdf"`);
         res.send(pdfBuffer);
 
@@ -1021,15 +985,12 @@ router.post('/printreport', async (req, res) => {
         res.status(500).send('Internal Server Error');
       }
     });
-   }
-   
-   
+
   } catch (error) {
     console.error('Error:', error);
     res.status(500).send('Internal Server Error');
   }
 });
-
 
 // project report
 router.get("/project-search/",  (req, res) => {
