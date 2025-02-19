@@ -36,28 +36,21 @@
 </style>
 
 <div style="padding-top:10px;">
-  <div class="row">
-    <div class="clearfix">
-                                            <div class="float-start mb-3">
-                                            <img src="https://tickrplus.com/assets/images/logo-white.png" style="height:130px; width:auto;">
-
-
-
-
-                                  
-
-                                            </div>
-                                            <div class="float-end">
-                                                <h4 class="m-0 d-print-none"></h4>
-                                            </div>
-                                        </div>
-  <div class="table-heading">
-    SALARY STATEMENT | MONTH OF {{employeereport.date}}
+  <div style="display: flex; align-items: center; justify-content: space-between;">
+    <div>
+      <img src="https://tickrplus.com/assets/images/logo-white.png" style="height:130px; width:auto;">
+    </div>
+    <div class="table-heading" style="flex-grow: 1; text-align: center;">
+      SALARY STATEMENT | MONTH OF {{employeereport.date}}
+    </div>
   </div>
+  <div class="date">
+    Type: {{employeereport.employeeType}}<br>
+    Generated On: {{employeereport.currentDate}}
   </div>
-  <div class="date">Type: {{employeereport.employeeType}}<br>
-  Genarated On: {{employeereport.currentDate}}
-  </div>
+  <!-- Rest of your content -->
+
+
 
   <table class="table mb-0 table-bordered table-hover">
     <thead>
