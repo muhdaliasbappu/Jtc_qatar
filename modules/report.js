@@ -1655,8 +1655,13 @@ if(extraincome>0 && extraincome>Dbasicsalary){
 }
 report.basicsalary = Math.round(timesheet[0].sbasic)
 report.extraincome =  Math.round(extraincome)
-report.othours = othours
+if(othours>100){
+    report.othours = 100
+}else{
+    report.othours = othours
+}
 report.totalsalary =  Math.round(basicsalary+allowance+bonus+otsalary)
+
 if(leave === month){
     report.deduction = Math.round(0)
     report.paymentType= 'VACATION' 
@@ -1772,7 +1777,11 @@ if(extraincome>0 && extraincome>Dbasicsalary){
 }
 report.basicsalary = Math.round(timesheet[0].sbasic)
 report.extraincome =  Math.round(extraincome)
-report.othours = othours
+if(othours>100){
+    report.othours = 100
+}else{
+    report.othours = othours
+}
 report.totalsalary =  Math.round(basicsalary+allowance+bonus+otsalary)
 report.deduction = Math.round(Dbasicsalary)
 if(leave === month){
