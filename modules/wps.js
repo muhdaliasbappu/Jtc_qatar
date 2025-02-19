@@ -8,6 +8,12 @@ const WPSemployeeData = async (searchdate,selectedgroup) => {
     let employees = [];
     let overallT = 0
     let Tselected = 0
+   
+
+    let [syear, smonth] = searchdate.split('-');
+    
+    // Ensure the month is 2 digits (e.g., "08" instead of "8")
+    smonth = smonth.padStart(2, '0');
     let selectedEmployees = await employeHelpers.getGroupbyGroupName(selectedgroup)
     for(let i = 0; i<selectedEmployees.selectedEmployees.length; i++){
       let semployee = await employeHelpers.getEmployeeDetails(selectedEmployees.selectedEmployees[i].id);
@@ -44,7 +50,7 @@ const WPSemployeeData = async (searchdate,selectedgroup) => {
                 String(thedata.extraincome),                   // Extra Income
                 String(thedata.deduction),                     // Deductions
                 String(thedata.paymentType),                   // Payment Type
-                String(0),                                     // Notes/Comments
+                String(`SAL ${syear+smonth}`),                                     // Notes/Comments
                 String(0),                                     // Housing Allowance
                 String(0),                                     // Food Allowance
                 String(0),                                     // Transportation Allowance
