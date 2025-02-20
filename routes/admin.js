@@ -21,28 +21,28 @@ const dayjs = require('dayjs'); // For date manipulations
 const customParseFormat = require('dayjs/plugin/customParseFormat');
 
 dayjs.extend(customParseFormat);
-// router.get("/create", function (req, res, next) {
+router.get("/create", function (req, res, next) {
   
-//   res.render('admin/create');
+  res.render('admin/create');
 
 
-// });
+});
 
-// router.post("/create", async (req, res) => {
-//   try {
-//     const response = await adminHelpers.createAdmin(req.body);
-//     if (response.status) {
-//       // Admin created successfully
-//       res.status(201).send("Admin created successfully");
-//     } else {
-//       // Could not create admin (maybe username is taken, etc.)
-//       res.status(400).send(response.message || "Error creating admin");
-//     }
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).send("Internal Server Error");
-//   }
-// });
+router.post("/create", async (req, res) => {
+  try {
+    const response = await adminHelpers.createAdmin(req.body);
+    if (response.status) {
+      // Admin created successfully
+      res.status(201).send("Admin created successfully");
+    } else {
+      // Could not create admin (maybe username is taken, etc.)
+      res.status(400).send(response.message || "Error creating admin");
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Internal Server Error");
+  }
+});
 
 //admin login
 
