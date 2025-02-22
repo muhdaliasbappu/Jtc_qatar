@@ -1,4 +1,5 @@
 <style>
+  /* Base styles */
   tr {
     page-break-inside: avoid;
   }
@@ -7,65 +8,84 @@
     width: 100%;
   }
   th, td {
-    padding: 4px; /* Minimal padding */
+    padding: 4px;
     text-align: left;
     border: 1px solid #ddd;
-    font-size: 10px; /* Minimal font size */
-  }
-  .table-heading {
-    font-size: 18px;
-    font-weight: bold;
-    padding: 10px 0;
+    font-size: 10px;
   }
   th.total-salary {
     width: 15%;
   }
-  .date {
-    font-size: 13px;
-    margin-bottom: 20px;
+  /* Header styling */
+  header {
+    width: 100%;
+    padding: 10px;
+    /* Optional: background-color: #f5f5f5; */
+  }
+  header .header-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  header .header-container > div {
+    flex: 1;
+  }
+  header .header-container .left-logo {
     text-align: left;
+  }
+  header .header-container .center-heading {
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+  }
+  header .header-container .right-logo {
+    text-align: right;
+  }
+  header .date {
+    font-size: 13px;
+    margin-top: 5px;
+    padding: 0 10px;
     border-bottom: 2px solid #000;
   }
-  /* Fixed header for print/PDF */
+  /* Ensure header is repeated on every page when printing */
   @media print {
     header {
       position: fixed;
       top: 0;
       left: 0;
       right: 0;
-      height: 150px; /* adjust height as needed */
+      height: 150px; /* Adjust as needed */
     }
     .content {
-      margin-top: 160px; /* leave space for header on each page */
+      margin-top: 160px; /* Space for the fixed header */
     }
   }
 </style>
 
-<!-- Header section to be repeated on every page -->
+<!-- Header: This will be repeated on every page -->
 <header>
-  <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px;">
+  <div class="header-container">
     <!-- Left Logo -->
     <div class="left-logo">
       <img src="https://jtcqatar.tickrplus.com/assets/images/logo-white.png" style="height:40px; width:auto;">
     </div>
-    
     <!-- Center Heading -->
-    <div class="table-heading" style="flex-grow: 1; text-align: center;">
+    <div class="center-heading">
       SALARY STATEMENT | MONTH OF {{employeereport.date}}
     </div>
-    
-    <!-- Right Logo (Replace with your desired logo URL) -->
+    <!-- Right Logo: Replace the URL with your desired logo -->
     <div class="right-logo">
       <img src="https://jtcqatar.tickrplus.com/assets/images/companylogo.png" style="height:60px; width:auto;">
     </div>
   </div>
-  <div class="date" style="padding: 0 10px;">
+  <!-- Date and type information -->
+  <div class="date">
     Type: {{employeereport.employeeType}}<br>
     Generated On: {{employeereport.currentDate}}
   </div>
 </header>
 
-<!-- Main content starts here -->
+<!-- Main content (table, etc.) -->
 <div class="content" style="padding-top:10px;">
   <table class="table mb-0 table-bordered table-hover">
     <thead>
@@ -114,48 +134,48 @@
     </thead>
     <tbody>
       {{#each employeereport}}
-        <tr>
-          <th scope="row">{{this.index}}</th>
-          <td>{{this.employeename}}</td>
-          <td>{{this.d1wh}}</td>
-          <td>{{this.d2wh}}</td>
-          <td>{{this.d3wh}}</td>
-          <td>{{this.d4wh}}</td>
-          <td>{{this.d5wh}}</td>
-          <td>{{this.d6wh}}</td>
-          <td>{{this.d7wh}}</td>
-          <td>{{this.d8wh}}</td>
-          <td>{{this.d9wh}}</td>
-          <td>{{this.d10wh}}</td>
-          <td>{{this.d11wh}}</td>
-          <td>{{this.d12wh}}</td>
-          <td>{{this.d13wh}}</td>
-          <td>{{this.d14wh}}</td>
-          <td>{{this.d15wh}}</td>
-          <td>{{this.d16wh}}</td>
-          <td>{{this.d17wh}}</td>
-          <td>{{this.d18wh}}</td>
-          <td>{{this.d19wh}}</td>
-          <td>{{this.d20wh}}</td>
-          <td>{{this.d21wh}}</td>
-          <td>{{this.d22wh}}</td>
-          <td>{{this.d23wh}}</td>
-          <td>{{this.d24wh}}</td>
-          <td>{{this.d25wh}}</td>
-          <td>{{this.d26wh}}</td>
-          <td>{{this.d27wh}}</td>
-          <td>{{this.d28wh}}</td>
-          <td>{{this.d29wh}}</td>
-          <td>{{this.d30wh}}</td>
-          <td>{{this.d31wh}}</td>
-          <td>{{this.workdays}}</td>
-          <td>{{this.othours}}</td>
-          <td>{{this.basic}}</td>
-          <td>{{this.allowance}}</td>
-          <td>{{this.bonus}}</td>
-          <td>{{this.otsalary}}</td>
-          <td>QAR {{this.totalsalary}}</td>
-        </tr>
+      <tr>
+        <th scope="row">{{this.index}}</th>
+        <td>{{this.employeename}}</td>
+        <td>{{this.d1wh}}</td>
+        <td>{{this.d2wh}}</td>
+        <td>{{this.d3wh}}</td>
+        <td>{{this.d4wh}}</td>
+        <td>{{this.d5wh}}</td>
+        <td>{{this.d6wh}}</td>
+        <td>{{this.d7wh}}</td>
+        <td>{{this.d8wh}}</td>
+        <td>{{this.d9wh}}</td>
+        <td>{{this.d10wh}}</td>
+        <td>{{this.d11wh}}</td>
+        <td>{{this.d12wh}}</td>
+        <td>{{this.d13wh}}</td>
+        <td>{{this.d14wh}}</td>
+        <td>{{this.d15wh}}</td>
+        <td>{{this.d16wh}}</td>
+        <td>{{this.d17wh}}</td>
+        <td>{{this.d18wh}}</td>
+        <td>{{this.d19wh}}</td>
+        <td>{{this.d20wh}}</td>
+        <td>{{this.d21wh}}</td>
+        <td>{{this.d22wh}}</td>
+        <td>{{this.d23wh}}</td>
+        <td>{{this.d24wh}}</td>
+        <td>{{this.d25wh}}</td>
+        <td>{{this.d26wh}}</td>
+        <td>{{this.d27wh}}</td>
+        <td>{{this.d28wh}}</td>
+        <td>{{this.d29wh}}</td>
+        <td>{{this.d30wh}}</td>
+        <td>{{this.d31wh}}</td>
+        <td>{{this.workdays}}</td>
+        <td>{{this.othours}}</td>
+        <td>{{this.basic}}</td>
+        <td>{{this.allowance}}</td>
+        <td>{{this.bonus}}</td>
+        <td>{{this.otsalary}}</td>
+        <td>QAR {{this.totalsalary}}</td>
+      </tr>
       {{/each}}
     </tbody>
     <tbody>
