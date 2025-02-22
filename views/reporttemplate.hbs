@@ -1,85 +1,61 @@
+
+                         
+
 <style>
-  /* Base styles */
-  tr {
+   tr {
     page-break-inside: avoid;
   }
   table {
     border-collapse: collapse;
     width: 100%;
   }
+
   th, td {
-    padding: 4px;
+    padding: 4px; /* Minimal padding */
     text-align: left;
     border: 1px solid #ddd;
-    font-size: 10px;
+    font-size: 10px; /* Minimal font size */
   }
-  .table-heading {
+ .table-heading {
+    text-align: center;
     font-size: 18px;
     font-weight: bold;
     padding: 10px 0;
+  
   }
+
   th.total-salary {
     width: 15%;
   }
   .date {
-    font-size: 13px;
-    margin-bottom: 20px;
-    text-align: left;
-    border-bottom: 2px solid #000;
-  }
-
-  /* Print styles */
-  @media print {
-    @page {
-      /* A4 landscape, small margins */
-      size: A4 landscape;
-      margin: 10mm;
+      font-size: 13px;
+      margin-bottom: 20px;
+      text-align: left; /* Center align the date */
+      border-bottom: 2px solid #000; /* Black line */
     }
-    /* Fixed header always at top */
-    header {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      /* Must match or exceed the total height of your logo + heading + date */
-      height: 140px; 
-      z-index: 9999;
-      /* Optional white background so text or images behind it don't show through */
-      background: #fff;
-    }
-    /* Push the content below the fixed header */
-    .content {
-      margin-top: 150px; /* Must be >= header height */
-    }
-  }
 </style>
 
-<!-- Header (repeated on each page) -->
-<header>
-  <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px;">
+<div style="padding-top:10px;">
+ <div style="display: flex; align-items: center; justify-content: space-between;">
     <!-- Left Logo -->
     <div class="left-logo">
-      <img src="https://jtcqatar.tickrplus.com/assets/images/logo-white.png"
-           style="height:40px; width:auto;">
+      <img src="https://jtcqatar.tickrplus.com/assets/images/logo-white.png" style="height:40px; width:auto;">
     </div>
+    
     <!-- Center Heading -->
     <div class="table-heading" style="flex-grow: 1; text-align: center;">
       SALARY STATEMENT | MONTH OF {{employeereport.date}}
     </div>
-    <!-- Right Logo -->
+    
+    <!-- Right Logo (Replace with your desired logo URL) -->
     <div class="right-logo">
-      <img src="https://jtcqatar.tickrplus.com/assets/images/companylogo.png"
-           style="height:60px; width:auto;">
+      <img src="https://jtcqatar.tickrplus.com/assets/images/companylogo.png" style="height:60px; width:auto;">
     </div>
   </div>
-  <div class="date" style="padding: 0 10px;">
-    Type: {{employeereport.employeeType}}<br>
-    Generated On: {{employeereport.currentDate}}
+  <div class="date">Type: {{employeereport.employeeType}}<br>
+  Genarated On: {{employeereport.currentDate}}
   </div>
-</header>
 
-<!-- Main content -->
-<div class="content">
   <table class="table mb-0 table-bordered table-hover">
     <thead>
       <tr>
@@ -122,15 +98,15 @@
       <th style="width: 5%;">Allowance</th>
       <th style="width: 5%;">Bonus</th>
       <th style="width: 5%;">OT Salary</th>
-        <th class="total-salary">Total Salary</th>
+      <th class="total-salary">Total Salary</th>
       </tr>
     </thead>
     <tbody>
       {{#each employeereport}}
-      <tr>
-        <th scope="row">{{this.index}}</th>
-        <td>{{this.employeename}}</td>
-         <td>{{this.d1wh}}</td>
+        <tr>
+          <th scope="row">{{this.index}}</th>
+          <td>{{this.employeename}}</td>
+          <td>{{this.d1wh}}</td>
       <td>{{this.d2wh}}</td>
       <td>{{this.d3wh}}</td>
       <td>{{this.d4wh}}</td>
@@ -167,15 +143,19 @@
       <td>{{this.allowance}}</td>
       <td>{{this.bonus}}</td>
       <td>{{this.otsalary}}</td>
-        <td>QAR {{this.totalsalary}}</td>
-      </tr>
+          <td >QAR {{this.totalsalary}}</td>
+        </tr>
       {{/each}}
     </tbody>
-    <tbody>
-      <tr>
-        <th scope="row" colspan="38" style="text-align: left;">Total:</th>
-        <td colspan="2" style="text-align: right;">QAR {{totalsum.sum}}</td>
-      </tr>
-    </tbody>
+     <tbody>
+    <tr>
+     <th scope="row" colspan="38" >Total: </th>
+     <td colspan="2" style="text-align: right;">QAR {{totalsum.sum}}</td>
+    </tr> 
+  </tbody>
   </table>
 </div>
+
+
+                         
+
