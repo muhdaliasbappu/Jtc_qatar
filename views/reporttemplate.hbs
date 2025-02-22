@@ -1,4 +1,5 @@
 <style>
+  /* Base styles */
   tr {
     page-break-inside: avoid;
   }
@@ -7,10 +8,10 @@
     width: 100%;
   }
   th, td {
-    padding: 4px; /* Minimal padding */
+    padding: 4px;
     text-align: left;
     border: 1px solid #ddd;
-    font-size: 10px; /* Minimal font size */
+    font-size: 10px;
   }
   .table-heading {
     font-size: 18px;
@@ -26,39 +27,49 @@
     text-align: left;
     border-bottom: 2px solid #000;
   }
-  /* Fixed header for print/PDF */
+
+  /* Print styles */
   @media print {
+    @page {
+      /* A4 landscape, small margins */
+      size: A4 landscape;
+      margin: 10mm;
+    }
+    /* Fixed header always at top */
     header {
       position: fixed;
       top: 0;
       left: 0;
       right: 0;
-      height: 150px; /* Adjust height as needed */
-      z-index: 1000;
+      /* Must match or exceed the total height of your logo + heading + date */
+      height: 140px; 
+      z-index: 9999;
+      /* Optional white background so text or images behind it don't show through */
+      background: #fff;
     }
-    /* Reserve space at the top of every page for the header */
-    @page {
-      margin-top: 160px;
+    /* Push the content below the fixed header */
+    .content {
+      margin-top: 150px; /* Must be >= header height */
     }
   }
 </style>
 
-<!-- Header section to be repeated on every page -->
+<!-- Header (repeated on each page) -->
 <header>
   <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px;">
     <!-- Left Logo -->
     <div class="left-logo">
-      <img src="https://jtcqatar.tickrplus.com/assets/images/logo-white.png" style="height:40px; width:auto;">
+      <img src="https://jtcqatar.tickrplus.com/assets/images/logo-white.png"
+           style="height:130px; width:auto;">
     </div>
-    
     <!-- Center Heading -->
     <div class="table-heading" style="flex-grow: 1; text-align: center;">
       SALARY STATEMENT | MONTH OF {{employeereport.date}}
     </div>
-    
-    <!-- Right Logo (Replace with your desired logo URL) -->
+    <!-- Right Logo -->
     <div class="right-logo">
-      <img src="https://jtcqatar.tickrplus.com/assets/images/companylogo.png" style="height:60px; width:auto;">
+      <img src="https://jtcqatar.tickrplus.com/assets/images/logo-right.png"
+           style="height:130px; width:auto;">
     </div>
   </div>
   <div class="date" style="padding: 0 10px;">
@@ -67,8 +78,8 @@
   </div>
 </header>
 
-<!-- Main content starts here -->
-<div class="content" style="padding-top:10px;">
+<!-- Main content -->
+<div class="content">
   <table class="table mb-0 table-bordered table-hover">
     <thead>
       <tr>
@@ -76,93 +87,93 @@
         <th style="width: 20%;">Name</th>
         <th>1</th>
         <th>2</th>
-        <th>3</th>
-        <th>4</th>
-        <th>5</th>
-        <th>6</th>
-        <th>7</th>
-        <th>8</th>
-        <th>9</th>
-        <th>10</th>
-        <th>11</th>
-        <th>12</th>
-        <th>13</th>
-        <th>14</th>
-        <th>15</th>
-        <th>16</th>
-        <th>17</th>
-        <th>18</th>
-        <th>19</th>
-        <th>20</th>
-        <th>21</th>
-        <th>22</th>
-        <th>23</th>
-        <th>24</th>
-        <th>25</th>
-        <th>26</th>
-        <th>27</th>
-        <th>28</th>
-        <th>29</th>
-        <th>30</th>
-        <th>31</th>
-        <th>WD</th>
-        <th>OT</th>
-        <th style="width: 5%;">Basic</th>
-        <th style="width: 5%;">Allowance</th>
-        <th style="width: 5%;">Bonus</th>
-        <th style="width: 5%;">OT Salary</th>
+      <th>3</th>
+      <th>4</th>
+      <th>5</th>
+      <th>6</th>
+      <th>7</th>
+      <th>8</th>
+      <th>9</th>
+      <th>10</th>
+      <th>11</th>
+      <th>12</th>
+      <th>13</th>
+      <th>14</th>
+      <th>15</th>
+      <th>16</th>
+      <th>17</th>
+      <th>18</th>
+      <th>19</th>
+      <th>20</th>
+      <th>21</th>
+      <th>22</th>
+      <th>23</th>
+      <th>24</th>
+      <th>25</th>
+      <th>26</th>
+      <th>27</th>
+      <th>28</th>
+      <th>29</th>
+      <th>30</th>
+      <th>31</th>
+      <th>WD</th>
+      <th>OT</th>
+      <th style="width: 5%;">Basic</th>
+      <th style="width: 5%;">Allowance</th>
+      <th style="width: 5%;">Bonus</th>
+      <th style="width: 5%;">OT Salary</th>
         <th class="total-salary">Total Salary</th>
       </tr>
     </thead>
     <tbody>
       {{#each employeereport}}
-        <tr>
-          <th scope="row">{{this.index}}</th>
-          <td>{{this.employeename}}</td>
-          <td>{{this.d1wh}}</td>
-          <td>{{this.d2wh}}</td>
-          <td>{{this.d3wh}}</td>
-          <td>{{this.d4wh}}</td>
-          <td>{{this.d5wh}}</td>
-          <td>{{this.d6wh}}</td>
-          <td>{{this.d7wh}}</td>
-          <td>{{this.d8wh}}</td>
-          <td>{{this.d9wh}}</td>
-          <td>{{this.d10wh}}</td>
-          <td>{{this.d11wh}}</td>
-          <td>{{this.d12wh}}</td>
-          <td>{{this.d13wh}}</td>
-          <td>{{this.d14wh}}</td>
-          <td>{{this.d15wh}}</td>
-          <td>{{this.d16wh}}</td>
-          <td>{{this.d17wh}}</td>
-          <td>{{this.d18wh}}</td>
-          <td>{{this.d19wh}}</td>
-          <td>{{this.d20wh}}</td>
-          <td>{{this.d21wh}}</td>
-          <td>{{this.d22wh}}</td>
-          <td>{{this.d23wh}}</td>
-          <td>{{this.d24wh}}</td>
-          <td>{{this.d25wh}}</td>
-          <td>{{this.d26wh}}</td>
-          <td>{{this.d27wh}}</td>
-          <td>{{this.d28wh}}</td>
-          <td>{{this.d29wh}}</td>
-          <td>{{this.d30wh}}</td>
-          <td>{{this.d31wh}}</td>
-          <td>{{this.workdays}}</td>
-          <td>{{this.othours}}</td>
-          <td>{{this.basic}}</td>
-          <td>{{this.allowance}}</td>
-          <td>{{this.bonus}}</td>
-          <td>{{this.otsalary}}</td>
-          <td>QAR {{this.totalsalary}}</td>
-        </tr>
+      <tr>
+        <th scope="row">{{this.index}}</th>
+        <td>{{this.employeename}}</td>
+         <td>{{this.d1wh}}</td>
+      <td>{{this.d2wh}}</td>
+      <td>{{this.d3wh}}</td>
+      <td>{{this.d4wh}}</td>
+      <td>{{this.d5wh}}</td>
+      <td>{{this.d6wh}}</td>
+      <td>{{this.d7wh}}</td>
+      <td>{{this.d8wh}}</td>
+      <td>{{this.d9wh}}</td>
+      <td>{{this.d10wh}}</td>
+      <td>{{this.d11wh}}</td>
+      <td>{{this.d12wh}}</td>
+      <td>{{this.d13wh}}</td>
+      <td>{{this.d14wh}}</td>
+      <td>{{this.d15wh}}</td>
+      <td>{{this.d16wh}}</td>
+      <td>{{this.d17wh}}</td>
+      <td>{{this.d18wh}}</td>
+      <td>{{this.d19wh}}</td>
+      <td>{{this.d20wh}}</td>
+      <td>{{this.d21wh}}</td>
+      <td>{{this.d22wh}}</td>
+      <td>{{this.d23wh}}</td>
+      <td>{{this.d24wh}}</td>
+      <td>{{this.d25wh}}</td>
+      <td>{{this.d26wh}}</td>
+      <td>{{this.d27wh}}</td>
+      <td>{{this.d28wh}}</td>
+      <td>{{this.d29wh}}</td>
+      <td>{{this.d30wh}}</td>
+       <td>{{this.d31wh}}</td>
+      <td>{{this.workdays}}</td>
+      <td>{{this.othours}}</td>
+      <td>{{this.basic}}</td>
+      <td>{{this.allowance}}</td>
+      <td>{{this.bonus}}</td>
+      <td>{{this.otsalary}}</td>
+        <td>QAR {{this.totalsalary}}</td>
+      </tr>
       {{/each}}
     </tbody>
     <tbody>
       <tr>
-        <th scope="row" colspan="38" style="text-align: left;">Total: </th>
+        <th scope="row" colspan="38" style="text-align: left;">Total:</th>
         <td colspan="2" style="text-align: right;">QAR {{totalsum.sum}}</td>
       </tr>
     </tbody>
