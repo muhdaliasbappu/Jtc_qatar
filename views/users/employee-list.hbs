@@ -391,110 +391,78 @@ var employeetype;
         }
     }
 
-        $('#submits').click(function () {
-        var selectedOption = $("#todaystatus").val();
-        if (!selectedOption) {
-        alert("Please select a working status.");
-        return false; // Prevent form submission
-        }
-        if (selectedOption === 'Working') {
-                    if (employeetype !== "Own Staff (Operations)" && employeetype !== "Hired Staff (Operations)") {
-                        var projectname1 = $("#projectname1").val();
-                        if (!projectname1) {
-                            alert("Please select Project 1");
-                            return false; // Prevent form submission
-                        }
-                        var workhour1 = $("#workhour1").val();
-                        if (!workhour1) {
-                            alert("Please enter Working Hour for Project 1.");
-                            return false; // Prevent form submission
-                        }
+      var batchData = [];
+var batchTimeout; // Timer handle for the debounce
 
-                        if (numpro === 1) {
-                            var projectname2 = $("#projectname2").val();
-                            if (!projectname2) {
-                                alert("Please select Project 2");
-                                return false; // Prevent form submission
-                            }
-                            var workhour2 = $("#workhour2").val();
-                            if (!workhour2) {
-                                alert("Please enter Working Hour for Project 2.");
-                                return false; // Prevent form submission
-                            }
-                        }
-                        if (numpro === 2) {
-                            var projectname3 = $("#projectname3").val();
-                            if (!projectname3) {
-                                alert("Please select Project 3");
-                                return false; // Prevent form submission
-                            }
-                            var workhour3 = $("#workhour3").val();
-                            if (!workhour3) {
-                                alert("Please enter Working Hour for Project 3");
-                                return false; // Prevent form submission
-                            }
-                        }
-                        if (numpro === 3) {
-                            var projectname4 = $("#projectname4").val();
-                            if (!projectname4) {
-                                alert("Please select Project 4");
-                                return false; // Prevent form submission
-                            }
-                            var workhour4 = $("#workhour4").val();
-                            if (!workhour4) {
-                                alert("Please enter Working Hour for Project 4");
-                                return false; // Prevent form submission
-                            }
-                        }
-                        if (numpro === 4) {
-                            var projectname5 = $("#projectname5").val();
-                            if (!projectname5) {
-                                alert("Please select Project 5");
-                                return false; // Prevent form submission
-                            }
-                            var workhour5 = $("#workhour5").val();
-                            if (!workhour5) {
-                                alert("Please enter Working Hour for Project 5");
-                                return false; // Prevent form submission
-                            }
-                        }
-                    }
-                }
-        
-        var userData = {
-            employee_id: $("#employee_id").val(),
-            surname: $("#hiddensurname").val(),
-            givenName: $("#hiddenemployeeName").val(),
-            datevalue: $("#datevalue").val(),
-            todaystatus: $("#todaystatus").val(),
-            projectname1: $("#projectname1").val(),
-            workhour1: $("#workhour1").val(),
-            projectname2: $("#projectname2").val(),
-            workhour2: $("#workhour2").val(),
-            projectname3: $("#projectname3").val(),
-            workhour3: $("#workhour3").val(),
-            projectname4: $("#projectname4").val(),
-            workhour4: $("#workhour4").val(),
-            projectname5: $("#projectname5").val(),
-            workhour5: $("#workhour5").val(),
-            salarystatus: $("#hiddenesalarystatus").val(),
-           
-        }
+// Function to add data to batch and restart the timer
+function addToBatch(userData) {
+  batchData.push(userData);
 
-        $.ajax({
-            url: '/users/employee-list/',
-            type: 'POST',
-            data: userData,
-            dataType: 'JSON',
-            success: function (data) {
-                $('#submits').prop('disabled', false);
-                nextEmployee();
-            }
-        })
-           
-          var employeeId = $("#employee_id").val();
-    submittedEmployeeIds.push(employeeId);
-    nextEmployee();
-    })
+  // Clear previous timeout and start a new one
+  clearTimeout(batchTimeout);
+  batchTimeout = setTimeout(function() {
+    submitBatch();
+  }, 20000); // 5000 milliseconds = 5 seconds of inactivity
+}
+
+// Function to submit batch data
+function submitBatch() {
+  if (batchData.length === 0) {
+    return; // Nothing to submit
+  }
+  
+  $.ajax({
+    url: '/users/employee-list/batch',
+    type: 'POST',
+    data: JSON.stringify({ timesheets: batchData }),
+    contentType: 'application/json',
+    success: function (response) {
+      alert("Batch submitted successfully!");
+      // Clear the batch after successful submission
+      batchData = [];
+    },
+    error: function (err) {
+      alert("Error submitting batch. Please try again.");
+    }
+  });
+}
+
+// Modified submit handler for each employee
+$('#submits').click(function () {
+  // Perform validation as before...
+
+  var userData = {
+    employee_id: $("#employee_id").val(),
+    surname: $("#hiddensurname").val(),
+    givenName: $("#hiddenemployeeName").val(),
+    datevalue: $("#datevalue").val(),
+    todaystatus: $("#todaystatus").val(),
+    projectname1: $("#projectname1").val(),
+    workhour1: $("#workhour1").val(),
+    projectname2: $("#projectname2").val(),
+    workhour2: $("#workhour2").val(),
+    projectname3: $("#projectname3").val(),
+    workhour3: $("#workhour3").val(),
+    projectname4: $("#projectname4").val(),
+    workhour4: $("#workhour4").val(),
+    projectname5: $("#projectname5").val(),
+    workhour5: $("#workhour5").val(),
+    salarystatus: $("#hiddenesalarystatus").val()
+  };
+
+  // Instead of immediately sending an AJAX request, add the entry to the batch
+  addToBatch(userData);
+
+  // Mark current employee as submitted and move to the next one.
+  var employeeId = $("#employee_id").val();
+  submittedEmployeeIds.push(employeeId);
+  nextEmployee();
+
+  // If we've reached the end of the employees, flush the batch immediately.
+  if (currentIndex >= employees.length) {
+    clearTimeout(batchTimeout);  // Clear any pending timer
+    submitBatch();
+  }
+});
 
 </script>
