@@ -47,6 +47,30 @@ function getthedate() {
 router.get('/', function (req, res, next) {
   res.render('./users/user-login');
 });
+
+function checkAdminSession(req, res, next) {
+  if (req.session.user) {
+    next(); // User is authenticated, proceed to the next middleware or route
+  } else {
+    res.redirect('/'); // Redirect to login page if not authenticated
+  }
+}
+// Apply middleware to all admin routes
+router.use(checkAdminSession);
+// routes/admin.js
+
+// Middleware for checking admin session
+function checkAdminSession(req, res, next) {
+  if (req.session.user) {
+    next(); // Proceed if the admin session exists
+  } else {
+    res.redirect('/'); // Redirect to login if not authenticated
+  }
+}
+
+// Apply middleware to all routes
+router.use(checkAdminSession);
+
 router.get('/employeelist', async function (req, res) {
   if (req.session.users) {
     try {
@@ -295,75 +319,149 @@ router.get('/logout', (req, res) => {
 
 
 //Time sheet upload
-router.post('/users/employee-list/', async (req, res) => {
+// router.post('/users/employee-list/', async (req, res) => {
   
 
    
- let semployee = await employeHelpers.getEmployeeDetails(req.body.employee_id);
+//  let semployee = await employeHelpers.getEmployeeDetails(req.body.employee_id);
 
-  var datasheet = req.body
-  var datevalue = req.body.datevalue
-  let datess = getthedate()
+//   var datasheet = req.body
+//   var datevalue = req.body.datevalue
+//   let datess = getthedate()
 
-  if (datevalue === datess[0].date1) {
-    var dateObj11 = new Date();
-    dateObj11.setDate(dateObj11.getDate() - 1);
-    datasheet.date = dateObj11;
-  } else if (datevalue === datess[0].date2) {
-    var dateObj22 = new Date();
-    dateObj22.setDate(dateObj22.getDate() - 2);
-    datasheet.date = dateObj22;
-  } else {
-    return 0;
-  }
-datasheet.employeeType = semployee.employeeType;
-  const dd = new Date(datasheet.date); 
-  if(dd.getDay() === 5){
-    if(semployee.employeeType === 'Hired Labour (Hourly)'){
-      datasheet.sbasic = '';
-    datasheet.sallowance = '';
-    datasheet.sbonus = ''; 
-    datasheet.srateph = semployee.srateph;
-    datasheet.workinghour = '0';
-    if(datasheet.todaystatus === 'Paid Leave'){
-      datasheet.todaystatus = 'Unpaid Leave'
-    }
-    }else{
-    datasheet.sbasic = semployee.sbasic;
-    datasheet.sallowance = semployee.sallowance;
-    datasheet.sbonus = semployee.sbonus;
-    datasheet.srateph = '';
-    datasheet.workinghour = '0';
-    }
+//   if (datevalue === datess[0].date1) {
+//     var dateObj11 = new Date();
+//     dateObj11.setDate(dateObj11.getDate() - 1);
+//     datasheet.date = dateObj11;
+//   } else if (datevalue === datess[0].date2) {
+//     var dateObj22 = new Date();
+//     dateObj22.setDate(dateObj22.getDate() - 2);
+//     datasheet.date = dateObj22;
+//   } else {
+//     return 0;
+//   }
+// datasheet.employeeType = semployee.employeeType;
+//   const dd = new Date(datasheet.date); 
+//   if(dd.getDay() === 5){
+//     if(semployee.employeeType === 'Hired Labour (Hourly)'){
+//       datasheet.sbasic = '';
+//     datasheet.sallowance = '';
+//     datasheet.sbonus = ''; 
+//     datasheet.srateph = semployee.srateph;
+//     datasheet.workinghour = '0';
+//     if(datasheet.todaystatus === 'Paid Leave'){
+//       datasheet.todaystatus = 'Unpaid Leave'
+//     }
+//     }else{
+//     datasheet.sbasic = semployee.sbasic;
+//     datasheet.sallowance = semployee.sallowance;
+//     datasheet.sbonus = semployee.sbonus;
+//     datasheet.srateph = '';
+//     datasheet.workinghour = '0';
+//     }
 
-  }else{
+//   }else{
 
-if(semployee.employeeType === 'Hired Labour (Hourly)'){
-  datasheet.sbasic = '';
-datasheet.sallowance = '';
-datasheet.sbonus = ''; 
-datasheet.srateph = semployee.srateph;
-datasheet.workinghour = '8';
-if(datasheet.todaystatus === 'Paid Leave'){
-  datasheet.todaystatus = 'Unpaid Leave'
-}
-}else{
-datasheet.sbasic = semployee.sbasic;
-datasheet.sallowance = semployee.sallowance;
-datasheet.sbonus = semployee.sbonus;
-datasheet.srateph = '';
-datasheet.workinghour = '8';
-}
-}
-userHelpers.getTimesheet(datevalue , datasheet.employee_id).then(function (edatasheets) {
-if(edatasheets.length === 0){
-  userHelpers.addDatasheet(datasheet, (result) => {
- })
+// if(semployee.employeeType === 'Hired Labour (Hourly)'){
+//   datasheet.sbasic = '';
+// datasheet.sallowance = '';
+// datasheet.sbonus = ''; 
+// datasheet.srateph = semployee.srateph;
+// datasheet.workinghour = '8';
+// if(datasheet.todaystatus === 'Paid Leave'){
+//   datasheet.todaystatus = 'Unpaid Leave'
+// }
+// }else{
+// datasheet.sbasic = semployee.sbasic;
+// datasheet.sallowance = semployee.sallowance;
+// datasheet.sbonus = semployee.sbonus;
+// datasheet.srateph = '';
+// datasheet.workinghour = '8';
+// }
+// }
+// userHelpers.getTimesheet(datevalue , datasheet.employee_id).then(function (edatasheets) {
+// if(edatasheets.length === 0){
+//   userHelpers.addDatasheet(datasheet, (result) => {
+//  })
   
-}
-})
+// }
+// })
+
+// });
+router.post('/users/employee-list/batch', async (req, res) => {
+  const timesheets = req.body.timesheets; // This is an array of timesheet objects.
+  
+  // Loop through each timesheet entry and process it.
+  for (const datasheet of timesheets) {
+    // Retrieve employee details.
+    let semployee = await employeHelpers.getEmployeeDetails(datasheet.employee_id);
+    
+    // Adjust date as needed using your current logic.
+    var datevalue = datasheet.datevalue;
+    let datess = getthedate();
+    if (datevalue === datess[0].date1) {
+      var dateObj11 = new Date();
+      dateObj11.setDate(dateObj11.getDate() - 1);
+      datasheet.date = dateObj11;
+    } else if (datevalue === datess[0].date2) {
+      var dateObj22 = new Date();
+      dateObj22.setDate(dateObj22.getDate() - 2);
+      datasheet.date = dateObj22;
+    } else {
+      continue;  // Skip processing this entry if date doesn’t match.
+    }
+    
+    datasheet.employeeType = semployee.employeeType;
+    const dd = new Date(datasheet.date); 
+    if (dd.getDay() === 5) {
+      if (semployee.employeeType === 'Hired Labour (Hourly)') {
+        datasheet.sbasic = '';
+        datasheet.sallowance = '';
+        datasheet.sbonus = ''; 
+        datasheet.srateph = semployee.srateph;
+        datasheet.workinghour = '0';
+        if (datasheet.todaystatus === 'Paid Leave') {
+          datasheet.todaystatus = 'Unpaid Leave';
+        }
+      } else {
+        datasheet.sbasic = semployee.sbasic;
+        datasheet.sallowance = semployee.sallowance;
+        datasheet.sbonus = semployee.sbonus;
+        datasheet.srateph = '';
+        datasheet.workinghour = '0';
+      }
+    } else {
+      if (semployee.employeeType === 'Hired Labour (Hourly)') {
+        datasheet.sbasic = '';
+        datasheet.sallowance = '';
+        datasheet.sbonus = ''; 
+        datasheet.srateph = semployee.srateph;
+        datasheet.workinghour = '8';
+        if (datasheet.todaystatus === 'Paid Leave') {
+          datasheet.todaystatus = 'Unpaid Leave';
+        }
+      } else {
+        datasheet.sbasic = semployee.sbasic;
+        datasheet.sallowance = semployee.sallowance;
+        datasheet.sbonus = semployee.sbonus;
+        datasheet.srateph = '';
+        datasheet.workinghour = '8';
+      }
+    }
+
+    // Check if an entry already exists before adding:
+    const edatasheets = await userHelpers.getTimesheet(datevalue, datasheet.employee_id);
+    if (edatasheets.length === 0) {
+      // You can perform a bulk insert here if your database supports it.
+      await userHelpers.addDatasheet(datasheet, (result) => {
+        // Callback logic if needed.
+      });
+    }
+  }
+
 
 });
+
 
 router.get('/employee-data', function (req, res, next) {
 
