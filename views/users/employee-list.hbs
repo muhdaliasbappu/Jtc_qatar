@@ -541,6 +541,13 @@ $('#submits').click(function () {
   nextEmployee();
   
 });
+    window.addEventListener("beforeunload", function (e) {
+  if (batchData.length > 0) {
+    var payload = JSON.stringify({ timesheets: batchData });
+    var blob = new Blob([payload], { type: "application/json" });
+    navigator.sendBeacon('/users/employee-list/batch', blob);
+  }
+});
 
 
 </script> 
