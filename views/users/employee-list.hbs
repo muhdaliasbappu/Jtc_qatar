@@ -275,42 +275,58 @@ var employeetype;
         radioButtons[i].addEventListener("click", handleRadioButtonClick);
     }
     var submittedEmployeeIds = [];
-
-
     function displayEmployee() {
-        var employee = employees[currentIndex];
-        var employeeId = employee._id;
-        if (submittedEmployeeIds.includes(employeeId)) {
-            nextEmployee(); // Skip to the next employee
-            return;
-        }else{
- 
-    
-         document.getElementById("employeeNames").textContent = employee.surname;
-        document.getElementById("employeeName").textContent = employee.givenName;
-        document.getElementById("employeeQID").textContent = employee.qid;
-         document.getElementById("employee_id").value = employee._id;
-        document.getElementById("hiddenemployeeName").value = employee.givenName;
-      document.getElementById("hiddensurname").value = employee.surname;
-        
-        employeetype = employee.employeeType
-          handleRadioButtonClick()
-   }
+  // Check if the employees list is empty
+  if (employees.length === 0) {
+    alert("No employees available.");
+    return;
+  }
+
+  // Use a loop to find the next unsubmitted employee
+  let attempts = 0;
+  while (attempts < employees.length && submittedEmployeeIds.includes(employees[currentIndex]._id)) {
+    currentIndex++;
+    attempts++;
+    // Wrap around if needed
+    if (currentIndex >= employees.length) {
+      currentIndex = 0;
     }
-    
+  }
+  
+  // If all employees are submitted, exit gracefully
+  if (attempts >= employees.length) {
+    clearTimeout(batchTimeout);  // Clear any pending timer
+    submitBatch();
+    return;
+  }
 
-    function nextEmployee() {
-        resetForm()
-        resetTodayStatus()
+  // Now display the unsubmitted employee's details
+  var employee = employees[currentIndex];
+  document.getElementById("employeeNames").textContent = employee.surname;
+  document.getElementById("employeeName").textContent = employee.givenName;
+  document.getElementById("employeeQID").textContent = employee.qid;
+  document.getElementById("employee_id").value = employee._id;
+  document.getElementById("hiddenemployeeName").value = employee.givenName;
+  document.getElementById("hiddensurname").value = employee.surname;
+  employeetype = employee.employeeType;
+  handleRadioButtonClick();
+}
+
+function nextEmployee() {
+  resetForm();
+  resetTodayStatus();
+  
+  // Increment the current index and display the next employee
+  currentIndex++;
+  if (currentIndex >= employees.length) {
+    currentIndex = 0; // Optionally wrap around, or decide to stop if all are submitted
+  }
+  displayEmployee();
+}
 
 
-        currentIndex++;
-        if (currentIndex >= employees.length) {
-            currentIndex = employees.length - 1;
-        }
-        displayEmployee();
 
-    }
+
 
     function previousEmployee() {
         resetForm()
@@ -331,28 +347,27 @@ var employeetype;
         todayStatusSelect.value = "";
     }
     function handleRadioButtonClick() {
-     
-        var selectedOption = document.getElementById("todaystatus").value;
- 
-        // Show or hide the projectFieldset based on the selected option
-        if (selectedOption === "Working") {
-            if (employeetype === "Own Staff (Operations)" || employeetype === "Hired Staff (Operations)"){
-                 projectFieldset.style.display = "none";
-            }else
-            projectFieldset.style.display = "block";
-        } else {
-            projectFieldset.style.display = "none";
-
-            var selects = projectFieldset.getElementsByTagName("select");
-
-            // Clear select values
-            for (var i = 0; i < selects.length; i++) {
-                selects[i].value = "";
-            }
-        }
+  var selectedOption = document.getElementById("todaystatus").value;
+  
+  // Show or hide the projectFieldset based on the selected option
+  if (selectedOption === "Working") {
+    if (employeetype === "Own Staff (Operations)" || employeetype === "Hired Staff (Operations)") {
+      projectFieldset.style.display = "none";
+    } else {
+      projectFieldset.style.display = "block";
     }
+  } else {
+    projectFieldset.style.display = "none";
+    var selects = projectFieldset.getElementsByTagName("select");
+    // Clear select values
+    for (var i = 0; i < selects.length; i++) {
+      selects[i].value = "";
+    }
+  }
+}
 
-
+// Instead of a "click" event, use the "change" event for immediate updates
+document.getElementById("todaystatus").addEventListener("change", handleRadioButtonClick);
 
     var numpro = 0;
     updateProjectVisibility();
@@ -429,7 +444,74 @@ function submitBatch() {
 
 // Modified submit handler for each employee
 $('#submits').click(function () {
-  // Perform validation as before...
+  var selectedOption = $("#todaystatus").val();
+        if (!selectedOption) {
+        alert("Please select a working status.");
+        return false; // Prevent form submission
+        }
+        if (selectedOption === 'Working') {
+                    if (employeetype !== "Own Staff (Operations)" && employeetype !== "Hired Staff (Operations)") {
+                        var projectname1 = $("#projectname1").val();
+                        if (!projectname1) {
+                            alert("Please select Project 1");
+                            return false; // Prevent form submission
+                        }
+                        var workhour1 = $("#workhour1").val();
+                        if (!workhour1) {
+                            alert("Please enter Working Hour for Project 1.");
+                            return false; // Prevent form submission
+                        }
+
+                        if (numpro === 1) {
+                            var projectname2 = $("#projectname2").val();
+                            if (!projectname2) {
+                                alert("Please select Project 2");
+                                return false; // Prevent form submission
+                            }
+                            var workhour2 = $("#workhour2").val();
+                            if (!workhour2) {
+                                alert("Please enter Working Hour for Project 2.");
+                                return false; // Prevent form submission
+                            }
+                        }
+                        if (numpro === 2) {
+                            var projectname3 = $("#projectname3").val();
+                            if (!projectname3) {
+                                alert("Please select Project 3");
+                                return false; // Prevent form submission
+                            }
+                            var workhour3 = $("#workhour3").val();
+                            if (!workhour3) {
+                                alert("Please enter Working Hour for Project 3");
+                                return false; // Prevent form submission
+                            }
+                        }
+                        if (numpro === 3) {
+                            var projectname4 = $("#projectname4").val();
+                            if (!projectname4) {
+                                alert("Please select Project 4");
+                                return false; // Prevent form submission
+                            }
+                            var workhour4 = $("#workhour4").val();
+                            if (!workhour4) {
+                                alert("Please enter Working Hour for Project 4");
+                                return false; // Prevent form submission
+                            }
+                        }
+                        if (numpro === 4) {
+                            var projectname5 = $("#projectname5").val();
+                            if (!projectname5) {
+                                alert("Please select Project 5");
+                                return false; // Prevent form submission
+                            }
+                            var workhour5 = $("#workhour5").val();
+                            if (!workhour5) {
+                                alert("Please enter Working Hour for Project 5");
+                                return false; // Prevent form submission
+                            }
+                        }
+                    }
+                }
 
   var userData = {
     employee_id: $("#employee_id").val(),
@@ -456,13 +538,8 @@ $('#submits').click(function () {
   // Mark current employee as submitted and move to the next one.
   var employeeId = $("#employee_id").val();
   submittedEmployeeIds.push(employeeId);
-  nextEmployee();
-
-  // If we've reached the end of the employees, flush the batch immediately.
-  if (currentIndex >= employees.length) {
-    clearTimeout(batchTimeout);  // Clear any pending timer
-    submitBatch();
-  }
+  
 });
 
-</script>
+
+</script> 
