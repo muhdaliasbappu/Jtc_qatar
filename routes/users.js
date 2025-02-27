@@ -48,28 +48,7 @@ router.get('/', function (req, res, next) {
   res.render('./users/user-login');
 });
 
-function checkAdminSession(req, res, next) {
-  if (req.session.user) {
-    next(); // User is authenticated, proceed to the next middleware or route
-  } else {
-    res.redirect('/'); // Redirect to login page if not authenticated
-  }
-}
-// Apply middleware to all admin routes
-router.use(checkAdminSession);
-// routes/admin.js
 
-// Middleware for checking admin session
-function checkAdminSession(req, res, next) {
-  if (req.session.user) {
-    next(); // Proceed if the admin session exists
-  } else {
-    res.redirect('/'); // Redirect to login if not authenticated
-  }
-}
-
-// Apply middleware to all routes
-router.use(checkAdminSession);
 
 router.get('/employeelist', async function (req, res) {
   if (req.session.users) {
