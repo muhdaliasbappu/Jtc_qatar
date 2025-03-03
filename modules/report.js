@@ -578,17 +578,17 @@ let month = getDaysInMonth(dd);
 let tempwd = 0;
 
 // Handle special February cases:
-if (month === 29 && workday === 29) {
+if (month === 29 && workday+paidL === 29) {
   report.workdays = 29;
   tempwd = 30;
 }
-else if (month === 28 && workday === 28) {
+else if (month === 28 && workday+paidL === 28) {
   report.workdays = 28;
   tempwd = 30;
 }
 else {
   // For months >= 30, default to workday
-  tempwd = workday;
+  tempwd = workday+paidL;
 
   // If it's a 31-day month:
   if (month === 31) {
@@ -1603,17 +1603,17 @@ let month = getDaysInMonth(dd);
 let tempwd = 0;
 
 // Handle special February cases:
-if (month === 29 && workday === 29) {
+if (month === 29 && workday+paidL === 29) {
   report.workdays = 29;
   tempwd = 30;
 }
-else if (month === 28 && workday === 28) {
+else if (month === 28 && workday+paidL === 28) {
   report.workdays = 28;
   tempwd = 30;
 }
 else {
   // For months >= 30, default to workday
-  tempwd = workday;
+  tempwd = workday+paidL;
 
   // If it's a 31-day month:
   if (month === 31) {
