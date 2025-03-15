@@ -56,8 +56,8 @@ const WPSemployeeData = async (searchdate,selectedgroup) => {
                 String(0),                                     // Transportation Allowance
                 String(0),                                     // Over Time Allowance
                 String(thedata.deductionRC),                   // Deduction Reason Code
-                '',                                     // Extra Field 1
-                ''                                      // Extra Field 2
+                '0',                                     // Extra Field 1
+                '0'                                      // Extra Field 2
             ]);
         }
     }
