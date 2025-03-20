@@ -14,7 +14,7 @@ var DayView = require('../modules/DayView')
 var ProjectReport = require('../modules/functions')
 var allprojectreport = require('../modules/project-report')
 const puppeteer = require('puppeteer');
-//var addcron = require('../modules/notcron')
+var addcron = require('../modules/notcron')
 var salarycalc = require('../modules/salarycalc')
 const cron = require('node-cron')
 const dayjs = require('dayjs'); // For date manipulations
@@ -416,6 +416,7 @@ router.post("/datasheet", async function (req, res) {
   try {
     // Parse the date from the request body
     const d = new Date(req.body.searchdate);
+     addcron.cronnotforyou(req.body.searchdate)
 
     // Retrieve the timesheet data by date
     const searchdatasheet = await userHelpers.gettimesheetbydate(d);
