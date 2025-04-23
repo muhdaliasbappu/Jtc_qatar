@@ -24,7 +24,6 @@ properties.forEach(prop => Fstore[prop] = Fstore[prop] || 0);
         const employees = await employeHelpers.getAllemployee();  
         for (let i = 0; i < employees.length; i++) {
 
-          
         if(employees[i].employeeType === 'Own Labour'){
           if(employeeType === 'All'){
             
@@ -35,8 +34,8 @@ properties.forEach(prop => Fstore[prop] = Fstore[prop] || 0);
               thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
               index++;
               thedata.index = index; 
-
               Fstore.ownLabourtotal += Number(thedata.totalsalary);
+
               Fstore.ownLabourOT += Number(thedata.otsalary);
 
               employeereport.push(thedata);
@@ -231,9 +230,7 @@ properties.forEach(prop => Fstore[prop] = Fstore[prop] || 0);
         sum = sum + employeereport[g].totalsalary
        }
        Fstore.Total += Number(sum);
-
-
-
+   
        return { employeereport, sum , Fstore };
 
     },
@@ -408,6 +405,157 @@ let data = await userHelpers.getallworkingoperationdata(month)
      total = total + temp
     }
     return total
+},
+salarycalculateforgroup: async(searchdate , selectedgroup)=>{
+  var employeereport = [];
+  let Fstore = {};
+
+// List of properties to initialize
+const properties = [
+"ownLabourtotal", "ownLabourOT", "HLabourMtotal", "HLabourMOT", 
+"HLabourHtotal", "ownStaffOtotal", "ownStaffOOT", "HStaffOtotal", 
+"HStaffOOT", "OStaffPtotal", "OStaffPOT", "HStaffPtotal", "HStaffPOT","Total"
+];
+
+    let employees = [];
+  
+    let selectedEmployees = await employeHelpers.getGroupbyGroupName(selectedgroup)
+    for(let i = 0; i<selectedEmployees.selectedEmployees.length; i++){
+      let semployee = await employeHelpers.getEmployeeDetails(selectedEmployees.selectedEmployees[i].id);
+      employees.push(semployee)
+
+    }
+// Initialize all properties to 0
+properties.forEach(prop => Fstore[prop] = Fstore[prop] || 0);
+
+  var index = 0
+  let sum = 0;
+  
+  for (let i = 0; i < employees.length; i++) {
+
+  if(employees[i].employeeType === 'Own Labour'){
+  
+      
+      var timesheet = await userHelpers.getDatabByMonthAndEmployee(searchdate, employees[i]._id.toString());    
+      if (timesheet.length > 0) {
+        const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
+        const thedata = await allsalaryreport.salaryreportlabour(searcheddata);
+        thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
+        index++;
+        thedata.index = index; 
+        Fstore.ownLabourtotal += Number(thedata.totalsalary);
+
+        Fstore.ownLabourOT += Number(thedata.otsalary);
+
+        employeereport.push(thedata);
+        }
+    
+
+   }else if(employees[i].employeeType === 'Hired Labour (Monthly)'){
+    
+      
+      var timesheet = await userHelpers.getDatabByMonthAndEmployee(searchdate, employees[i]._id.toString());    
+      if (timesheet.length > 0) {
+        const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
+        const thedata = await allsalaryreport.salaryreportlabour(searcheddata);
+        thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
+        index++;
+        thedata.index = index;
+        Fstore.HLabourMtotal += Number(thedata.totalsalary);
+        Fstore.HLabourMOT += Number(thedata.otsalary);
+        employeereport.push(thedata);
+        }
+   
+
+   }
+   else if(employees[i].employeeType === 'Hired Labour (Hourly)'){    
+      var timesheet = await userHelpers.getDatabByMonthAndEmployee(searchdate, employees[i]._id.toString());   
+      if (timesheet.length > 0) {
+        const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
+      
+        const thedata = await allsalaryreport.salaryreportlabourhourly(searcheddata);
+        thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
+        index++;
+        thedata.index = index;
+        Fstore.HLabourHtotal += Number(thedata.totalsalary);
+        employeereport.push(thedata);
+        } 
+   
+   }else if(employees[i].employeeType ==='Own Staff (Operations)'){
+
+                 
+    var timesheet = await userHelpers.getDatabByMonthAndEmployee(searchdate, employees[i]._id.toString());
+    if (timesheet.length > 0) {
+      const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
+    
+      const thedata = await allsalaryreport.salaryreportoperations(searcheddata);
+      thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
+      index++;
+      thedata.index = index;
+      Fstore.ownStaffOtotal += Number(thedata.totalsalary);
+      Fstore.ownStaffOOT += Number(thedata.otsalary);
+      employeereport.push(thedata);
+      } 
+  }
+  else if(employees[i].employeeType === 'Hired Staff (Operations)'  ){
+       var timesheet = await userHelpers.getDatabByMonthAndEmployee(searchdate, employees[i]._id.toString());
+      if (timesheet.length > 0) {
+      const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
+    const thedata = await allsalaryreport.salaryreportoperations(searcheddata);
+    thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
+    index++;
+    thedata.index = index;
+    Fstore.HStaffOtotal += Number(thedata.totalsalary);
+    Fstore.HStaffOOT += Number(thedata.otsalary);
+    employeereport.push(thedata);    
+      }
+    
+  }else if(employees[i].employeeType === 'Own Staff (Projects)' ){
+
+      
+      var timesheet = await userHelpers.getDatabByMonthAndEmployee(searchdate, employees[i]._id.toString());
+      if (timesheet.length > 0) {
+        const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
+      
+        const thedata = await allsalaryreport.salaryreportoperations(searcheddata);
+        thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
+        index++;
+        thedata.index = index;
+        Fstore.OStaffPtotal += Number(thedata.totalsalary);
+        Fstore.OStaffPOT += Number(thedata.otsalary);
+        employeereport.push(thedata);
+        }
+
+    
+  }
+  else if(employees[i].employeeType === 'Hired Staff (Projects)'){
+
+      var timesheet = await userHelpers.getDatabByMonthAndEmployee(searchdate, employees[i]._id.toString());
+      if (timesheet.length > 0) {
+        const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
+      
+        const thedata = await allsalaryreport.salaryreportoperations(searcheddata);
+        thedata.employeename = employees[i].surname+ ' ' +employees[i].givenName
+        index++;
+        thedata.index = index;
+        Fstore.HStaffPtotal += Number(thedata.totalsalary);
+        Fstore.HStaffPOT += Number(thedata.otsalary);
+        
+        employeereport.push(thedata);
+        }
+
+    
+  }
+ 
+ 
+ }
+ for(let g= 0; g<employeereport.length; g++){
+  sum = sum + employeereport[g].totalsalary
+ }
+ Fstore.Total += Number(sum);
+
+ return { employeereport, sum , Fstore };
+
 },
 
     

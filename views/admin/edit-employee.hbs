@@ -15,20 +15,22 @@
                                        
                                         <div class="tab-content">
                                             <div class="tab-pane show active" id="daterange-picker-preview">
+                                                 <form action="/admin/edit-employee/{{semployee._id}}" method="post">
                                                 <div class="row">
-                                                    <div class="col-lg-6">
-                                                        <!-- Date Range -->
-                                                        <div class="mb-3">
-                                                            <label class="form-label">Surname</label>
-                                                            <input type="text" value="{{semployee.surname}}" class="form-control date"  data-cancel-class="btn-warning" readonly>
-                                                        </div>
-                                                    </div>
-        
+
                                                     <div class="col-lg-6">
                                                         <!-- Date Range Picker With Times -->
                                                         <div class="mb-3">
                                                             <label class="form-label">GivenName</label>
-                                                            <input type="text" value="{{semployee.givenName}}" class="form-control date" readonly >
+                                                            <input class="form-control" value="{{semployee.givenName}}" name="givenName"  placeholder="{{semployee.givenName}}" >    
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-6">
+                                                        <!-- Date Range -->
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Surname</label>
+                                                            <input class="form-control" value="{{semployee.surname}}" name="surname"  placeholder="{{semployee.surname}}" >    
+                                                           
                                                         </div>
                                                     </div>
                                                 </div>
@@ -66,7 +68,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                 <form action="/admin/edit-employee/{{semployee._id}}" method="post">
+                                                
                                                  <div class="row">
                                                     <div class="col-lg-6">
                                                         <!-- Date Range -->

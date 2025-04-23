@@ -107,7 +107,7 @@ router.get("/dashboard", async (req, res) => {
      const counts = await ProjectReport.getCounts();
      let projectbar = await ProjectReport.getMultiCategoryReports();
     let PPerformance = await ProjectReport.getProjectsPerformanceReport();
-    let typeCounts = await employeHelpers.getEmployeeTypeCounts()    
+
     let projectNames = PPerformance.projectNames
 
     res.render("./admin/dashboard", {
@@ -116,7 +116,8 @@ router.get("/dashboard", async (req, res) => {
       PPerformance,
       projectNames, 
       projectbar,
-      typeCounts
+      typeCounts,
+      doc
       
     });
   } catch (error) {
@@ -210,7 +211,7 @@ router.post("/add-employee", function async (req, res) {
       employeHelpers.addemployee(req.body, async (success) => {
         if (success) {
           const logMessage = `New Employee ${req.body.surname} ${req.body.givenName} was added.`;
-          await logHelpers.addlog(logMessage, 'Employee')
+
           let employee = await employeHelpers.getEmployeeDetailswithQID(req.body.qid)
           if(req.body.groupname){
           let groupedEmployee = {}
@@ -244,7 +245,7 @@ router.post("/add-employee", function async (req, res) {
 router.post("/add-project", function (req, res) {
   projectHelpers.addproject(req.body, async () => {
     const logMessage = `New Project ${req.body.projectname} was added.`;
-          await logHelpers.addlog(logMessage, 'Project')
+          await logHelpers.addlog(req,logMessage, 'Project')
     res.render("./admin/add-project", { admin: true });
   });
 });
@@ -254,7 +255,7 @@ router.post("/add-project", function (req, res) {
 router.post("/add-user", function (req, res) {
   userHelpers.adduser(req.body, async () => {
     const logMessage = `New User ${req.body.usernames} was added.`;
-    await logHelpers.addlog(logMessage, 'User')
+    await logHelpers.addlog(req,logMessage, 'User')
     
     res.redirect("/admin/user-setting");
   });
@@ -275,11 +276,11 @@ router.post("/edit-employee/:id", async (req, res) => {
 
     if (semployee.Employeeasigned != req.body.Employeeasigned) {
       const logMessage = `${semployee.surname} ${semployee.givenName} was assigned to ${req.body.Employeeasigned} from ${semployee.Employeeasigned}.`;
-      await logHelpers.addlog(logMessage, 'Employee');
+      await logHelpers.addlog(req,logMessage, 'Employee');
     }
     if (semployee.Employeestatus != req.body.Employeestatus) {
       const logMessage = `${semployee.surname} ${semployee.givenName} working status was changed to ${req.body.Employeestatus}.`;
-      await logHelpers.addlog(logMessage, 'Employee');
+      await logHelpers.addlog(req, logMessage, 'Employee');
     }
    
     res.redirect("/admin/employee");
@@ -306,7 +307,7 @@ router.post("/edit-project/:id", (req, res) => {
   projectHelpers.updateProject(req.params.id, req.body).then(async() => {
 
     const logMessage = `Project: ${req.body.projectname} Status: Changed from  ${req.body.oldstatus} to ${req.body.projectstatus}`;
-    await logHelpers.addlog(logMessage, 'Project')
+    await logHelpers.addlog(req, logMessage, 'Project')
     res.redirect("/admin/projects");
   });
 });
@@ -330,7 +331,7 @@ router.get("/edit-user/:id", async (req, res) => {
 router.post("/edit-user/:id", (req, res) => {
   userHelpers.updateuser(req.params.id, req.body).then(async () => {
     const logMessage = `User: ${req.body.usernames} password was changed.`;
-    await logHelpers.addlog(logMessage, 'User')
+    await logHelpers.addlog(req,logMessage, 'User')
     res.redirect("/admin/user-setting");
   });
 });
@@ -389,7 +390,7 @@ router.post("/edit-admin/:id", async (req, res) => {
     if (response.status) {
       // Set a success message in the session
       warningMessage = `Admin Credentials Reseted successfully!`;
-       await logHelpers.addlog(warningMessage, 'Admin')
+       await logHelpers.addlog(req,warningMessage, 'Admin')
       req.session.destroy();
       res.redirect("/admin");
     } else {
@@ -414,6 +415,7 @@ router.post("/datasheet", async function (req, res) {
   try {
     // Parse the date from the request body
     const d = new Date(req.body.searchdate);
+    // addcron.cronnotforyou(req.body.searchdate)
 
     // Retrieve the timesheet data by date
     const searchdatasheet = await userHelpers.gettimesheetbydate(d);
@@ -575,7 +577,7 @@ router.post("/change-workhour/:date", async function (req, res) {
 const targetDate = req.params.date; // Replace with your target date
 const newWorkingHour = req.body.workhour;
 const logMessage = `Working hours for ${targetDate},have been changed to ${newWorkingHour} `;
-    await logHelpers.addlog(logMessage, 'Timesheet')
+    await logHelpers.addlog(req,logMessage, 'Timesheet')
 if(newWorkingHour > 0){
   userHelpers.updateWorkingHourForDate(targetDate, newWorkingHour);
 
@@ -650,7 +652,7 @@ router.post("/edit-datasheets/:id",async (req, res) => {
   forstoring[1].date = edatasheet.date
 
   const logMessage = `The timesheet for employee ${edatasheet.givenName} ${edatasheet.surname}, dated ${edatasheet.datevalue}, was updated  `;
-  await logHelpers.addlogtimesheet(logMessage, 'eTimesheet', forstoring)
+  await logHelpers.addlogtimesheet(req, logMessage, 'eTimesheet', forstoring)
 
   userHelpers.updateDatasheet(req.params.id, req.body).then(() => {
     res.redirect("/admin/datasheet");
@@ -742,7 +744,7 @@ router.post("/edit-searcheddata/:id",async (req, res) => {
    forstoring[1].date = edatasheet.date
  
    const logMessage = `The timesheet for employee ${edatasheet.givenName} ${edatasheet.surname}, dated ${edatasheet.datevalue}, was updated  `;
-   await logHelpers.addlogtimesheet(logMessage, 'eTimesheet', forstoring)
+   await logHelpers.addlogtimesheet(req,logMessage, 'eTimesheet', forstoring)
  
   
   userHelpers.updateDatasheet(req.params.id, req.body).then(() => {
@@ -849,7 +851,7 @@ sdetails[1].srateph = req.body.srateph;
 
 
   const logMessage = `The salary for employee ${edetail.givenName} ${edetail.surname}, holding QID ${edetail.qid}, was updated for the ${req.body.month} `;
-    await logHelpers.addlogsalary(logMessage, 'Salary', sdetails)
+    await logHelpers.addlogsalary(req,logMessage, 'Salary', sdetails)
   if (req.body.month === 'This Month') {
     reqdate = new Date(Date.UTC(new Date().getFullYear(), new Date().getMonth(), 1));
   } else if (req.body.month === 'Last Month') {
@@ -1040,13 +1042,6 @@ router.post("/project-search", async (req, res) => {
   try {
     const { searchdate } = req.body;
 
-    // Attempt to fetch an existing report from the database.
-    const existingReport = await reportHelpers.getProjectReportByDate(searchdate);
-
-    // If an existing report is found and it is closed, render it directly.
-    if (existingReport && existingReport.salarystatus.toLowerCase() === "close") {
-      const { projectimesheets, sumemployeetype } = existingReport;
-
       if (!projectimesheets || !sumemployeetype) {
         return res.status(500).send("Incomplete report data in the database.");
       }
@@ -1205,7 +1200,7 @@ router.post('/printprojectreport', async (req, res) => {
         }
     
         const logMessage = `Salary report for ${searchdate} closed successfully.`;
-        await logHelpers.addlog(logMessage, 'Employee')
+
         
     
         // 6. Respond to the client with success and warning if any
@@ -1361,10 +1356,7 @@ router.post("/generateWPS", async function (req, res) {
 
     try {
       // Wait for the CSV file to be generated and get the file path
-      const filePath = await WPSHelpers.generateCSV(req.body.searchdate, req.body.selectedgroup)
 
-      // Send the file to the client for download
-      res.download(filePath, 'salaries.csv', (err) => {
           if (err) {
               console.error('Error sending file:', err);
           }
@@ -1672,7 +1664,7 @@ router.post("/generateWPS", async function (req, res) {
 
        })
        const logMessage = `Admin added the timesheet of ${originalDate} for ${req.body.surname} ${req.body.givenName} `;
-        await logHelpers.addlog(logMessage, 'Employee')
+
        res.send(`
         <script>
           alert('Timesheet added successfully!');
@@ -1695,6 +1687,7 @@ router.post("/generateWPS", async function (req, res) {
       
     
   })
+
 
 
 

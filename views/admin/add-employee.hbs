@@ -18,8 +18,9 @@
 <form action="/admin/add-employee" method="POST">
         <img class="mb-4" src="" alt="">
         
-        <input class="form-control" name="surname" id="surname" placeholder="Surname" required>
-        <input class="form-control mt-3" name="givenName" id="givenname" placeholder="Given name" required>
+       
+        <input class="form-control " name="givenName" id="givenname" placeholder="Given name" required>
+   <input class="form-control mt-3" name="surname" id="surname" placeholder="Surname" required>
         <input class="form-control mt-3" type="number" maxlength="11" minlength="11" name="qid" id="qid"
             placeholder="QID">
         <input class="form-control mt-3" name="passno" id="passno" placeholder="Passport No" required>
@@ -272,11 +273,11 @@
                 <option value="">Employee Type</option>
                 <option value="Own Labour">Own Labour</option>
                 <option value="Own Staff (Operations)">Own Staff (Operations)</option>
-                      <option value="Own Staff (Projects)">Own Staff (Projects)</option>
+                <option value="Own Staff (Projects)">Own Staff (Projects)</option>
                 <option value="Hired Labour (Hourly)">Hired Labour (Hourly)</option>
                  <option value="Hired Labour (Monthly)">Hired Labour (Monthly)</option>
                 <option value="Hired Staff (Operations)">Hired Staff (Operations)</option>            
-                      <option value="Hired Staff (Projects)">Hired Staff (Projects)</option>      
+                <option value="Hired Staff (Projects)">Hired Staff (Projects)</option>      
         </select>
         
         <fieldset id="own" style="display:none;">
@@ -291,6 +292,12 @@
             <option value="">Assign To</option>
             {{#each users}}
             <option value="{{this.usernames}}">{{this.usernames}}</option>
+            {{/each}}
+        </select>
+        <select class="form-select mt-3" name="groupname" aria-label=" Default select example" >
+            <option value="">Select Group</option>
+            {{#each groups}}
+            <option value="{{this.groupName}}">{{this.groupName}}</option>
             {{/each}}
         </select>
         <input type="hidden" name="Employeestatus" value="Working">

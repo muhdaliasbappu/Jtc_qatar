@@ -31,13 +31,27 @@
       font-size: 13px;
       margin-bottom: 20px;
       text-align: left; /* Center align the date */
-      border-bottom: 2px solid #000; /* Black line */
+      border-bottom: 1px solid #000; /* Black line */
+    padding-bottom: 10px;
     }
 </style>
 
 <div style="padding-top:10px;">
-  <div class="table-heading">
-    SALARY STATEMENT | MONTH OF {{employeereport.date}}
+ <div style="display: flex; align-items: center; justify-content: space-between;">
+    <!-- Left Logo -->
+    <div class="left-logo">
+      <img src="https://jtcqatar.tickrplus.com/assets/images/logo-white.png" style="height:40px; width:auto;">
+    </div>
+    
+    <!-- Center Heading -->
+    <div class="table-heading" style="flex-grow: 1; text-align: center;">
+      SALARY STATEMENT | MONTH OF {{employeereport.date}}
+    </div>
+    
+    <!-- Right Logo (Replace with your desired logo URL) -->
+    <div class="right-logo">
+      <img src="https://jtcqatar.tickrplus.com/assets/images/companylogo.png" style="height:60px; width:auto;">
+    </div>
   </div>
   <div class="date">Type: {{employeereport.employeeType}}<br>
   Genarated On: {{employeereport.currentDate}}
@@ -80,6 +94,7 @@
       <th>30</th>
       <th>31</th>
       <th>WD</th>
+       <th>TH</th>
       <th>OT</th>
       <th style="width: 5%;">Basic</th>
       <th style="width: 5%;">Allowance</th>
@@ -125,6 +140,7 @@
       <td>{{this.d30wh}}</td>
        <td>{{this.d31wh}}</td>
       <td>{{this.workdays}}</td>
+          <td>{{this.totalhours}}</td>
       <td>{{this.othours}}</td>
       <td>{{this.basic}}</td>
       <td>{{this.allowance}}</td>
@@ -136,9 +152,9 @@
     </tbody>
      <tbody>
     <tr>
-     <th scope="row" colspan="39" >Total: </th>
-     <td >QAR {{totalsum.sum}}</td>
-    </tr>
+     <th scope="row" colspan="38" >Total: </th>
+     <td colspan="2" style="text-align: right;">QAR {{totalsum.sum}}</td>
+    </tr> 
   </tbody>
   </table>
 </div>
@@ -146,6 +162,3 @@
 
                          
 
-
-
-                         

@@ -30,7 +30,15 @@ const hbs = exphbs.create({
     json: function (context) {
       // Ensure the JSON is not escaped by returning a SafeString
       return new Handlebars.SafeString(JSON.stringify(context));
+    },
+    range: function (start, end) {
+      let result = [];
+      for (let i = start; i <= end; i++) {
+        result.push(i);
+      }
+      return result; // Return an array of numbers
     }
+    
   }
 });
 
@@ -46,6 +54,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/assets', express.static(path.join(__dirname, 'assets')));
+
 app.use(session({ 
   secret: "your-secret-key", 
   resave: false, 

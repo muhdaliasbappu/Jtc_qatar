@@ -10,6 +10,8 @@
                                 <div class="page-title-box">
                                  <div style="float: right; margin-top: 20px;">
                                        <a href="/admin/add-employee" class="btn btn-danger rounded-pill mb-3"><i class="mdi mdi-plus"></i> Add Employee</a>
+                                       <a href="/admin/viewgroup" class="btn btn-primary rounded-pill mb-3"><i class=""></i>Groups</a>
+ 
                                     </div>
                                     <h4 class="page-title">Employee List</h4>
                                 </div>
@@ -29,8 +31,9 @@
                                                     <thead>
                                                         <tr>
                                                           <th scope="col">#</th>
-              <th scope="col">Surname</th>
+    
             <th scope="col">Given Name</th>
+             <th scope="col">Surname</th>
             <th scope="col">Passport Number</th>
             <th scope="col">QID</th>
             <th scope="col">Nation</th>
@@ -45,8 +48,8 @@
                                                           {{#each employee}}
         <tr>
             <th scope="row">{{this.index}}</th>
-            <td>{{this.surname}}</td>
             <td>{{this.givenName}}</td>
+           <td>{{this.surname}}</td>
             <td>{{this.passno}}</td>
             <td>{{this.qid}}</td>
             <td>{{this.nation}}</td>
@@ -70,6 +73,7 @@
             <a href="/admin/edit-employee/{{this._id}}" class="action-icon"> <i class="mdi mdi-square-edit-outline"></i></a>
             
             <a href="/admin/datasearch/{{this._id}}" class="action-icon">  <i class="mdi mdi-clipboard-text-clock"></i></a>
+            <a href="/admin/add-datasheet/{{this._id}}" class="action-icon">  <i class="ri-file-add-fill"></i></a>
 
             </td>
 

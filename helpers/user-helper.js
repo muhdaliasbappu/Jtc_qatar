@@ -1,11 +1,28 @@
 var db = require('../config/connection')
+const bcrypt = require("bcrypt");
+const saltRounds = 10; // You can adjust the number of salt rounds as needed
+const { ObjectId } = require('mongodb');
+
 var objectId = require('mongodb').ObjectId
 module.exports = {
     adduser: (user, callback) => {
-        db.get().collection('user').insertOne(user).then((data) => {
-            callback(true)
-        })
+        bcrypt.hash(user.passwords, saltRounds, (err, hash) => {
+            if (err) {
+                console.error("Error hashing password:", err);
+                return callback(false);
+            }
+            user.passwords = hash;
+            db.get().collection('user').insertOne(user)
+                .then((data) => {
+                    callback(true);
+                })
+                .catch((error) => {
+                    console.error("Error inserting user:", error);
+                    callback(false);
+                });
+        });
     },
+
     getAlluser: () => {
         return new Promise(async (resolve, reject) => {
             let user = await db.get().collection('user').find().toArray()
@@ -14,46 +31,64 @@ module.exports = {
     },
     uLogin: (userData) => {
         return new Promise(async (resolve, reject) => {
-            let loginStatus = false
-            let response = {}
-            let user = await db.get().collection('user').findOne({ usernames: userData.usernames })
+            let response = {};
+            let user = await db.get().collection('user').findOne({ usernames: userData.usernames });
             if (user) {
-                if (user.passwords == userData.passwords) {
-                    response.user = user
-                    response.status = true
-                    resolve(response)
-                } else {
-                    resolve({
-                        status: false
-                    })
-                }
+                bcrypt.compare(userData.passwords, user.passwords, (err, result) => {
+                    if (err) {
+                        console.error("Error comparing passwords:", err);
+                        return resolve({ status: false });
+                    }
+                    if (result) {
+                        response.user = user;
+                        response.status = true;
+                        resolve(response);
+                    } else {
+                        resolve({ status: false });
+                    }
+                });
+            } else {
+                resolve({ status: false });
             }
-            else {
-                resolve({ status: false })
-            }
-        })
+        });
     },
+    
     getuserDetails: (userId) => {
-
         return new Promise((resolve, reject) => {
-            db.get().collection('user').findOne({ _id: new objectId(userId) }).then((user) => {
-                resolve(user)
+          db.get().collection('user')
+            .findOne({ _id: new ObjectId(userId) })
+            .then((user) => {
+              if (user) {
+                // Remove the password field before returning the user object
+                delete user.passwords;
+              }
+              resolve(user);
             })
-        })
-    },
+            .catch((error) => {
+              reject(error);
+            });
+        });
+      },
     updateuser: (userId, userDetails) => {
-
-        return new Promise((resolve, reject) => {
-            db.get().collection('user').updateOne({ _id: new objectId(userId) }, {
-                $set: {
-                    usernames: userDetails.usernames,
-                    passwords: userDetails.passwords
-                }
-            }).then((response) => {
-                resolve()
-            })
-        })
-    },
+        return new Promise(async (resolve, reject) => {
+          try {
+            // If a new password is provided, hash it first
+            if (userDetails.passwords) {
+              userDetails.passwords = await bcrypt.hash(userDetails.passwords, saltRounds);
+            }
+            
+            // Update the user document with the new details
+            let response = await db.get().collection('user').updateOne(
+              { _id: new ObjectId(userId) },
+              { $set: userDetails }
+            );
+            
+            resolve(response);
+          } catch (err) {
+            reject(err);
+          }
+        });
+      },
     deleteuser: (userId) => {
         return new Promise((resolve, reject) => {
             db.get().collection('user').deleteOne({ _id: new objectId(userId) }).then((response) => {

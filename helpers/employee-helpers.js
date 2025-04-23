@@ -24,10 +24,21 @@ module.exports = {
             })
         })
     },
+    getEmployeeDetailswithQID: (QID) => {
+
+        return new Promise((resolve, reject) => {
+            db.get().collection('employee').findOne({ qid: QID }).then((employee) => {
+                resolve(employee)
+            })
+        })
+    },
+    
     updateEmployee: (empId, empDetails) => {
         return new Promise((resolve, reject) => {
             db.get().collection('employee').updateOne({ _id: new ObjectId(empId) }, {
                 $set: {
+                    surname: empDetails.surname,
+                    givenName: empDetails.givenName,
                     Employeestatus: empDetails.Employeestatus,
                     Employeeasigned: empDetails.Employeeasigned,
                     employeeBank: empDetails.employeeBank,
@@ -115,8 +126,110 @@ module.exports = {
             throw error;
         }
     },
+    getEmployeesByType: async (employeeTypes) => {
+        try {
+            
+    
+            // If you only want active (e.g. "Working") employees, include "Employeestatus: 'Working'" in the $match.
+            // For example:
+            // { $match: { employeeType: { $in: employeeTypes }, Employeestatus: "Working" } }
+    
+            const employees = await db.get()
+                .collection('employee')
+                .aggregate([
+                    { 
+                        $match: { 
+                            $and: [
+                                { employeeType: { $in: employeeTypes } },
+                                { Employeestatus: { $ne: "Dismissed" } }
+                            ]
+                        } 
+                    }
+                ])
+                .toArray();
+    
+            return employees;
+        } catch (error) {
+            console.error("Error fetching employees by type:", error);
+            throw error;
+        }
+    },
+    addGroup: (group ) => {
+
+        db.get().collection('employeeGroup').insertOne(group).then((data) => {
+            
+        })
+    },
+    getAllgroups: () => {
+        return new Promise(async (resolve, reject) => {
+            let groups = await db.get().collection('employeeGroup').find().toArray()
+           
+            resolve(groups)
+        })
+    },
+    getGroupbyGroupName: (groupName) => {
+        return new Promise((resolve, reject) => {
+            db.get().collection('employeeGroup').findOne({ groupName: groupName }).then((group) => {
+                resolve(group)
+            })
+        })
+    },
+    addEmployeeToGroup: (groupName, newEmployee) => {
+        return new Promise((resolve, reject) => {
+          db.get().collection('employeeGroup')
+            .updateOne(
+              { groupName: groupName },              // Query to find the correct group document
+              { $push: { selectedEmployees: newEmployee } }  // Push new employee object into the array
+            )
+            .then(result => resolve(result))
+            .catch(error => reject(error));
+        });
+      },
+      getGroupDetailswithID: (groupID) => {
+        return new Promise((resolve, reject) => {
+            db.get().collection('employeeGroup').findOne({ _id: new ObjectId(groupID) }).then((group) => {
+                resolve(group)
+            })
+        })
+    },
+      
+   
+      updateGroup: (groupId, groupedEmployees, groupName) => {
+        return new Promise((resolve, reject) => {
+          db.get().collection('employeeGroup')
+            .updateOne(
+              { _id: new ObjectId(groupId) },
+              {
+                $set: {
+                  groupName: groupName,
+                  selectedEmployees: groupedEmployees.selectedEmployees  // Set the array directly
+                }
+              }
+            )
+            .then(result => resolve(result))
+            .catch(error => reject(error));
+        });
+      },
+      addEmployeeCount: (employeec) => {
+
+        db.get().collection('employeecount').insertOne(employeec)
+    },
+    getEmployeeCount: () => {
+        // Using findOne since we expect only one document
+        return db.get().collection('employeecount').findOne({});
+      },
+    
+
+      updateEmployeeCount: (data) => {
+        return db
+          .get()
+          .collection('employeecount')
+          .updateOne({}, { $set: data }, { upsert: true });
+      }
+
+
+      
     
     
 
 }
-

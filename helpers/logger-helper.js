@@ -2,10 +2,7 @@ const async = require('hbs/lib/async')
 var db = require('../config/connection')
 var objectId = require('mongodb').ObjectId
 const { ObjectId } = require("mongodb");
-const os = require('os');
-const getMacAddresses = () => {
-  const interfaces = os.networkInterfaces();
-  const macAddresses = [];
+
 
   // Loop through the network interfaces and extract non-internal MAC addresses
   for (const interfaceName in interfaces) {
@@ -26,19 +23,7 @@ module.exports = {
 
  
   
-addlog :(Message, type) => {
-    const date = new Date(); // Example: Sat Jan 04 2025 10:29:22 GMT+0300 (Arabian Standard Time)
-    const dateStr = date.toString().split(' GMT')[0];
-  
-    // Retrieve system details including MAC addresses
-    const systemDetails = {
-      platform: os.platform(),      // e.g., 'win32', 'linux'
-      release: os.release(),        // OS version
-      arch: os.arch(),              // e.g., 'x64', 'arm'
-      hostname: os.hostname(),      // Hostname of the system
-      macAddresses: getMacAddresses() // Array of MAC addresses
-    };
-  
+
     const logEntry = {
       Timestamp: dateStr,
       Message,
@@ -65,17 +50,11 @@ addlog :(Message, type) => {
             }
         });
     },
-    addlogsalary: (Message, type, sdetails) => {
+    addlogsalary: (req,Message, type, sdetails) => {
         const date = new Date(); // Example: Sat Jan 04 2025 10:29:22 GMT+0300 (Arabian Standard Time)
         const dateStr = date.toString().split(' GMT')[0];
         
-        const systemDetails = {
-          platform: os.platform(),      // e.g., 'win32', 'linux'
-          release: os.release(),        // OS version
-          arch: os.arch(),              // e.g., 'x64', 'arm'
-          hostname: os.hostname(),      // Hostname of the system
-          macAddresses: getMacAddresses() // Array of MAC addresses
-        };
+
         const fstoreObj = {
           Timestamp: dateStr,
           Message: Message,
@@ -92,16 +71,10 @@ addlog :(Message, type) => {
           .collection('logger')
           .insertOne(fstoreObj);
       },
-      addlogtimesheet: (Message, type, forstoring) => {
+      addlogtimesheet: (req,Message, type, forstoring) => {
         const date = new Date(); // Example: Sat Jan 04 2025 10:29:22 GMT+0300 (Arabian Standard Time)
         const dateStr = date.toString().split(' GMT')[0];
-        const systemDetails = {
-          platform: os.platform(),      // e.g., 'win32', 'linux'
-          release: os.release(),        // OS version
-          arch: os.arch(),              // e.g., 'x64', 'arm'
-          hostname: os.hostname(),      // Hostname of the system
-          macAddresses: getMacAddresses() // Array of MAC addresses
-        };
+
         const fstoreObj = {
           Timestamp: dateStr,
           Message: Message,
