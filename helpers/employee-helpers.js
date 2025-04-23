@@ -37,6 +37,8 @@ module.exports = {
         return new Promise((resolve, reject) => {
             db.get().collection('employee').updateOne({ _id: new ObjectId(empId) }, {
                 $set: {
+                    surname: empDetails.surname,
+                    givenName: empDetails.givenName,
                     Employeestatus: empDetails.Employeestatus,
                     Employeeasigned: empDetails.Employeeasigned,
                     employeeBank: empDetails.employeeBank,
