@@ -1042,6 +1042,13 @@ router.post("/project-search", async (req, res) => {
   try {
     const { searchdate } = req.body;
 
+    // Attempt to fetch an existing report from the database.
+    const existingReport = await reportHelpers.getProjectReportByDate(searchdate);
+
+    // If an existing report is found and it is closed, render it directly.
+    if (existingReport && existingReport.salarystatus.toLowerCase() === "close") {
+      const { projectimesheets, sumemployeetype } = existingReport;
+
       if (!projectimesheets || !sumemployeetype) {
         return res.status(500).send("Incomplete report data in the database.");
       }
@@ -1083,8 +1090,6 @@ router.post("/project-search", async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 });
-
-
 router.post('/printprojectreport', async (req, res) => {
 
   const sumemployeetype = JSON.parse(req.body.sumemployeetype);
