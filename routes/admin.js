@@ -107,7 +107,8 @@ router.get("/dashboard", async (req, res) => {
      const counts = await ProjectReport.getCounts();
      let projectbar = await ProjectReport.getMultiCategoryReports();
     let PPerformance = await ProjectReport.getProjectsPerformanceReport();
-
+    let typeCounts = await employeHelpers.getEmployeeTypeCounts()   
+    let doc = await employeHelpers.getEmployeeCount(); 
     let projectNames = PPerformance.projectNames
 
     res.render("./admin/dashboard", {
@@ -125,7 +126,6 @@ router.get("/dashboard", async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 });
-
 
 
 //employee list
