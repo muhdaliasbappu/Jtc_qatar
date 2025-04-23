@@ -107,8 +107,7 @@ router.get("/dashboard", async (req, res) => {
      const counts = await ProjectReport.getCounts();
      let projectbar = await ProjectReport.getMultiCategoryReports();
     let PPerformance = await ProjectReport.getProjectsPerformanceReport();
-    let typeCounts = await employeHelpers.getEmployeeTypeCounts()   
-    let doc = await employeHelpers.getEmployeeCount(); 
+
     let projectNames = PPerformance.projectNames
 
     res.render("./admin/dashboard", {
@@ -212,7 +211,7 @@ router.post("/add-employee", function async (req, res) {
       employeHelpers.addemployee(req.body, async (success) => {
         if (success) {
           const logMessage = `New Employee ${req.body.surname} ${req.body.givenName} was added.`;
-          await logHelpers.addlog(req,logMessage, 'Employee')
+
           let employee = await employeHelpers.getEmployeeDetailswithQID(req.body.qid)
           if(req.body.groupname){
           let groupedEmployee = {}
@@ -1043,13 +1042,6 @@ router.post("/project-search", async (req, res) => {
   try {
     const { searchdate } = req.body;
 
-    // Attempt to fetch an existing report from the database.
-    const existingReport = await reportHelpers.getProjectReportByDate(searchdate);
-
-    // If an existing report is found and it is closed, render it directly.
-    if (existingReport && existingReport.salarystatus.toLowerCase() === "close") {
-      const { projectimesheets, sumemployeetype } = existingReport;
-
       if (!projectimesheets || !sumemployeetype) {
         return res.status(500).send("Incomplete report data in the database.");
       }
@@ -1208,7 +1200,7 @@ router.post('/printprojectreport', async (req, res) => {
         }
     
         const logMessage = `Salary report for ${searchdate} closed successfully.`;
-        await logHelpers.addlog(req,logMessage, 'Employee')
+
         
     
         // 6. Respond to the client with success and warning if any
@@ -1364,10 +1356,7 @@ router.post("/generateWPS", async function (req, res) {
 
     try {
       // Wait for the CSV file to be generated and get the file path
-      const { filePath, fileName } = await WPSHelpers.generateCSV(req.body.searchdate, req.body.selectedgroup);
 
-      // Send the file to the client for download using the dynamic file name
-      res.download(filePath, fileName, (err) => {
           if (err) {
               console.error('Error sending file:', err);
           }
@@ -1675,7 +1664,7 @@ router.post("/generateWPS", async function (req, res) {
 
        })
        const logMessage = `Admin added the timesheet of ${originalDate} for ${req.body.surname} ${req.body.givenName} `;
-        await logHelpers.addlog(req,logMessage, 'Employee')
+
        res.send(`
         <script>
           alert('Timesheet added successfully!');
@@ -1699,36 +1688,6 @@ router.post("/generateWPS", async function (req, res) {
     
   })
 
-  cron.schedule('00 50 23 * * 4', async () => {
- 
-      try {
-        // Get the current working employees count
-        const counts =  ProjectReport.getCounts();
-   
-        // Retrieve the existing document (if any)
-        let doc = await employeHelpers.getEmployeeCount();
-        let updatedCounts;
-    
-        if (doc && Array.isArray(doc.counts)) {
-          // If the document exists, add the new count to the existing counts array
-          updatedCounts = doc.counts;
-          updatedCounts.push(counts.workingemployees);
-    
-          // Keep only the latest 12 counts
-          if (updatedCounts.length > 12) {
-            updatedCounts = updatedCounts.slice(updatedCounts.length - 12);
-          }
-        } else {
-          // If no document exists, initialize with 11 zeros and the current count as the 12th entry
-          updatedCounts = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, counts.workingemployees];
-        }
-        // Update the document in the collection (or create one if it doesn't exist)
-        await employeHelpers.updateEmployeeCount({ counts: updatedCounts });
-      } catch (error) {
-        console.error('Error in scheduled tasks:', error);
-      }
-    });
-    
 
 
 

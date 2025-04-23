@@ -4,28 +4,26 @@ var objectId = require('mongodb').ObjectId
 const { ObjectId } = require("mongodb");
 
 
+  // Loop through the network interfaces and extract non-internal MAC addresses
+  for (const interfaceName in interfaces) {
+    const addresses = interfaces[interfaceName];
+    for (const addrInfo of addresses) {
+      // Only consider non-internal (i.e., external) interfaces
+      if (!addrInfo.internal && addrInfo.mac && addrInfo.mac !== '00:00:00:00:00:00') {
+        macAddresses.push(addrInfo.mac);
+      }
+    }
+  }
+  
+  return macAddresses;
+};
+
 module.exports = {
 
 
  
   
-addlog :(req, Message, type) => {
-    const date = new Date(); // Example: Sat Jan 04 2025 10:29:22 GMT+0300 (Arabian Standard Time)
-    const dateStr = date.toString().split(' GMT')[0];
-    
 
-    const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-
-    // Get the user agent from the headers
-    const userAgent = req.headers['user-agent'];
-  
-    // Optionally, include additional client-side details if available
-    const systemDetails = {
-      ip,
-      userAgent,
-      // You might also include any authenticated user details:
-      // userId: req.user ? req.user.id : 'unknown'
-    };
     const logEntry = {
       Timestamp: dateStr,
       Message,
@@ -56,18 +54,7 @@ addlog :(req, Message, type) => {
         const date = new Date(); // Example: Sat Jan 04 2025 10:29:22 GMT+0300 (Arabian Standard Time)
         const dateStr = date.toString().split(' GMT')[0];
         
-        const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 
-        // Get the user agent from the headers
-        const userAgent = req.headers['user-agent'];
-      
-        // Optionally, include additional client-side details if available
-        const systemDetails = {
-          ip,
-          userAgent,
-          // You might also include any authenticated user details:
-          // userId: req.user ? req.user.id : 'unknown'
-        };
         const fstoreObj = {
           Timestamp: dateStr,
           Message: Message,
@@ -87,18 +74,7 @@ addlog :(req, Message, type) => {
       addlogtimesheet: (req,Message, type, forstoring) => {
         const date = new Date(); // Example: Sat Jan 04 2025 10:29:22 GMT+0300 (Arabian Standard Time)
         const dateStr = date.toString().split(' GMT')[0];
-        const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 
-        // Get the user agent from the headers
-        const userAgent = req.headers['user-agent'];
-      
-        // Optionally, include additional client-side details if available
-        const systemDetails = {
-          ip,
-          userAgent,
-          // You might also include any authenticated user details:
-          // userId: req.user ? req.user.id : 'unknown'
-        };
         const fstoreObj = {
           Timestamp: dateStr,
           Message: Message,
