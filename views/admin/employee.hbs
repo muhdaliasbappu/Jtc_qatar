@@ -31,8 +31,9 @@
                                                     <thead>
                                                         <tr>
                                                           <th scope="col">#</th>
-              <th scope="col">Surname</th>
+    
             <th scope="col">Given Name</th>
+             <th scope="col">Surname</th>
             <th scope="col">Passport Number</th>
             <th scope="col">QID</th>
             <th scope="col">Nation</th>
@@ -47,8 +48,8 @@
                                                           {{#each employee}}
         <tr>
             <th scope="row">{{this.index}}</th>
-            <td>{{this.surname}}</td>
             <td>{{this.givenName}}</td>
+           <td>{{this.surname}}</td>
             <td>{{this.passno}}</td>
             <td>{{this.qid}}</td>
             <td>{{this.nation}}</td>
