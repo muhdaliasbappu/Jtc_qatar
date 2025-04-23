@@ -39,7 +39,7 @@ const WPSemployeeData = async (searchdate,selectedgroup) => {
                 String(i + 1),                                  // Record Sequence
                 String(employees[i].qid),                      // Employee QID
                 '',                                             // Employee Visa ID
-                String(employees[i].surname + ' ' + employees[i].givenName), // Employee Name
+                String(employees[i].givenName + ' ' + employees[i].surname), // Employee Name
                 String(employees[i].employeeBank),             // Employee Bank Short Name
                 String(employees[i].employeeAccountN),         // Employee Account
                 'M',                                            // Salary Frequency
