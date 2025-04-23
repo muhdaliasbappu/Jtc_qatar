@@ -1361,7 +1361,10 @@ router.post("/generateWPS", async function (req, res) {
 
     try {
       // Wait for the CSV file to be generated and get the file path
+      const { filePath, fileName } = await WPSHelpers.generateCSV(req.body.searchdate, req.body.selectedgroup);
 
+      // Send the file to the client for download using the dynamic file name
+      res.download(filePath, fileName, (err) => {
           if (err) {
               console.error('Error sending file:', err);
           }
@@ -1372,6 +1375,8 @@ router.post("/generateWPS", async function (req, res) {
   }
   res.render("./admin/generateWPS", { admin: true });
 })
+
+
 
 
 
