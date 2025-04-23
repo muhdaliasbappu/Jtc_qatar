@@ -1,109 +1,121 @@
+const async = require('hbs/lib/async')
 var db = require('../config/connection')
-var userHelpers = require("../helpers/user-helper");
 var objectId = require('mongodb').ObjectId
+const { ObjectId } = require("mongodb");
+
+
 module.exports = {
-    addproject: (project, callback) => {
-        db.get().collection('project').insertOne(project).then((data) => {
-            callback(true)
-        })
-    },
-    getAllproject: () => {
-        return new Promise(async (resolve, reject) => {
-            let project = await db.get().collection('project').find().toArray()
-            resolve(project)
-        })
-    },
-    getProjectDetails: (proId) => {
 
-        return new Promise((resolve, reject) => {
-            db.get().collection('project').findOne({ _id: new objectId(proId) }).then((project) => {
 
-                resolve(project)
-            })
-        })
-    },
-  updateProject: (proId, proDetails) => {
-        return new Promise((resolve, reject) => {
-            // Initialize the updateFields with projectstatus
-            const updateFields = {
-                projectstatus: proDetails.projectstatus
-            };
+ 
+  
+addlog :(req, Message, type) => {
+    const date = new Date(); // Example: Sat Jan 04 2025 10:29:22 GMT+0300 (Arabian Standard Time)
+    const dateStr = date.toString().split(' GMT')[0];
     
-            // Conditional logic based on the new projectstatus
-            if (proDetails.projectstatus === 'Completed') {
-                // If status is 'Completed', set completedDate to current date
-                updateFields.completedDate = new Date();
-            } else if (proDetails.projectstatus === 'Ongoing') {
-                // If status is 'Ongoing', remove the completedDate field
-                updateFields.completedDate = ""; // Placeholder; actual removal is handled below
-            }
-    
-            // Prepare the update document
-            let updateDoc = { $set: { projectstatus: proDetails.projectstatus } };
-    
-            if (proDetails.projectstatus === 'Completed') {
-                updateDoc.$set.completedDate = new Date();
-            } else if (proDetails.projectstatus === 'Ongoing') {
-                updateDoc.$unset = { completedDate: "" };
-            }
-    
-            // Perform the update operation
-            db.get().collection('project').updateOne(
-                { _id: new objectId(proId) },
-                updateDoc
-            )
-            .then((response) => {
-                if (response.modifiedCount > 0) {
-                    resolve({ success: true, message: 'Project updated successfully.' });
-                } else {
-                    resolve({ success: false, message: 'No changes made to the project.' });
-                }
-            })
-            .catch((error) => {
-                console.error('Error updating project:', error);
-                reject({ success: false, message: 'Failed to update the project.', error });
-            });
-        });
-    },
-    deleteProject: (proId) => {
-        return new Promise((resolve, reject) => {
-            db.get().collection('project').deleteOne({ _id: new objectId(proId) }).then((response) => {
-                resolve(response)
-            })
-        })
-    },
-    projecttimesheet: async(month , project , employeetype) => {
-        let projectimesheet = await userHelpers.getDatabByproject1(month , project , employeetype);
-        projectimesheet.push(...await userHelpers.getDatabByproject2(month , project , employeetype))
-        projectimesheet.push(...await userHelpers.getDatabByproject3(month , project , employeetype))
-        projectimesheet.push(...await userHelpers.getDatabByproject4(month , project , employeetype))
-        projectimesheet.push(...await userHelpers.getDatabByproject5(month , project , employeetype))
-        return projectimesheet;
-    },
-    projecttimesheetdtd: async(month , project , employeetype) => {
-    
-        let projectimesheet = await userHelpers.getDatabByproject1dtd(month , project , employeetype);
-        projectimesheet.push(...await userHelpers.getDatabByproject2dtd(month , project , employeetype))
-        projectimesheet.push(...await userHelpers.getDatabByproject3dtd(month , project , employeetype))
-        projectimesheet.push(...await userHelpers.getDatabByproject4dtd(month , project , employeetype))
-        projectimesheet.push(...await userHelpers.getDatabByproject5dtd(month , project , employeetype))
-        return projectimesheet;
-    },
-    getOngoingProjectCount: () => {
+
+    const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+
+    // Get the user agent from the headers
+    const userAgent = req.headers['user-agent'];
+  
+    // Optionally, include additional client-side details if available
+    const systemDetails = {
+      ip,
+      userAgent,
+      // You might also include any authenticated user details:
+      // userId: req.user ? req.user.id : 'unknown'
+    };
+    const logEntry = {
+      Timestamp: dateStr,
+      Message,
+      type,
+      systemDetails  // Append system details here
+    };
+  
+    // Return a Promise that resolves to the result of insertOne
+    return db.get()
+      .collection('logger')
+      .insertOne(logEntry);
+  },
+  
+      getAllLog: () => {
         return new Promise(async (resolve, reject) => {
             try {
-                const count = await db.get()
-                    .collection('project')
-                    .countDocuments({ projectstatus: "Ongoing" }); // Filter by projectstatus "Ongoing"
-                
-                resolve(count); // Return the count
+                const logs = await db.get().collection('logger')
+                    .find()
+                    .sort({ timestamp: -1 }) // Sort by timestamp descending
+                    .toArray();
+                resolve(logs);
             } catch (error) {
-                console.error("Error fetching ongoing project count:", error);
-                reject(error); // Reject the promise if there’s an error
+                reject(error);
             }
         });
-    }
+    },
+    addlogsalary: (req,Message, type, sdetails) => {
+        const date = new Date(); // Example: Sat Jan 04 2025 10:29:22 GMT+0300 (Arabian Standard Time)
+        const dateStr = date.toString().split(' GMT')[0];
+        
+        const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+
+        // Get the user agent from the headers
+        const userAgent = req.headers['user-agent'];
+      
+        // Optionally, include additional client-side details if available
+        const systemDetails = {
+          ip,
+          userAgent,
+          // You might also include any authenticated user details:
+          // userId: req.user ? req.user.id : 'unknown'
+        };
+        const fstoreObj = {
+          Timestamp: dateStr,
+          Message: Message,
+          type: type,
+          isSalary: true,
+          old: sdetails[0],
+          new: sdetails[1],
+          systemDetails:systemDetails 
+
+        };
     
+        // Return a Promise that resolves to the result of insertOne
+        return db.get()
+          .collection('logger')
+          .insertOne(fstoreObj);
+      },
+      addlogtimesheet: (req,Message, type, forstoring) => {
+        const date = new Date(); // Example: Sat Jan 04 2025 10:29:22 GMT+0300 (Arabian Standard Time)
+        const dateStr = date.toString().split(' GMT')[0];
+        const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+
+        // Get the user agent from the headers
+        const userAgent = req.headers['user-agent'];
+      
+        // Optionally, include additional client-side details if available
+        const systemDetails = {
+          ip,
+          userAgent,
+          // You might also include any authenticated user details:
+          // userId: req.user ? req.user.id : 'unknown'
+        };
+        const fstoreObj = {
+          Timestamp: dateStr,
+          Message: Message,
+          type: type,
+          isTimesheet: true,
+          old: forstoring[0],
+          new: forstoring[1],
+          systemDetails:systemDetails 
+        };
+    
+        // Return a Promise that resolves to the result of insertOne
+        return db.get()
+          .collection('logger')
+          .insertOne(fstoreObj);
+      }
+
+
+
 
 }
-
