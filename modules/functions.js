@@ -5,6 +5,7 @@ var adminHelpers = require("../helpers/admin-helper");
 var userHelpers = require("../helpers/user-helper");
 var reportHelpers = require("../helpers/report-helpers");
 
+
 var DayView = require('./DayView')
 
 var allprojectreport = require('./project-report')
@@ -274,7 +275,7 @@ getCounts: () => {
     // Define "overall" as from the earliest available month to the current month
     // You can adjust the start date based on your data availability
     // For demonstration, let's assume data starts from "2020-01"
-    const overallStart = dayjs("2020-01", "YYYY-MM"); // Example start date
+    const overallStart = dayjs("2023-12", "YYYY-MM"); // Example start date
     const overallEnd = dayjs().format("YYYY-MM");
     const overallMonthsRange = getMonthsInRange(
       overallStart.format("YYYY-MM"),
