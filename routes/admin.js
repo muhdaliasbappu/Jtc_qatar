@@ -1735,13 +1735,13 @@ router.post("/generateWPS", async function (req, res) {
       if (existingDetails) {
         // If details exist, update them.
         adminHelpers.updateCompanyDetails(req.body, (success) => {
+          res.redirect("/admin/dashboard");
 
-          res.redirect("/admin/company-details");
         });
       } else {
         // If no details exist, insert new details.
         adminHelpers.addcompanydetails(req.body, (success) => {
-          res.redirect("/admin/company-details");
+          res.redirect("/admin/dashboard");
         });
       }
     });
