@@ -1697,16 +1697,7 @@ router.post("/generateWPS", async function (req, res) {
       
     
   })
- router.get("/company-details", async (req, res, next) => {
-        try {
-          let details = await adminHelpers.getCompanyDetails();
-      
-          res.render("admin/companydetails", { admin: true, details});
-        } catch (error) {
-          next(error);
-        }
-      
-    });
+
     router.get("/admin-Clogin", function (req, res, next) {
   
       res.render("./admin/admin-Clogin", { admin: true });
