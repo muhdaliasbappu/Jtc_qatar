@@ -1697,6 +1697,66 @@ router.post("/generateWPS", async function (req, res) {
       
     
   })
+ router.get("/company-details", async (req, res, next) => {
+        try {
+          let details = await adminHelpers.getCompanyDetails();
+      
+          res.render("admin/companydetails", { admin: true, details});
+        } catch (error) {
+          next(error);
+        }
+      
+    });
+    router.get("/admin-Clogin", function (req, res, next) {
+  
+      res.render("./admin/admin-Clogin", { admin: true });
+    
+  });
+
+  
+  router.post("/admin-Clogin", async (req, res) => {
+    try {
+      // Call your login helper
+      const response = await adminHelpers.doLogin(req.body);
+      
+      if (response.status) {
+        let details = await adminHelpers.getCompanyDetails();
+        let Cadmin = await adminHelpers.getadminDetails();
+  
+      res.render("admin/companydetails", { admin: true, Cadmin,details });        // redirect to the edit-admin page
+      } else {
+        // If login fails, perhaps set an error message and redirect to login again
+        req.session.loginError = "Invalid credentials. Please try again.";
+        res.redirect("/admin/admin-dlogin");
+      }
+    } catch (error) {
+      console.error(error);
+      // Handle unexpected errors
+      res.status(500).send("Internal Server Error");
+    }
+  });
+    
+    
+    router.post("/company-details", async (req, res, next) => {
+      // Fetch existing details to determine if we are updating or adding.
+      let existingDetails = await adminHelpers.getCompanyDetails();
+    
+      if (existingDetails) {
+        // If details exist, update them.
+        adminHelpers.updateCompanyDetails(req.body, (success) => {
+
+          res.redirect("/admin/company-details");
+        });
+      } else {
+        // If no details exist, insert new details.
+        adminHelpers.addcompanydetails(req.body, (success) => {
+          res.redirect("/admin/company-details");
+        });
+      }
+    });
+    
+
+
 
 
 
