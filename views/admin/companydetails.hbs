@@ -1,0 +1,100 @@
+<div class="content-page">
+    <div class="content">
+      <div class="container-fluid">
+        <!-- Page Title -->
+        <div class="row">
+          <div class="col-12">
+            <div class="page-title-box">
+              <h4 class="page-title">WPS Details</h4>
+            </div>
+          </div>
+        </div>
+        <!-- Form Card -->
+        <div class="row">
+          <div class="col-12">
+            <div class="card">
+              <div class="card-body">
+                <!-- The form below handles both adding and editing -->
+                <div class="tab-content">
+                  <div class="tab-pane show active" id="daterange-picker-preview">
+                    <!-- When in edit mode, include the hidden _id field -->
+                    <form action="/admin/company-details" method="post">
+                      {{#if details._id}}
+                        <input type="hidden" name="_id" value="{{details._id}}">
+                      {{/if}}
+                      <div class="row">
+                        <div class="col-lg-6">
+                          <div class="mb-3">
+                            <label class="form-label">Company Name</label>
+                            <input type="text" class="form-control" name="company_name" 
+                              value="{{details.company_name}}" 
+                              placeholder="Enter Company Name"
+                            >
+                          </div>
+                        </div>
+                        <div class="col-lg-6">
+                          <div class="mb-3">
+                            <label class="form-label">Company EID</label>
+                            <input type="text" class="form-control" name="Employer_EID" 
+                              value="{{details.Employer_EID}}" 
+                              placeholder="Enter Company EID"
+                            >
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-lg-6">
+                          <div class="mb-3">
+                            <label class="form-label">Payer EID</label>
+                            <input type="text" class="form-control" name="Payer_EID" 
+                              value="{{details.Payer_EID}}"
+                              placeholder="Enter Payer EID"
+                             >
+                          </div>
+                        </div>
+                        <div class="col-lg-6">
+                          <div class="mb-3">
+                            <label class="form-label">Payer QID</label>
+                            <input type="text" class="form-control" name="Payer_QID" 
+                              value="{{details.Payer_QID}}" 
+                              placeholder="Enter Payer QID">
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-lg-6">
+                          <div class="mb-3">
+                            <label class="form-label">Bank Short Name</label>
+                            <input type="text" class="form-control" name="Payer_Bank_Short_Name" 
+                              value="{{details.Payer_Bank_Short_Name}}" 
+                              placeholder="Enter Bank Short Name">
+                          </div>
+                        </div>
+                        <div class="col-lg-6">
+                          <div class="mb-3">
+                            <label class="form-label">Company IBAN</label>
+                            <input type="text" class="form-control" name="Payer_IBAN" 
+                              value="{{details.Payer_IBAN}}" 
+                              placeholder="Enter Company IBAN">
+                          </div>
+                        </div>
+                      </div>
+                      <!-- Button Section -->
+                      <div class="row">
+                        <div class="col-lg-12">
+                
+                            <!-- In add or edit mode, show the submit button -->
+                            <button type="submit" class="btn btn-primary mt-2">Apply</button>
+              
+                        </div>
+                      </div>
+                    </form>
+                  </div> <!-- end active tab pane -->
+                </div> <!-- end tab-content -->
+              </div> <!-- end card-body -->
+            </div> <!-- end card -->
+          </div> <!-- end col -->
+        </div> <!-- end row -->
+      </div> <!-- end container-fluid -->
+    </div> <!-- end content -->
+  </div> <!-- end content-page -->
