@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const employeHelpers = require('../helpers/employee-helpers');
 const allsalaryreport = require('../modules/report');
-
+var adminHelpers = require("../helpers/admin-helper");
 const WPSemployeeData = async (searchdate,selectedgroup) => {
     let employeeData = [];
     let employees = [];
@@ -93,9 +93,9 @@ const generateCSV = async (searchdate,selectedgroup) => {
 
   const { employeeData, overallT, Tselected } = await WPSemployeeData(searchdate, selectedgroup);
 
-   
+  let details = await adminHelpers.getCompanyDetails();
     const records = [
-        ["10711301", `${year}${month}${day}`, `${hours}${minutes}`, "10711301", "", "MAR", "QA02MAFR000000000009114716001", `${syear+smonth}`,`${overallT}` , `${Tselected}`, "1"]
+        [ `${details.Employer_EID}`, `${year}${month}${day}`, `${hours}${minutes}`, `${details.Payer_EID}`, `${details.Payer_QID}`, `${details.Payer_Bank_Short_Name}`, `${details.Payer_IBAN}`, `${syear+smonth}`,`${overallT}` , `${Tselected}`, "1"]
     ];
     const employeeHeader = [
         "Record Sequence", "Employee QID", "Employee Visa ID", "Employee Name", "Employee Bank Short Name",
