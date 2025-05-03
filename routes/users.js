@@ -541,6 +541,27 @@ router.post('/edit-datasheet/:id', (req, res) => {
     res.redirect('/employee-data')
   })
 })
+router.get('/edit-datasheet2/:id', async (req, res) => {
+
+  let edatasheet = await userHelpers.getDatasheetDetails(req.params.id)
+  var activeProjects = [];
+  projectHelpers.getAllproject().then((projects) => {
+    for (let j = 0; j < projects.length; j++) {
+      if (projects[j].projectstatus === 'Ongoing') {
+      
+        activeProjects.push(projects[j]);
+        
+      }
+    }
+  })
+  res.render('./users/edit-datasheet2', { user: true, edatasheet, activeProjects })
+})
+router.post('/edit-datasheet2/:id', (req, res) => {
+
+  userHelpers.updateDatasheet(req.params.id, req.body).then(() => {
+    res.redirect('/employee-data2')
+  })
+})
 
 module.exports = router;
 
