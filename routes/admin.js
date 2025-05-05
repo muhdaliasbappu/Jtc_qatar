@@ -655,10 +655,49 @@ router.post("/edit-datasheets/:id",async (req, res) => {
   await logHelpers.addlogtimesheet(req, logMessage, 'eTimesheet', forstoring)
 
   userHelpers.updateDatasheet(req.params.id, req.body).then(() => {
-    res.redirect("/admin/datasheet");
+    res.redirect(`/admin/searchdatasheet?date=${edatasheet.datevalue}`);
   });
 });
+router.get("/searchdatasheet", async function (req, res) {
+  try {
+    const d = new Date(req.query.date);
+    if (isNaN(d)) {
+      return res.status(400).send("Invalid date");
+    }
 
+    const searchdatasheet = await userHelpers.gettimesheetbydate(d);
+
+    const employeeTypeOrder = [
+      'Own Labour',
+      'Hired Labour (Monthly)',
+      'Hired Labour (Hourly)',
+      'Hired Staff (Projects)',
+      'Own Staff (Projects)', 
+      'Own Staff (Operations)', 
+      'Hired Staff (Operations)'  
+    ];
+
+    searchdatasheet.sort((a, b) => {
+      return employeeTypeOrder.indexOf(a.employeeType) - employeeTypeOrder.indexOf(b.employeeType);
+    });
+
+    searchdatasheet.forEach((item, index) => {
+      item.index = index + 1;
+    });
+
+    if (searchdatasheet[0]) {
+      searchdatasheet.date = DayView.dayview(searchdatasheet[0].datevalue);
+      searchdatasheet.date1 = searchdatasheet[0].datevalue;
+      searchdatasheet.workinghour1 = searchdatasheet[0].workinghour;
+      searchdatasheet.searcheddate = d;
+    }
+
+    res.render("./admin/searchdatasheet", { admin: true, searchdatasheet });
+  } catch (error) {
+    console.error("Error loading search datasheet:", error);
+    res.status(500).send("Error loading timesheet");
+  }
+});
 router.get("/datasearch/:id", function (req, res) {
     var idd = req.params.id;
     res.render("./admin/datasearch", { admin: true, idd });
