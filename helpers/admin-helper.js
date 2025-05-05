@@ -108,6 +108,37 @@ module.exports = {
       return { status: false, error };
     }
   },
+  addcompanydetails: (details, callback) => {
 
+    db.get().collection('companydetails').insertOne(details).then((data) => {
+        callback(true)
+    })
+},
+// In adminHelpers.js
+updateCompanyDetails: (details, callback) => {
+  // Convert the _id string to an ObjectId
+  const id = new ObjectId(details._id);
+  // Remove _id from details so it doesn't get updated
+  delete details._id;
+  
+  db.get().collection('companydetails')
+    .updateOne({ _id: id }, { $set: details })
+    .then((data) => callback(true))
+    .catch((err) => {
+      console.error("Error updating company details:", err);
+      callback(false);
+    });
+},
+getCompanyDetails: async () => {
+  try {
+    // Find one document from the 'companydetails' collection
+    const details = await db.get().collection('companydetails').findOne({});
+    return details;
+  } catch (error) {
+    console.error("Error retrieving company details:", error);
+    throw error;
+  }
+},
+  
 
 }

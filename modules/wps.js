@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const employeHelpers = require('../helpers/employee-helpers');
 const allsalaryreport = require('../modules/report');
-
+var adminHelpers = require("../helpers/admin-helper");
 const WPSemployeeData = async (searchdate,selectedgroup) => {
     let employeeData = [];
     let employees = [];
@@ -39,7 +39,7 @@ const WPSemployeeData = async (searchdate,selectedgroup) => {
                 String(i + 1),                                  // Record Sequence
                 String(employees[i].qid),                      // Employee QID
                 '',                                             // Employee Visa ID
-                String(employees[i].surname + ' ' + employees[i].givenName), // Employee Name
+                String(employees[i].givenName + ' ' + employees[i].surname), // Employee Name
                 String(employees[i].employeeBank),             // Employee Bank Short Name
                 String(employees[i].employeeAccountN),         // Employee Account
                 'M',                                            // Salary Frequency
@@ -56,8 +56,8 @@ const WPSemployeeData = async (searchdate,selectedgroup) => {
                 String(0),                                     // Transportation Allowance
                 String(0),                                     // Over Time Allowance
                 String(thedata.deductionRC),                   // Deduction Reason Code
-                String(0),                                     // Extra Field 1
-                String(0)                                      // Extra Field 2
+                '0',                                     // Extra Field 1
+                '0'                                      // Extra Field 2
             ]);
         }
     }
@@ -93,9 +93,9 @@ const generateCSV = async (searchdate,selectedgroup) => {
 
   const { employeeData, overallT, Tselected } = await WPSemployeeData(searchdate, selectedgroup);
 
-   
+  let details = await adminHelpers.getCompanyDetails();
     const records = [
-        ["10711301", `${year}${month}${day}`, `${hours}${minutes}`, "10711301", "", "MAR", "QA02MAFR000000000009114716001", `${syear+smonth}`,`${overallT}` , `${Tselected}`, "1"]
+        [ `${details.Employer_EID}`, `${year}${month}${day}`, `${hours}${minutes}`, `${details.Payer_EID}`, `${details.Payer_QID}`, `${details.Payer_Bank_Short_Name}`, `${details.Payer_IBAN}`, `${syear+smonth}`,`${overallT}` , `${Tselected}`, "1"]
     ];
     const employeeHeader = [
         "Record Sequence", "Employee QID", "Employee Visa ID", "Employee Name", "Employee Bank Short Name",

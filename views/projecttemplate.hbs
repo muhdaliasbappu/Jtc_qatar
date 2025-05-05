@@ -26,10 +26,9 @@
 
     .table-heading {
       text-align: center;
-      font-size: 18px;
+      font-size: 22px;
       font-weight: bold;
       padding: 10px 0;
-      border-bottom: 2px solid #000;
       margin-bottom: 20px; /* Added margin for separation from the date */
     }
 
@@ -54,16 +53,34 @@
       font-size: 13px;
       margin-bottom: 20px;
       text-align: left; /* Center align the date */
+      border-bottom: 1px solid #000; /* Black line */
+      padding-bottom: 10px;/* Center align the date */
     }
   </style>
   <div class="table-container">
-  <div class="heading">Project Wise Monthly HR Expense</div>
+    <div style="display: flex; align-items: center; justify-content: space-between;">
+    <!-- Left Logo -->
+    <div class="left-logo">
+      <img src="https://jtcqatar.tickrplus.com/assets/images/logo-white.png" style="height:40px; width:auto;">
+    </div>
+    
+    <!-- Center Heading -->
+    <div class="table-heading" style="flex-grow: 1; text-align: center;">
+      PROJECT WISE MONTHLY HR EXPENSE
+    </div>
+    
+    <!-- Right Logo (Replace with your desired logo URL) -->
+    <div class="right-logo">
+      <img src="https://jtcqatar.tickrplus.com/assets/images/companylogo.png" style="height:60px; width:auto;">
+    </div>
+  </div>
+  
   <div class="date">Month: {{sumemployeetype.reqdate}}<br>
   Genarated On: {{sumemployeetype.currentDate}}
   </div>
  
 
-                    <table class="table table-bordered table-centered mb-0">
+                    <table class="table table-bordered table-centered mb-0 mt-4">
                       <thead>
                         <tr>
                           <th scope="col">#</th>

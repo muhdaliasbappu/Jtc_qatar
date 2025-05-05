@@ -128,7 +128,6 @@ router.get("/dashboard", async (req, res) => {
 });
 
 
-
 //employee list
 
 router.get("/employee", function (req, res, next) {
@@ -212,7 +211,7 @@ router.post("/add-employee", function async (req, res) {
       employeHelpers.addemployee(req.body, async (success) => {
         if (success) {
           const logMessage = `New Employee ${req.body.surname} ${req.body.givenName} was added.`;
-          await logHelpers.addlog(req,logMessage, 'Employee')
+
           let employee = await employeHelpers.getEmployeeDetailswithQID(req.body.qid)
           if(req.body.groupname){
           let groupedEmployee = {}
@@ -416,6 +415,7 @@ router.post("/datasheet", async function (req, res) {
   try {
     // Parse the date from the request body
     const d = new Date(req.body.searchdate);
+    // addcron.cronnotforyou(req.body.searchdate)
 
     // Retrieve the timesheet data by date
     const searchdatasheet = await userHelpers.gettimesheetbydate(d);
@@ -655,10 +655,49 @@ router.post("/edit-datasheets/:id",async (req, res) => {
   await logHelpers.addlogtimesheet(req, logMessage, 'eTimesheet', forstoring)
 
   userHelpers.updateDatasheet(req.params.id, req.body).then(() => {
-    res.redirect("/admin/datasheet");
+    res.redirect(`/admin/searchdatasheet?date=${edatasheet.datevalue}`);
   });
 });
+router.get("/searchdatasheet", async function (req, res) {
+  try {
+    const d = new Date(req.query.date);
+    if (isNaN(d)) {
+      return res.status(400).send("Invalid date");
+    }
 
+    const searchdatasheet = await userHelpers.gettimesheetbydate(d);
+
+    const employeeTypeOrder = [
+      'Own Labour',
+      'Hired Labour (Monthly)',
+      'Hired Labour (Hourly)',
+      'Hired Staff (Projects)',
+      'Own Staff (Projects)', 
+      'Own Staff (Operations)', 
+      'Hired Staff (Operations)'  
+    ];
+
+    searchdatasheet.sort((a, b) => {
+      return employeeTypeOrder.indexOf(a.employeeType) - employeeTypeOrder.indexOf(b.employeeType);
+    });
+
+    searchdatasheet.forEach((item, index) => {
+      item.index = index + 1;
+    });
+
+    if (searchdatasheet[0]) {
+      searchdatasheet.date = DayView.dayview(searchdatasheet[0].datevalue);
+      searchdatasheet.date1 = searchdatasheet[0].datevalue;
+      searchdatasheet.workinghour1 = searchdatasheet[0].workinghour;
+      searchdatasheet.searcheddate = d;
+    }
+
+    res.render("./admin/searchdatasheet", { admin: true, searchdatasheet });
+  } catch (error) {
+    console.error("Error loading search datasheet:", error);
+    res.status(500).send("Error loading timesheet");
+  }
+});
 router.get("/datasearch/:id", function (req, res) {
     var idd = req.params.id;
     res.render("./admin/datasearch", { admin: true, idd });
@@ -715,43 +754,62 @@ router.get("/edit-searcheddata/:id", async (req, res) => {
     activeProjects,
   });
 });
-router.post("/edit-searcheddata/:id",async (req, res) => {
+router.post("/edit-searcheddata/:id", async (req, res) => {
   let edatasheet = await userHelpers.getDatasheetDetails(req.params.id);
-  let  forstoring = []
-   forstoring[0] = {}
-   forstoring[0].projectname1 = edatasheet.projectname1
-   forstoring[0].workhour1  = edatasheet.workhour1
-   forstoring[0].projectname2  = edatasheet.projectname2
-   forstoring[0].workhour2 = edatasheet.workhour2
-   forstoring[0].projectname3 = edatasheet.projectname3
-   forstoring[0].workhour3 = edatasheet.workhour3
-   forstoring[0].projectname4 = edatasheet.projectname4
-   forstoring[0].workhour4 = edatasheet.workhour4
-   forstoring[0].projectname5 = edatasheet.projectname5
-   forstoring[0].workhour5 = edatasheet.workhour5
-   forstoring[0].date = edatasheet.date
-   forstoring[1] = {}
-   forstoring[1].projectname1 = req.body.projectname1
-   forstoring[1].workhour1  = req.body.workhour1
-   forstoring[1].projectname2  = req.body.projectname2
-   forstoring[1].workhour2 = req.body.workhour2
-   forstoring[1].projectname3 = req.body.projectname3
-   forstoring[1].workhour3 = req.body.workhour3
-   forstoring[1].projectname4 = req.body.projectname4
-   forstoring[1].workhour4 = req.body.workhour4
-   forstoring[1].projectname5 = req.body.projectname5
-   forstoring[1].workhour5 = req.body.workhour5
-   forstoring[1].date = edatasheet.date
- 
-   const logMessage = `The timesheet for employee ${edatasheet.givenName} ${edatasheet.surname}, dated ${edatasheet.datevalue}, was updated  `;
-   await logHelpers.addlogtimesheet(req,logMessage, 'eTimesheet', forstoring)
- 
   
-  userHelpers.updateDatasheet(req.params.id, req.body).then(() => {
+  let forstoring = [];
+  forstoring[0] = {
+    projectname1: edatasheet.projectname1,
+    workhour1: edatasheet.workhour1,
+    projectname2: edatasheet.projectname2,
+    workhour2: edatasheet.workhour2,
+    projectname3: edatasheet.projectname3,
+    workhour3: edatasheet.workhour3,
+    projectname4: edatasheet.projectname4,
+    workhour4: edatasheet.workhour4,
+    projectname5: edatasheet.projectname5,
+    workhour5: edatasheet.workhour5,
+    date: edatasheet.date,
+  };
 
-    res.redirect("/admin/employee");
+  forstoring[1] = {
+    projectname1: req.body.projectname1,
+    workhour1: req.body.workhour1,
+    projectname2: req.body.projectname2,
+    workhour2: req.body.workhour2,
+    projectname3: req.body.projectname3,
+    workhour3: req.body.workhour3,
+    projectname4: req.body.projectname4,
+    workhour4: req.body.workhour4,
+    projectname5: req.body.projectname5,
+    workhour5: req.body.workhour5,
+    date: edatasheet.date,
+  };
+
+  const logMessage = `The timesheet for employee ${edatasheet.givenName} ${edatasheet.surname}, dated ${edatasheet.datevalue}, was updated`;
+  await logHelpers.addlogtimesheet(req, logMessage, 'eTimesheet', forstoring);
+
+  await userHelpers.updateDatasheet(req.params.id, req.body);
+
+  // Re-fetch data for re-rendering searcheddata page
+  let datadetail = await employeHelpers.getEmployeeDetails(edatasheet.employee_id);
+  let databdate = await userHelpers.getdatabdate(edatasheet.date, edatasheet.date); // or use correct date range
+  let searcheddatas = databdate.filter(item => item.employee_id === edatasheet.employee_id);
+
+  // Sort and index the data
+  const searcheddata = searcheddatas.sort((a, b) => Number(a.date) - Number(b.date));
+  searcheddata.forEach((data, index) => {
+    data.index = index + 1;
+  });
+
+  // Render the searcheddata page with updated info
+  res.render("./admin/searcheddata", {
+    admin: true,
+    searcheddata,
+    datadetail,
   });
 });
+
 
 
 router.get("/search-report/", async function (req, res) {
@@ -1090,8 +1148,6 @@ router.post("/project-search", async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 });
-
-
 router.post('/printprojectreport', async (req, res) => {
 
   const sumemployeetype = JSON.parse(req.body.sumemployeetype);
@@ -1207,7 +1263,7 @@ router.post('/printprojectreport', async (req, res) => {
         }
     
         const logMessage = `Salary report for ${searchdate} closed successfully.`;
-        await logHelpers.addlog(req,logMessage, 'Employee')
+
         
     
         // 6. Respond to the client with success and warning if any
@@ -1377,6 +1433,8 @@ router.post("/generateWPS", async function (req, res) {
   }
   res.render("./admin/generateWPS", { admin: true });
 })
+
+
 
 
 
@@ -1674,7 +1732,7 @@ router.post("/generateWPS", async function (req, res) {
 
        })
        const logMessage = `Admin added the timesheet of ${originalDate} for ${req.body.surname} ${req.body.givenName} `;
-        await logHelpers.addlog(req,logMessage, 'Employee')
+
        res.send(`
         <script>
           alert('Timesheet added successfully!');
@@ -1698,36 +1756,57 @@ router.post("/generateWPS", async function (req, res) {
     
   })
 
-  cron.schedule('00 50 23 * * 4', async () => {
- 
-      try {
-        // Get the current working employees count
-        const counts =  ProjectReport.getCounts();
-   
-        // Retrieve the existing document (if any)
-        let doc = await employeHelpers.getEmployeeCount();
-        let updatedCounts;
+    router.get("/admin-Clogin", function (req, res, next) {
+  
+      res.render("./admin/admin-Clogin", { admin: true });
     
-        if (doc && Array.isArray(doc.counts)) {
-          // If the document exists, add the new count to the existing counts array
-          updatedCounts = doc.counts;
-          updatedCounts.push(counts.workingemployees);
+  });
+
+  
+  router.post("/admin-Clogin", async (req, res) => {
+    try {
+      // Call your login helper
+      const response = await adminHelpers.doLogin(req.body);
+      
+      if (response.status) {
+        let details = await adminHelpers.getCompanyDetails();
+        let Cadmin = await adminHelpers.getadminDetails();
+  
+      res.render("admin/companydetails", { admin: true, Cadmin,details });        // redirect to the edit-admin page
+      } else {
+        // If login fails, perhaps set an error message and redirect to login again
+        req.session.loginError = "Invalid credentials. Please try again.";
+        res.redirect("/admin/admin-dlogin");
+      }
+    } catch (error) {
+      console.error(error);
+      // Handle unexpected errors
+      res.status(500).send("Internal Server Error");
+    }
+  });
     
-          // Keep only the latest 12 counts
-          if (updatedCounts.length > 12) {
-            updatedCounts = updatedCounts.slice(updatedCounts.length - 12);
-          }
-        } else {
-          // If no document exists, initialize with 11 zeros and the current count as the 12th entry
-          updatedCounts = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, counts.workingemployees];
-        }
-        // Update the document in the collection (or create one if it doesn't exist)
-        await employeHelpers.updateEmployeeCount({ counts: updatedCounts });
-      } catch (error) {
-        console.error('Error in scheduled tasks:', error);
+    
+    router.post("/company-details", async (req, res, next) => {
+      // Fetch existing details to determine if we are updating or adding.
+      let existingDetails = await adminHelpers.getCompanyDetails();
+    
+      if (existingDetails) {
+        // If details exist, update them.
+        adminHelpers.updateCompanyDetails(req.body, (success) => {
+          res.redirect("/admin/dashboard");
+
+        });
+      } else {
+        // If no details exist, insert new details.
+        adminHelpers.addcompanydetails(req.body, (success) => {
+          res.redirect("/admin/dashboard");
+        });
       }
     });
     
+
+
+
 
 
 
