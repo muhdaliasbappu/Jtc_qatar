@@ -320,8 +320,11 @@ function nextEmployee() {
   currentIndex++;
   if (currentIndex >= employees.length) {
     currentIndex = 0; // Optionally wrap around, or decide to stop if all are submitted
+    alert("Submission of all employee timesheets completed successfully");
+     window.location.href = "/users/submissiondone";
+  }else{
+     displayEmployee();
   }
-  displayEmployee();
 }
 
 
