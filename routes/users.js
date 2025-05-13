@@ -562,6 +562,10 @@ router.post('/edit-datasheet2/:id', (req, res) => {
     res.redirect('/employee-data2')
   })
 })
+router.get('/users/submissiondone', async function (req, res) {
+  res.render('./users/submissiondone',{user: true})
+
+})
 
 module.exports = router;
 
