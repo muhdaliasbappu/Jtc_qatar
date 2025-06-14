@@ -1640,7 +1640,7 @@ else {
 
 
 // finalWorkdays now matches your scenario-based requirements
-
+console.log(timesheet[0])
 basicsalary = tempwd*timesheet[0].sbasic/30
 allowance = tempwd*timesheet[0].sallowance/30
 bonus = tempwd*timesheet[0].sbonus/30
