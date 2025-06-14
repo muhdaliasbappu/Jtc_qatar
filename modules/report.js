@@ -1639,51 +1639,51 @@ else {
 }
 
 
-let Dbasicsalary
-// finalWorkdays now matches your scenario-based requirements
-if (Array.isArray(timesheet) && timesheet.length > 0 && timesheet[0].sbasic != null) {
-    basicsalary = tempwd*timesheet[0].sbasic/30
-    allowance = tempwd*timesheet[0].sallowance/30
-    bonus = tempwd*timesheet[0].sbonus/30
-     Dbasicsalary = timesheet[0].sbasic-basicsalary
-} else {
-    basicsalary = 0; // or handle this case differently
-    console.warn("Warning: timesheet[0] is missing or sbasic is undefined.");
-}
-let extraincome = otsalary+allowance+bonus
-if(extraincome>0 && extraincome>Dbasicsalary){
-    extraincome = extraincome-Dbasicsalary
-}else if(extraincome<Dbasicsalary){
-    Dbasicsalary = Dbasicsalary-extraincome
-    extraincome = 0
-    basicsalary-Dbasicsalary
-}
-report.basicsalary = Math.round(timesheet[0].sbasic)
-report.extraincome =  Math.round(extraincome)
-if(othours>100){
-    report.othours = 100
-}else{
-    report.othours = othours
-}
-report.totalsalary =  Math.round(basicsalary+allowance+bonus+otsalary)
+// let Dbasicsalary
+// // finalWorkdays now matches your scenario-based requirements
+// if (Array.isArray(timesheet) && timesheet.length > 0 && timesheet[0].sbasic != null) {
+//     basicsalary = tempwd*timesheet[0].sbasic/30
+//     allowance = tempwd*timesheet[0].sallowance/30
+//     bonus = tempwd*timesheet[0].sbonus/30
+//      Dbasicsalary = timesheet[0].sbasic-basicsalary
+// } else {
+//     basicsalary = 0; // or handle this case differently
+//     console.warn("Warning: timesheet[0] is missing or sbasic is undefined.");
+// }
+// let extraincome = otsalary+allowance+bonus
+// if(extraincome>0 && extraincome>Dbasicsalary){
+//     extraincome = extraincome-Dbasicsalary
+// }else if(extraincome<Dbasicsalary){
+//     Dbasicsalary = Dbasicsalary-extraincome
+//     extraincome = 0
+//     basicsalary-Dbasicsalary
+// }
+// report.basicsalary = Math.round(timesheet[0].sbasic)
+// report.extraincome =  Math.round(extraincome)
+// if(othours>100){
+//     report.othours = 100
+// }else{
+//     report.othours = othours
+// }
+// report.totalsalary =  Math.round(basicsalary+allowance+bonus+otsalary)
 
-if(leave === month){
-    report.deduction = Math.round(0)
-    report.paymentType= 'VACATION' 
-}else{
-    report.deduction = Math.round(Dbasicsalary)
-    report.paymentType= 'Monthly Salary and allowance' 
-}
-if(report.deduction>0){
-    report.deductionRC = '4'
-}else{
-    report.deductionRC = '0'
-}
-resolve(report)
-})
-if(report.deduction>0){
-    report.deductionRC = '0'
-}
+// if(leave === month){
+//     report.deduction = Math.round(0)
+//     report.paymentType= 'VACATION' 
+// }else{
+//     report.deduction = Math.round(Dbasicsalary)
+//     report.paymentType= 'Monthly Salary and allowance' 
+// }
+// if(report.deduction>0){
+//     report.deductionRC = '4'
+// }else{
+//     report.deductionRC = '0'
+// }
+// resolve(report)
+// })
+// if(report.deduction>0){
+//     report.deductionRC = '0'
+// }
 
 },
 
