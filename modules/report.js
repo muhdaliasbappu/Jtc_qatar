@@ -1639,12 +1639,17 @@ else {
 }
 
 
+let Dbasicsalary
 // finalWorkdays now matches your scenario-based requirements
-console.log(timesheet[0])
-basicsalary = tempwd*timesheet[0].sbasic/30
-allowance = tempwd*timesheet[0].sallowance/30
-bonus = tempwd*timesheet[0].sbonus/30
-let Dbasicsalary = timesheet[0].sbasic-basicsalary
+if (Array.isArray(timesheet) && timesheet.length > 0 && timesheet[0].sbasic != null) {
+    basicsalary = tempwd*timesheet[0].sbasic/30
+    allowance = tempwd*timesheet[0].sallowance/30
+    bonus = tempwd*timesheet[0].sbonus/30
+     Dbasicsalary = timesheet[0].sbasic-basicsalary
+} else {
+    basicsalary = 0; // or handle this case differently
+    console.warn("Warning: timesheet[0] is missing or sbasic is undefined.");
+}
 let extraincome = otsalary+allowance+bonus
 if(extraincome>0 && extraincome>Dbasicsalary){
     extraincome = extraincome-Dbasicsalary
