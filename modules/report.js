@@ -1529,7 +1529,7 @@ resolve(report)
 salaryreportlabourWPS: (searchdate,EmployeeID)=>{
     return new Promise(async (resolve, reject) => {
  var timesheet = await userHelpers.getDatabByMonthAndEmployee(searchdate,EmployeeID);  
-  console.log(timesheet)
+  console.log(timesheet[0],searchdate,EmployeeID,'hhehe')
 let workday =0;
 let leave = 0
 let paidL = 0
