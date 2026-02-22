@@ -21,12 +21,12 @@ const dayjs = require('dayjs'); // For date manipulations
 const customParseFormat = require('dayjs/plugin/customParseFormat');
 
 dayjs.extend(customParseFormat);
-// router.get("/create", function (req, res, next) {
+router.get("/create", function (req, res, next) {
   
-//   res.render('admin/create');
+  res.render('admin/create');
 
 
-// });
+});
 
 router.post("/create", async (req, res) => {
   try {
