@@ -357,9 +357,9 @@ router.post("/datasheet", async function (req, res) {
 
     // Define the order for employeeType
     const employeeTypeOrder = [
-      'Own Labour',
-      'Hired Labour (Monthly)',
-      'Hired Labour (Hourly)',
+      'Own Technician',
+      'Hired Technician (Monthly)',
+      'Hired Technician (Hourly)',
       'Hired Staff (Projects)',
       'Own Staff (Projects)', 
       'Own Staff (Operations)', 
@@ -410,9 +410,9 @@ router.post("/predatasheet/", async function (req, res) {
 
     // Define the order for employeeType
     const employeeTypeOrder = [
-      'Own Labour',
-      'Hired Labour (Monthly)',
-      'Hired Labour (Hourly)',
+      'Own Technician',
+      'Hired Technician (Monthly)',
+      'Hired Technician (Hourly)',
       'Hired Staff (Projects)',
       'Own Staff (Projects)', 
       'Own Staff (Operations)', 
@@ -470,9 +470,9 @@ router.post("/nextdatasheet/", async function (req, res) {
 
     // Define the order for employeeType
     const employeeTypeOrder = [
-      'Own Labour',
-      'Hired Labour (Monthly)',
-      'Hired Labour (Hourly)',
+      'Own Technician',
+      'Hired Technician (Monthly)',
+      'Hired Technician (Hourly)',
       'Hired Staff (Projects)',
       'Own Staff (Projects)', 
       'Own Staff (Operations)', 
@@ -682,7 +682,7 @@ router.post("/edit-salary/:id", (req, res) => {
   } else if (req.body.month === 'Last Month') {
     reqdate = new Date(Date.UTC(new Date().getFullYear(), new Date().getMonth() - 1, 1));
   }
-  if(req.body.employeeType === 'Hired Labour (Hourly)'){
+  if(req.body.employeeType === 'Hired Technician (Hourly)'){
     req.body.sbasic = ''
     req.body.sallowance = ''
     req.body.sbonus = ''
@@ -709,9 +709,9 @@ router.post("/edit-salary/:id", (req, res) => {
         
         
     });
-    if(targetdata[i].employeeType === 'Hired Labour (Hourly)' && req.body.employeeType === 'Hired Labour (Hourly)'){
+    if(targetdata[i].employeeType === 'Hired Technician (Hourly)' && req.body.employeeType === 'Hired Technician (Hourly)'){
       targetdata[i].srateph = req.body.srateph
-    }else if(req.body.employeeType === 'Hired Labour (Hourly)' ){
+    }else if(req.body.employeeType === 'Hired Technician (Hourly)' ){
       targetdata[i].employeeType = req.body.employeeType 
       targetdata[i].srateph = req.body.srateph
       delete targetdata[i].sbasic

@@ -16,7 +16,7 @@ let apexChart = null; // Will hold the current ApexCharts instance
 
     // Default colors to match each series
     const defaultColors = [
-      "#6f70af", // Own Labour
+      "#6f70af", // Own Technician
       "#0acf97", // Hired Labour
       "#fa5c7c", // Man Power
       "#6c757d", // Own Staff(P)
@@ -59,7 +59,7 @@ let apexChart = null; // Will hold the current ApexCharts instance
       },
       series: [
         {
-          name: "Own Labour",
+          name: "Own Technician",
           data: projectData.ownlaboursalary
         },
         {

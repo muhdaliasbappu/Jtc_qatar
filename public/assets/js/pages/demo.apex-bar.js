@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Define the series mapping
     const seriesMapping = {
-        "Own Labour": "ownlaboursalary",
+        "Own Technician": "ownlaboursalary",
         "Hired Labour": "hiredlabourmsalary",
         "Man Power": "hiredstaffhourly",
         "Own Staff(P)": "ownstaffsalary",
@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Define the order of series to maintain consistent coloring
     const seriesOrder = [
-        "Own Labour",
+        "Own Technician",
         "Hired Labour",
         "Man Power",
         "Own Staff(P)",
@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Define the color mapping
     const seriesColors = {
-        "Own Labour": "#727cf5",
+        "Own Technician": "#727cf5",
         "Hired Labour": "#0acf97",
         "Man Power": "#fa5c7c",
         "Own Staff(P)": "#6c757d",

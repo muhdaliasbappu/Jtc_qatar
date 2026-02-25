@@ -322,7 +322,7 @@ router.get('/logout', (req, res) => {
 // datasheet.employeeType = semployee.employeeType;
 //   const dd = new Date(datasheet.date); 
 //   if(dd.getDay() === 5){
-//     if(semployee.employeeType === 'Hired Labour (Hourly)'){
+//     if(semployee.employeeType === 'Hired Technician (Hourly)'){
 //       datasheet.sbasic = '';
 //     datasheet.sallowance = '';
 //     datasheet.sbonus = ''; 
@@ -341,7 +341,7 @@ router.get('/logout', (req, res) => {
 
 //   }else{
 
-// if(semployee.employeeType === 'Hired Labour (Hourly)'){
+// if(semployee.employeeType === 'Hired Technician (Hourly)'){
 //   datasheet.sbasic = '';
 // datasheet.sallowance = '';
 // datasheet.sbonus = ''; 
@@ -393,7 +393,7 @@ router.post('/users/employee-list/batch', async (req, res) => {
     datasheet.employeeType = semployee.employeeType;
     const dd = new Date(datasheet.date); 
     if (dd.getDay() === 5) {
-      if (semployee.employeeType === 'Hired Labour (Hourly)') {
+      if (semployee.employeeType === 'Hired Technician (Hourly)') {
         datasheet.sbasic = '';
         datasheet.sallowance = '';
         datasheet.sbonus = ''; 
@@ -410,7 +410,7 @@ router.post('/users/employee-list/batch', async (req, res) => {
         datasheet.workinghour = '0';
       }
     } else {
-      if (semployee.employeeType === 'Hired Labour (Hourly)') {
+      if (semployee.employeeType === 'Hired Technician (Hourly)') {
         datasheet.sbasic = '';
         datasheet.sallowance = '';
         datasheet.sbonus = ''; 

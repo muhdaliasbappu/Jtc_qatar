@@ -24,7 +24,7 @@ const WPSemployeeData = async (searchdate,selectedgroup) => {
     for (let i = 0; i < employees.length; i++) {
         let thedata;
 
-        if (employees[i].employeeType === 'Own Labour') {
+        if (employees[i].employeeType === 'Own Technician') {
             thedata = await allsalaryreport.salaryreportlabourWPS(searchdate, employees[i]._id.toString());
         } else if (
             employees[i].employeeType === 'Own Staff (Operations)' || 

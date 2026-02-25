@@ -24,7 +24,7 @@ properties.forEach(prop => Fstore[prop] = Fstore[prop] || 0);
         const employees = await employeHelpers.getAllemployee();  
         for (let i = 0; i < employees.length; i++) {
 
-        if(employees[i].employeeType === 'Own Labour'){
+        if(employees[i].employeeType === 'Own Technician'){
           if(employeeType === 'All'){
             
             var timesheet = await userHelpers.getDatabByMonthAndEmployee(searchdate, employees[i]._id.toString());    
@@ -40,7 +40,7 @@ properties.forEach(prop => Fstore[prop] = Fstore[prop] || 0);
 
               employeereport.push(thedata);
               }
-         }else if (employeeType === 'Own Labour'){
+         }else if (employeeType === 'Own Technician'){
           var timesheet = await userHelpers.getDatabByMonthAndEmployeewithType(searchdate, employees[i]._id.toString() ,    employeeType );
           if (timesheet.length > 0) {
             const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
@@ -53,7 +53,7 @@ properties.forEach(prop => Fstore[prop] = Fstore[prop] || 0);
             }
          }     
     
-         }else if(employees[i].employeeType === 'Hired Labour (Monthly)'){
+         }else if(employees[i].employeeType === 'Hired Technician (Monthly)'){
           if(employeeType === 'All'){
             
             var timesheet = await userHelpers.getDatabByMonthAndEmployee(searchdate, employees[i]._id.toString());    
@@ -67,7 +67,7 @@ properties.forEach(prop => Fstore[prop] = Fstore[prop] || 0);
               Fstore.HLabourMOT += Number(thedata.otsalary);
               employeereport.push(thedata);
               }
-         }else if (employeeType === 'Hired Labour (Monthly)'){
+         }else if (employeeType === 'Hired Technician (Monthly)'){
           var timesheet = await userHelpers.getDatabByMonthAndEmployeewithType(searchdate, employees[i]._id.toString(), employeeType );
           if (timesheet.length > 0) {
             const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
@@ -81,7 +81,7 @@ properties.forEach(prop => Fstore[prop] = Fstore[prop] || 0);
          }     
     
          }
-         else if(employees[i].employeeType === 'Hired Labour (Hourly)'){
+         else if(employees[i].employeeType === 'Hired Technician (Hourly)'){
           if(employeeType === 'All'){
             
             var timesheet = await userHelpers.getDatabByMonthAndEmployee(searchdate, employees[i]._id.toString());   
@@ -95,7 +95,7 @@ properties.forEach(prop => Fstore[prop] = Fstore[prop] || 0);
               Fstore.HLabourHtotal += Number(thedata.totalsalary);
               employeereport.push(thedata);
               }
-         }else if (employeeType === 'Hired Labour (Hourly)'){
+         }else if (employeeType === 'Hired Technician (Hourly)'){
           var timesheet = await userHelpers.getDatabByMonthAndEmployeewithType(searchdate, employees[i]._id.toString(), employeeType );
           if (timesheet.length > 0) {
             const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));
@@ -433,7 +433,7 @@ properties.forEach(prop => Fstore[prop] = Fstore[prop] || 0);
   
   for (let i = 0; i < employees.length; i++) {
 
-  if(employees[i].employeeType === 'Own Labour'){
+  if(employees[i].employeeType === 'Own Technician'){
   
       
       var timesheet = await userHelpers.getDatabByMonthAndEmployee(searchdate, employees[i]._id.toString());    
@@ -451,7 +451,7 @@ properties.forEach(prop => Fstore[prop] = Fstore[prop] || 0);
         }
     
 
-   }else if(employees[i].employeeType === 'Hired Labour (Monthly)'){
+   }else if(employees[i].employeeType === 'Hired Technician (Monthly)'){
     
       
       var timesheet = await userHelpers.getDatabByMonthAndEmployee(searchdate, employees[i]._id.toString());    
@@ -468,7 +468,7 @@ properties.forEach(prop => Fstore[prop] = Fstore[prop] || 0);
    
 
    }
-   else if(employees[i].employeeType === 'Hired Labour (Hourly)'){    
+   else if(employees[i].employeeType === 'Hired Technician (Hourly)'){    
       var timesheet = await userHelpers.getDatabByMonthAndEmployee(searchdate, employees[i]._id.toString());   
       if (timesheet.length > 0) {
         const searcheddata = timesheet.sort((objA, objB) => Number(objA.date) - Number(objB.date));

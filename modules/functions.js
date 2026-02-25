@@ -27,7 +27,7 @@ const MONTH_NAMES = ['Jan','Feb','Mar','Apr','May','Jun',
 module.exports = {
 
         ProjectReport: async (searchdate) => {
-          let employeetype = ['Own Labour', 'Hired Labour (Monthly)', 'Hired Labour (Hourly)', 'Own Staff (Projects)', 'Hired Staff (Projects)'];
+          let employeetype = ['Own Technician', 'Hired Technician (Monthly)', 'Hired Technician (Hourly)', 'Own Staff (Projects)', 'Hired Staff (Projects)'];
           let projectimesheets = [];
       
           try {
@@ -44,13 +44,13 @@ module.exports = {
                   tempobj.projectname = projects[i].projectname;
       
                   switch (employeetype[j]) {
-                    case 'Own Labour':
+                    case 'Own Technician':
                       report = await allprojectreport.projectreportlabour(projectimesheet, projects[i].projectname);
                       tempobj.ownlaboursalary = report.totalsalary || 0;
                       tempobj.ownlabourot = report.otsalary;
                       break;
       
-                    case 'Hired Labour (Monthly)':
+                    case 'Hired Technician (Monthly)':
                       report = await allprojectreport.projectreportlabour(projectimesheet, projects[i].projectname);
                       tempobj.hiredlabourmsalary = report.totalsalary || 0;
                       tempobj.hiredlabourmot = report.otsalary;
@@ -66,7 +66,7 @@ module.exports = {
                       tempobj.hiredstaffsalary = report.totalsalary || 0;
                       break;
       
-                    case 'Hired Labour (Hourly)':
+                    case 'Hired Technician (Hourly)':
                       report = await allprojectreport.projectreporthourly(projectimesheet, projects[i].projectname);
                       tempobj.hiredstaffhourly = report.totalsalary || 0;
                       break;

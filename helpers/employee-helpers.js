@@ -88,11 +88,11 @@ module.exports = {
     getEmployeeTypeCounts: async () => {
         try {
             const employeeTypes = [
-                "Own Labour",
+                "Own Technician",
                 "Own Staff (Operations)",
                 "Own Staff (Projects)",
-                "Hired Labour (Hourly)",
-                "Hired Labour (Monthly)",
+                "Hired Technician (Hourly)",
+                "Hired Technician (Monthly)",
                 "Hired Staff (Operations)",
                 "Hired Staff (Projects)"
             ];

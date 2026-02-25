@@ -314,8 +314,8 @@ return report;
         let totalsum = 0
         
         let paidleavecostoperations = await salarycalc.operationpaidleavecost(date, mdetails )
-      let paidleavecost = await salarycalc.paidleavecost(date, mdetails , 'Own Labour' )
-       paidleavecost += await salarycalc.paidleavecost(date, mdetails , 'Hired Labour (Monthly)' )
+      let paidleavecost = await salarycalc.paidleavecost(date, mdetails , 'Own Technician' )
+       paidleavecost += await salarycalc.paidleavecost(date, mdetails , 'Hired Technician (Monthly)' )
        paidleavecost += await salarycalc.paidleavecost(date, mdetails , 'Own Staff (Projects)' )
       paidleavecost += await salarycalc.paidleavecost(date, mdetails , 'Hired Staff (Projects)' )      
       paidleavecost += paidleavecostoperations

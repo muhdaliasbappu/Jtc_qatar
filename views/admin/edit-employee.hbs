@@ -155,11 +155,11 @@
                                                             <label class="form-label">EmployeeType</label>
                                                             <select class="form-select" name="employeeType" id="employeeType"> 
                                                                 <option value="{{semployee.employeeType}}">{{semployee.employeeType}}</option>
-                                                                 <option value="Own Labour">Own Labour</option>
+                                                                 <option value="Own Technician">Own Technician</option>
                                                                  <option value="Own Staff (Operations)">Own Staff (Operations)</option>
                                                                  <option value="Own Staff (Projects)">Own Staff (Projects)</option>
-                                                                  <option value="Hired Labour (Hourly)">Hired Labour (Hourly)</option>
-                                                                  <option value="Hired Labour (Monthly)">Hired Labour (Monthly)</option>
+                                                                  <option value="Hired Technician (Hourly)">Hired Technician (Hourly)</option>
+                                                                  <option value="Hired Technician (Monthly)">Hired Technician (Monthly)</option>
                                                                  <option value="Hired Staff (Operations)">Hired Staff (Operations)</option>            
                                                                  <option value="Hired Staff (Projects)">Hired Staff (Projects)</option>      
                                                             </select>
@@ -258,17 +258,17 @@
                 const selectedValue = employeeTypeSelect.value;
 
                 if (
-                    selectedValue === "Own Labour" ||
+                    selectedValue === "Own Technician" ||
                     selectedValue === "Own Staff (Operations)" ||
                     selectedValue === "Own Staff (Projects)" ||
-                    selectedValue === "Hired Labour (Monthly)" ||
+                    selectedValue === "Hired Technician (Monthly)" ||
                     selectedValue === "Hired Staff (Operations)" ||
                     selectedValue === "Hired Staff (Projects)"
                 ) {
                     ownFieldset.style.display = "block";
                     hiredFieldset.style.display = "none";
                     resetValues();
-                } else if (selectedValue === "Hired Labour (Hourly)") {
+                } else if (selectedValue === "Hired Technician (Hourly)") {
                     ownFieldset.style.display = "none";
                     hiredFieldset.style.display = "block";
                     resetValues();

@@ -18,7 +18,7 @@
         labels: projectData.date, // Assuming 'date' is an array of labels
         datasets: [
             {
-                label: "Own Labour",
+                label: "Own Technician",
                 backgroundColor: "transparent",
                 borderColor: "#727cf5",
                 borderDash: [5, 5],

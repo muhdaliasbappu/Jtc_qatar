@@ -196,7 +196,7 @@ router.post("/add-employee", function async (req, res) {
           let groupedEmployee = {}
           groupedEmployee.id = employee._id.toString();
           groupedEmployee.name = employee.givenName
-          if (req.body.employeeType === "Own Labour" || req.body.employeeType === "Own Staff (Operations)" || req.body.employeeType === "Own Staff (Projects)" ) {
+          if (req.body.employeeType === "Own Technician" || req.body.employeeType === "Own Staff (Operations)" || req.body.employeeType === "Own Staff (Projects)" ) {
             groupedEmployee.category  = 'own'
           }else{
             groupedEmployee.category  = 'hired'
@@ -401,9 +401,9 @@ router.post("/datasheet", async function (req, res) {
 
     // Define the order for employeeType
     const employeeTypeOrder = [
-      'Own Labour',
-      'Hired Labour (Monthly)',
-      'Hired Labour (Hourly)',
+      'Own Technician',
+      'Hired Technician (Monthly)',
+      'Hired Technician (Hourly)',
       'Hired Staff (Projects)',
       'Own Staff (Projects)', 
       'Own Staff (Operations)', 
@@ -454,9 +454,9 @@ router.post("/predatasheet/", async function (req, res) {
 
     // Define the order for employeeType
     const employeeTypeOrder = [
-      'Own Labour',
-      'Hired Labour (Monthly)',
-      'Hired Labour (Hourly)',
+      'Own Technician',
+      'Hired Technician (Monthly)',
+      'Hired Technician (Hourly)',
       'Hired Staff (Projects)',
       'Own Staff (Projects)', 
       'Own Staff (Operations)', 
@@ -514,9 +514,9 @@ router.post("/nextdatasheet/", async function (req, res) {
 
     // Define the order for employeeType
     const employeeTypeOrder = [
-      'Own Labour',
-      'Hired Labour (Monthly)',
-      'Hired Labour (Hourly)',
+      'Own Technician',
+      'Hired Technician (Monthly)',
+      'Hired Technician (Hourly)',
       'Hired Staff (Projects)',
       'Own Staff (Projects)', 
       'Own Staff (Operations)', 
@@ -647,9 +647,9 @@ router.get("/searchdatasheet", async function (req, res) {
     const searchdatasheet = await userHelpers.gettimesheetbydate(d);
 
     const employeeTypeOrder = [
-      'Own Labour',
-      'Hired Labour (Monthly)',
-      'Hired Labour (Hourly)',
+      'Own Technician',
+      'Hired Technician (Monthly)',
+      'Hired Technician (Hourly)',
       'Hired Staff (Projects)',
       'Own Staff (Projects)', 
       'Own Staff (Operations)', 
@@ -818,11 +818,11 @@ router.post("/search-report", async (req, res) => {
   searchdata.employeeType = req.body.employeeType
   // Define the valid employee type options
 const validEmployeeTypes = [
-  "Own Labour",
+  "Own Technician",
   "Own Staff (Operations)",
   "Own Staff (Projects)",
-  "Hired Labour (Hourly)",
-  "Hired Labour (Monthly)",
+  "Hired Technician (Hourly)",
+  "Hired Technician (Monthly)",
   "Hired Staff (Operations)",
   "Hired Staff (Projects)",
   "All"
@@ -894,7 +894,7 @@ sdetails[1].srateph = req.body.srateph;
   } else if (req.body.month === 'Last Month') {
     reqdate = new Date(Date.UTC(new Date().getFullYear(), new Date().getMonth() - 1, 1));
   }
-  if(req.body.employeeType === 'Hired Labour (Hourly)'){
+  if(req.body.employeeType === 'Hired Technician (Hourly)'){
     req.body.sbasic = ''
     req.body.sallowance = ''
     req.body.sbonus = ''
@@ -921,9 +921,9 @@ sdetails[1].srateph = req.body.srateph;
         
         
     });
-    if(targetdata[i].employeeType === 'Hired Labour (Hourly)' && req.body.employeeType === 'Hired Labour (Hourly)'){
+    if(targetdata[i].employeeType === 'Hired Technician (Hourly)' && req.body.employeeType === 'Hired Technician (Hourly)'){
       targetdata[i].srateph = req.body.srateph
-    }else if(req.body.employeeType === 'Hired Labour (Hourly)' ){
+    }else if(req.body.employeeType === 'Hired Technician (Hourly)' ){
       targetdata[i].employeeType = req.body.employeeType 
       targetdata[i].srateph = req.body.srateph
       delete targetdata[i].sbasic
@@ -960,11 +960,11 @@ router.post('/printreport', async (req, res) => {
     let totalsum = {}
     searchdata.searchdate = req.body.searchdate
     const validEmployeeTypes = [
-      "Own Labour",
+      "Own Technician",
       "Own Staff (Operations)",
       "Own Staff (Projects)",
-      "Hired Labour (Hourly)",
-      "Hired Labour (Monthly)",
+      "Hired Technician (Hourly)",
+      "Hired Technician (Monthly)",
       "Hired Staff (Operations)",
       "Hired Staff (Projects)",
       "All"
@@ -1279,17 +1279,17 @@ router.post('/printprojectreport', async (req, res) => {
 
     router.get("/createGroup", async function (req, res) {
       const employeeTypesOwn = [
-        "Own Labour",
+        "Own Technician",
         "Own Staff (Operations)",
         "Own Staff (Projects)"
     ];
     const employeeTypesHired = [
-      "Hired Labour (Monthly)",
+      "Hired Technician (Monthly)",
       "Hired Staff (Operations)",
       "Hired Staff (Projects)"
     ];
     const employeeTypesHourly = [
-      "Hired Labour (Hourly)",
+      "Hired Technician (Hourly)",
     ];
       let ownEmployees = await employeHelpers.getEmployeesByType(employeeTypesOwn)
       let hiredEmployees = await employeHelpers.getEmployeesByType(employeeTypesHired)
@@ -1342,16 +1342,16 @@ router.get("/editGroup/:groupId", async function (req, res) {
 
   // Get lists of employees (by type) as in your createGroup route.
   const employeeTypesOwn = [
-    "Own Labour",
+    "Own Technician",
     "Own Staff (Operations)",
     "Own Staff (Projects)"
   ];
   const employeeTypesHired = [
-    "Hired Labour (Monthly)",
+    "Hired Technician (Monthly)",
     "Hired Staff (Operations)",
     "Hired Staff (Projects)"
   ];
-  const employeeTypesHourly = ["Hired Labour (Hourly)"];
+  const employeeTypesHourly = ["Hired Technician (Hourly)"];
 
   let ownEmployees = await employeHelpers.getEmployeesByType(employeeTypesOwn);
   let hiredEmployees = await employeHelpers.getEmployeesByType(employeeTypesHired);

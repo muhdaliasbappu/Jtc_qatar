@@ -67,7 +67,7 @@ cronfriday:  async() => {
          tempobj1.workinghour = '0'
          tempobj1.date= dateObj2
          tempobj1.employeeType = employee[i].employeeType
-         if(employee[i].employeeType === 'Hired Labour (Hourly)'){
+         if(employee[i].employeeType === 'Hired Technician (Hourly)'){
           tempobj1.srateph = employee[i].srateph
          }else{
          tempobj1.sbasic = employee[i].sbasic
@@ -90,7 +90,7 @@ cronfriday:  async() => {
             tempobj2.givenName = employee[i].givenName
             tempobj2.surname = employee[i].surname
             tempobj2.datevalue = date2
-            if(employee[i].employeeType === 'Hired Labour (Hourly)'){
+            if(employee[i].employeeType === 'Hired Technician (Hourly)'){
               tempobj2.todaystatus =  'Unpaid Leave'
                }else{
                 tempobj2.todaystatus =  'Paid Leave'
@@ -108,7 +108,7 @@ cronfriday:  async() => {
             tempobj2.workinghour = '0'
             tempobj2.date= dateObj2
             tempobj2.employeeType = employee[i].employeeType
-            if(employee[i].employeeType === 'Hired Labour (Hourly)'){
+            if(employee[i].employeeType === 'Hired Technician (Hourly)'){
             tempobj2.srateph = employee[i].srateph
              }else{
                 tempobj2.sbasic = employee[i].sbasic
@@ -165,7 +165,7 @@ cronfriday:  async() => {
                tempobj1.date= dateObj2
                tempobj1.workinghour = workinghour
                tempobj1.employeeType = employee[i].employeeType
-               if(employee[i].employeeType === 'Hired Labour (Hourly)'){
+               if(employee[i].employeeType === 'Hired Technician (Hourly)'){
                 tempobj1.srateph = employee[i].srateph
                }else{
                tempobj1.sbasic = employee[i].sbasic
@@ -202,7 +202,7 @@ cronfriday:  async() => {
                   tempobj2.date= dateObj2
                   tempobj2.workinghour = workinghour
                   tempobj2.employeeType = employee[i].employeeType
-                  if(employee[i].employeeType === 'Hired Labour (Hourly)'){
+                  if(employee[i].employeeType === 'Hired Technician (Hourly)'){
                   tempobj2.srateph = employee[i].srateph
                    }else{
                       tempobj2.sbasic = employee[i].sbasic
@@ -280,7 +280,7 @@ cronfriday:  async() => {
                tempobj1.date= dateObj2
                tempobj1.workinghour = '8'
                tempobj1.employeeType = employee[i].employeeType
-               if(employee[i].employeeType === 'Hired Labour (Hourly)'){
+               if(employee[i].employeeType === 'Hired Technician (Hourly)'){
                 tempobj1.srateph = employee[i].srateph
                }else{
                tempobj1.sbasic = employee[i].sbasic
@@ -317,7 +317,7 @@ cronfriday:  async() => {
                   tempobj2.date= dateObj2
                   tempobj2.workinghour = '8'
                   tempobj2.employeeType = employee[i].employeeType
-                  if(employee[i].employeeType === 'Hired Labour (Hourly)'){
+                  if(employee[i].employeeType === 'Hired Technician (Hourly)'){
                   tempobj2.srateph = employee[i].srateph
                    }else{
                       tempobj2.sbasic = employee[i].sbasic
@@ -378,7 +378,7 @@ cronfriday:  async() => {
                      tempobj1.date= dateObj2
                      tempobj1.workinghour = workinghour
                      tempobj1.employeeType = employee[i].employeeType
-                     if(employee[i].employeeType === 'Hired Labour (Hourly)'){
+                     if(employee[i].employeeType === 'Hired Technician (Hourly)'){
                       tempobj1.srateph = employee[i].srateph
                      }else{
                      tempobj1.sbasic = employee[i].sbasic
@@ -415,7 +415,7 @@ cronfriday:  async() => {
                         tempobj2.date= dateObj2
                         tempobj2.workinghour = workinghour
                         tempobj2.employeeType = employee[i].employeeType
-                        if(employee[i].employeeType === 'Hired Labour (Hourly)'){
+                        if(employee[i].employeeType === 'Hired Technician (Hourly)'){
                         tempobj2.srateph = employee[i].srateph
                          }else{
                             tempobj2.sbasic = employee[i].sbasic
