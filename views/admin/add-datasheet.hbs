@@ -142,7 +142,7 @@
         </div><!-- container -->
     </div><!-- content -->
 </div><!-- content-page -->
-
+{{!-- 
 <script>
     // Track how many project fieldsets are visible
     let dis = 1;
@@ -251,5 +251,126 @@
     document.getElementById("todaystatus").addEventListener("change", toggleProjectFieldset);
 
     // Initial check on page load
+    toggleProjectFieldset();
+</script> --}}
+<script>
+    // 1. INITIAL SETUP & VARIABLES
+    let dis = 1;
+    const employeeType = "{{person.employeeType}}";
+    const dateInput = document.getElementById("dateInput");
+
+    // 2. DATE CONSTRAINTS (Current Month + Previous Month)
+    const today = new Date();
+    
+    // Set Max Date to Today (Format: YYYY-MM-DD)
+    const yMax = today.getFullYear();
+    const mMax = String(today.getMonth() + 1).padStart(2, '0');
+    const dMax = String(today.getDate()).padStart(2, '0');
+    const maxDateStr = `${yMax}-${mMax}-${dMax}`;
+
+    // Set Min Date to the 1st of the Previous Month
+    const firstDayPrevMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+    const yMin = firstDayPrevMonth.getFullYear();
+    const mMin = String(firstDayPrevMonth.getMonth() + 1).padStart(2, '0');
+    const dMin = "01"; // Always start at the first of the month
+    const minDateStr = `${yMin}-${mMin}-${dMin}`;
+
+    // Apply constraints
+    dateInput.max = maxDateStr;
+    dateInput.min = minDateStr;
+
+    // 3. PROJECT FIELDSET VISIBILITY LOGIC
+    document.getElementById("project2").style.display = "none";
+    document.getElementById("project3").style.display = "none";
+    document.getElementById("project4").style.display = "none";
+    document.getElementById("project5").style.display = "none";
+
+    // Show/hide the entire project fieldset depending on employee type AND status
+    function toggleProjectFieldset() {
+        const status = document.getElementById("todaystatus").value;
+        const projectFieldset = document.getElementById("projectFieldset");
+
+        // If status == "Working" AND NOT one of the operations staff
+        if (
+            status === "Working" && 
+            !["Own Staff (Operations)", "Hired Staff (Operations)"].includes(employeeType)
+        ) {
+            projectFieldset.style.display = "block";
+        } else {
+            // Otherwise hide the entire fieldset
+            projectFieldset.style.display = "none";
+            
+            // Reset everything except project1's layout
+            for (let i = 2; i <= 5; i++) {
+                document.getElementById(`project${i}`).style.display = "none";
+                document.getElementById(`projectname${i}`).value = "";
+                document.getElementById(`workhour${i}`).value = "0";
+            }
+            dis = 1; // reset the visible project count to 1
+        }
+    }
+
+    // 4. ADD/REMOVE PROJECT BUTTONS
+    function addproject() {
+        if (dis < 5) {
+            dis++;
+            document.getElementById(`project${dis}`).style.display = "block";
+        }
+    }
+
+    function removeproject() {
+        if (dis > 1) {
+            document.getElementById(`projectname${dis}`).value = "";
+            document.getElementById(`workhour${dis}`).value = "0";
+            document.getElementById(`project${dis}`).style.display = "none";
+            dis--;
+        }
+    }
+
+    // 5. FINAL VALIDATION & SUBMISSION
+    document.getElementById("submits").addEventListener("click", function(e) {
+        e.preventDefault();
+        let isValid = true;
+
+        const status = document.getElementById("todaystatus").value;
+        const dateValue = dateInput.value;
+
+        if (!dateValue) {
+            alert("Please select a date");
+            isValid = false;
+            return;
+        }
+
+        // If "Working" and not operations staff => check the project fields
+        if (
+            status === "Working" && 
+            !["Own Staff (Operations)", "Hired Staff (Operations)"].includes(employeeType)
+        ) {
+            for (let i = 1; i <= dis; i++) {
+                const project = document.getElementById(`projectname${i}`).value;
+                const hours   = document.getElementById(`workhour${i}`).value;
+
+                if (!project) {
+                    alert(`Please select a project for Project ${i}`);
+                    isValid = false;
+                    break;
+                }
+                if (hours === "0") {
+                    alert(`Please enter work hours for Project ${i}`);
+                    isValid = false;
+                    break;
+                }
+            }
+        }
+
+        if (isValid) {
+            document.getElementById("employeeForm").submit();
+        }
+    });
+
+    // 6. EVENT LISTENERS
+    document.getElementById("todaystatus").addEventListener("change", toggleProjectFieldset);
+
+    // Initial check on page load to set correct visibility
     toggleProjectFieldset();
 </script>
