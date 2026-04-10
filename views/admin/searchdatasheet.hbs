@@ -87,7 +87,7 @@
                                                     <td>{{this.workhour5}}</td>
                                                     <td class="table-action text-center">
                                                         {{!-- If salarystatus is "open", go to edit page. Otherwise, show an alert. --}}
-                                                        {{#if (eq this.salarystatus "open")}}
+                                                        {{!-- {{#if (eq this.salarystatus "open")}}
                                                             <a href="/admin/edit-datasheets/{{this._id}}" class="action-icon">
                                                                 <i class="ri-edit-fill"></i>
                                                             </a>
@@ -96,7 +96,10 @@
                                                                onclick="alert('Salary of selected date is already closed')">
                                                                 <i class="ri-edit-fill"></i>
                                                             </a>
-                                                        {{/if}}
+                                                        {{/if}} --}}
+                                                        <a href="/admin/edit-datasheets/{{this._id}}" class="action-icon">
+                                                                <i class="ri-edit-fill"></i>
+                                                            </a>
                                                     </td>
                                                 </tr>
                                                 {{/each}}
